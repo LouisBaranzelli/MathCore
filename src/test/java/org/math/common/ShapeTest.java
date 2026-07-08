@@ -1,4 +1,4 @@
-package org.example.common;
+package org.math.common;
 
 import org.junit.jupiter.api.Test;
 

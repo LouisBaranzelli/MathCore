@@ -1,6 +1,5 @@
-package org.example.common;
+package org.math.common;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class Shape {

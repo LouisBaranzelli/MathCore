@@ -1,6 +1,6 @@
-package org.example.common.exception;
+package org.math.common.exception;
 
-import org.example.common.Shape;
+import org.math.common.Shape;
 
 public class ShapeException extends RuntimeException {
 

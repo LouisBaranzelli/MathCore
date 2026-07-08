@@ -1,8 +1,8 @@
-package org.example.vector;
+package org.math.vector;
 
-import org.example.common.Shapable;
-import org.example.common.Shape;
-import org.example.common.exception.ShapeException;
+import org.math.common.Shapable;
+import org.math.common.Shape;
+import org.math.common.exception.ShapeException;
 
 import java.util.Arrays;
 
