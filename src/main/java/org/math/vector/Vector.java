@@ -16,6 +16,13 @@ public class Vector implements Shapable {
     private double average;
     private boolean averageCalculated = false;
 
+    private double minimum;
+    private boolean minimumCalculated = false;
+
+    private double maximum;
+    private boolean maximumCalculated = false;
+
+
     public Vector(double... values){
         if (values == null || values.length == 0){
             throw new IllegalArgumentException("Vector  must have at least one dimension");
@@ -81,6 +88,39 @@ public class Vector implements Shapable {
     public double norm() {
         return Math.sqrt(dot(this));
     }
+
+    public double getMinimum() {
+        if (minimumCalculated){
+            return minimum;
+        }
+        minimum = values[0];
+        for (int i = 1; i < values.length; i++) {
+            if (values[i] < minimum){
+                minimum = values[i];
+            }
+        }
+        minimumCalculated = true;
+        return minimum;
+    }
+
+    public double getMaximum() {
+        if (maximumCalculated){
+            return maximum;
+        }
+        maximum = values[0];
+        for (int i = 1; i < values.length; i++) {
+            if (values[i] > maximum){
+                maximum = values[i];
+            }
+        }
+        maximumCalculated = true;
+        return maximum;
+    }
+
+    double getValue(int index){
+        return values[index];
+    }
+
 
     @Override
     public Shape getShape() {

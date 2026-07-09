@@ -142,4 +142,21 @@ class VectorTest {
 
         assertEquals("[1.0, 2.0, 3.0]", vector.toString());
     }
+
+    @Test
+    void findMinimum() {
+        Vector a = new Vector(1, 2, 3);
+        Vector b = new Vector(4, 5, -1.2);
+        assertEquals(1, a.getMinimum());
+        assertEquals(-1.2, b.getMinimum());
+    }
+
+    @Test
+    void findMaximum() {
+        Vector a = new Vector(1, 2, 3);
+        Vector b = new Vector(5, 4, -1.2);
+        assertEquals(a.getValue(2), a.getMaximum());
+        assertEquals(b.getValue(0), b.getMaximum());
+    }
+
 }
