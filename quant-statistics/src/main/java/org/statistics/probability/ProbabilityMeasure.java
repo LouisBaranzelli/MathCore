@@ -1,8 +1,6 @@
 package org.statistics.probability;
 
 
-import javax.management.RuntimeOperationsException;
-
 public interface ProbabilityMeasure<T> {
 
     double probability(Event<T> event);

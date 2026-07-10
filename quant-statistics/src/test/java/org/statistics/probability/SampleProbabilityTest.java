@@ -3,6 +3,7 @@ package org.statistics.probability;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SampleProbabilityTest {
 
@@ -61,4 +62,31 @@ class SampleProbabilityTest {
 
         assertEquals(2.0 / 3.0, probability.probability(adult));
     }
+
+
+    @Test
+    void shouldComputeConditionalProbabilityForObjects() {
+        record Person(String name, int age) {}
+
+        SampleProbability<Person> samples =
+                new SampleProbability<>(
+                        new Person("Alice", 25),
+                        new Person("Bob", 15),
+                        new Person("Bob", 36),
+                        new Person("Charlie", 42)
+                );
+
+        Event<Person> bob = new Event<>(p -> p.name.equals("Bob"));
+        Event<Person> adult = new Event<>(p -> p.age > 18);
+        Event<Person> twentyFive = new Event<>(p -> p.age == 25);
+        Event<Person> thirtySix = new Event<>(p -> p.age == 36);
+
+        assertEquals(3.0 / 4.0, samples.probability(adult));
+        assertEquals(1.0 / 2.0, samples.conditionalProbability(adult, bob));
+        assertEquals(2.0 / 3.0, samples.conditionalProbability(adult, bob.or(twentyFive)));
+        assertThrows(IllegalArgumentException.class, () -> samples.conditionalProbability(adult, bob.and(twentyFive)));
+        assertEquals(1, samples.conditionalProbability(adult, bob.and(thirtySix)));
+    }
+
+
 }
