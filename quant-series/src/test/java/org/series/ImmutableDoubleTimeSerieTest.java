@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.math.vector.Vector;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -135,20 +135,29 @@ class ImmutableDoubleTimeSerieTest {
     }
 
     @Test
-    void shouldReturnCorrectLocalDateTimeForGivenZoneId() {
+    void shouldReturnCorrectZonedDateTimeForGivenZoneId() {
         // Epoch milli pour le 2023-01-01 à 00:00:00 UTC
         long[] timestamps = {1672531200000L};
         double[] values = {10.0};
 
         DoubleTimeSerie serie = new ImmutableDoubleTimeSerie(timestamps, values);
 
-        // En UTC, l'heure doit être 00:00:00
-        LocalDateTime localDateTimeUTC = serie.getLocalDateTime(0, ZoneId.of("UTC"));
-        assertEquals(LocalDateTime.of(2023, 1, 1, 0, 0, 0), localDateTimeUTC);
+        // En UTC, l'heure doit être 2023-01-01T00:00:00Z
+        ZoneId zoneUTC = ZoneId.of("UTC");
+        ZonedDateTime expectedUTC = ZonedDateTime.of(2023, 1, 1, 0, 0, 0, 0, zoneUTC);
+        ZonedDateTime actualUTC = serie.getZoneDateTime(0, zoneUTC);
 
-        // En Europe/Paris (UTC+1 en hiver), l'heure doit être 01:00:00
-        LocalDateTime localDateTimeParis = serie.getLocalDateTime(0, ZoneId.of("Europe/Paris"));
-        assertEquals(LocalDateTime.of(2023, 1, 1, 1, 0, 0), localDateTimeParis);
+        // On compare les instants et les fuseaux
+        assertTrue(expectedUTC.isEqual(actualUTC));
+        assertEquals(zoneUTC, actualUTC.getZone());
+
+        // En Europe/Paris (UTC+1 en hiver), l'heure locale doit être 01:00:00
+        ZoneId zoneParis = ZoneId.of("Europe/Paris");
+        ZonedDateTime expectedParis = ZonedDateTime.of(2023, 1, 1, 1, 0, 0, 0, zoneParis);
+        ZonedDateTime actualParis = serie.getZoneDateTime(0, zoneParis);
+
+        assertTrue(expectedParis.isEqual(actualParis));
+        assertEquals(zoneParis, actualParis.getZone());
     }
 
     @Test

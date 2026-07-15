@@ -3,8 +3,8 @@ package org.series;
 import org.math.vector.Vector;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public interface DoubleTimeSerie {
 
@@ -28,8 +28,8 @@ public interface DoubleTimeSerie {
         return Instant.ofEpochMilli(getTimestamp(size() - 1));
     }
 
-    default LocalDateTime getLocalDateTime(int index, ZoneId zoneId){
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(getTimestamp(index)), zoneId);
+    default ZonedDateTime getZoneDateTime(int index, ZoneId zoneId){
+        return TimeTools.fromLongToZonedDateTime(getTimestamp(index), zoneId);
     }
 
 

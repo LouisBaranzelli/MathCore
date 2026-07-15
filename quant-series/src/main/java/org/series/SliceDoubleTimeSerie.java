@@ -8,7 +8,6 @@ import org.math.vector.Vector;
 public final class SliceDoubleTimeSerie implements DoubleTimeSerie {
     private final DoubleTimeSerie source;
     private final int startIndex;
-    private final int endIndex; // Stockage de l'index de fin (exclu)
     private final int length;
 
         /**
@@ -35,7 +34,6 @@ public final class SliceDoubleTimeSerie implements DoubleTimeSerie {
 
             this.source = source;
             this.startIndex = start;
-            this.endIndex = end;
         }
 
 
