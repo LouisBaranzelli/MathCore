@@ -1,6 +1,6 @@
 package org.series.timegrid;
 
-import org.series.TimeFrame;
+import org.series.timeserie.TimeFrame;
 import org.series.TimeTools;
 
 import java.time.ZonedDateTime;

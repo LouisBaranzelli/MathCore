@@ -1,6 +1,7 @@
-package org.series;
+package org.series.timeserie;
 
 import org.math.vector.Vector;
+import org.series.TimeTools;
 
 import java.time.Instant;
 import java.time.ZoneId;

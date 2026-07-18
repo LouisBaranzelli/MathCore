@@ -2,8 +2,8 @@ package org.series.timegrid;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.series.TimeFrame;
 import org.series.TimeTools;
+import org.series.timeserie.TimeFrame;
 
 import java.time.DayOfWeek;
 import java.time.ZonedDateTime;

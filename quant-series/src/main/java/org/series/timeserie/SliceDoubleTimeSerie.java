@@ -1,8 +1,7 @@
-package org.series;
+package org.series.timeserie;
 
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-
 
 
 public final class SliceDoubleTimeSerie implements DoubleTimeSerie {
@@ -24,7 +23,6 @@ public final class SliceDoubleTimeSerie implements DoubleTimeSerie {
 
             this.length = end - start;
 
-            // Validation identique à SliceVector
             if (start < 0 || this.length <= 0 || end > source.size()) {
                 throw new IndexOutOfBoundsException(
                         String.format("Invalid slice boundaries: start=%d, end=%d, sourceSize=%d",
