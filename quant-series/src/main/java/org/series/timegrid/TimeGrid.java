@@ -1,4 +1,4 @@
-package org.series;
+package org.series.timegrid;
 
 public interface TimeGrid {
 

@@ -1,6 +1,6 @@
-package org.series;
+package org.series.timegrid;
 
-public class IrregularTimeGrid implements TimeGrid{
+public class IrregularTimeGrid implements TimeGrid {
 
     private final long[] timestamps;
 /*
@@ -11,8 +11,8 @@ public class IrregularTimeGrid implements TimeGrid{
             complétée par une micro-table de sauts (indexée) pour les jours fériés.
  */
 
-    public IrregularTimeGrid(long[] timestamps) throws NullValueException {
-        this.validate();
+    public IrregularTimeGrid(long[] timestamps) {
+        this.validate(timestamps);
         this.timestamps = timestamps.clone();
     }
 
@@ -26,13 +26,13 @@ public class IrregularTimeGrid implements TimeGrid{
         return timestamps[index];
     }
 
-    public void validate() throws NullValueException {
-        if (size() == 0) {
+    public void validate(long[] values) {
+        if (values == null || values.length == 0) {
             throw new IllegalArgumentException("Time serie cannot be empty");
         }
 
-        for (int i = 0; i < size(); i++) {
-            if (i > 0 && getTimeStamp(i) <= getTimeStamp(i - 1)) {
+        for (int i = 0; i < values.length; i++) {
+            if (i > 0 && values[i] <= values[i - 1]) {
                 throw new IllegalArgumentException("Timestamps must be strictly increasing. Violation at index " + i);
             }
         }

@@ -7,12 +7,12 @@ import java.util.TimeZone;
 
 public class TimeTools {
 
-    public static double fromInstantToLong(Instant instant){
-        return instant.toEpochMilli();
+    public static long fromInstantToLong(Instant instant){
+        return instant.getEpochSecond();
     }
 
     public static Instant fromLongToInstant(long longValue){
-        return Instant.ofEpochMilli(longValue);
+        return Instant.ofEpochSecond(longValue);
     }
 
     public static ZonedDateTime fromLongToZonedDateTime(long longValue, ZoneId zoneId){
@@ -20,7 +20,7 @@ public class TimeTools {
     }
 
     public static long fromZonedDateTimeToLong(ZonedDateTime zone){
-        return zone.toInstant().toEpochMilli();
+        return zone.toInstant().getEpochSecond() ;
     }
 
 
