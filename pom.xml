@@ -12,6 +12,7 @@
   <modules>
     <module>quant-math</module>
     <module>quant-statistics</module>
+      <module>quant-series</module>
   </modules>
 
   <properties>
