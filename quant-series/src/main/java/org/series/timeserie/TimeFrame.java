@@ -1,7 +1,7 @@
-package org.series;
+package org.series.timeserie;
 
 import lombok.Getter;
-import java.time.Duration;
+
 import java.time.ZonedDateTime;
 import java.util.function.BiFunction;
 
