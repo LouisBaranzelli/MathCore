@@ -23,5 +23,11 @@ public class TimeTools {
         return zone.toInstant().getEpochSecond() ;
     }
 
+    public static long fromZonedDateTimeToIndex(ZonedDateTime zone){
+        return zone.toInstant().getEpochSecond() ;
+    }
+
+
+
 
 }
