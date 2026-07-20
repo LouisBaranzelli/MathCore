@@ -13,6 +13,9 @@
     <module>quant-math</module>
     <module>quant-statistics</module>
       <module>quant-series</module>
+    <module>quant-data</module>
+    <module>quant-fin</module>
+    <module>quant-app</module>
   </modules>
 
   <properties>
