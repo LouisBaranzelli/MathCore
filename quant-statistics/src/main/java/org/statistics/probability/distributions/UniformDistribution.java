@@ -1,6 +1,6 @@
-package org.statistics.probability;
+package org.statistics.probability.distributions;
 
-public class UniformDistribution implements Distribution {
+public class UniformDistribution implements ContinuousDistribution {
     private final double a;
     private final double b;
 
