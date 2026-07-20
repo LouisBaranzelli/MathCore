@@ -2,11 +2,7 @@ package org.statistics.probability.distributions;
 
 import java.util.random.RandomGenerator;
 
-public interface ContinuousDistribution {
-
-    double cdf(double x);
-
-    double inverseCdf(double x);
+public interface ContinuousDistribution extends Distribution {
 
     default double survivalFunction(double x) {
         return 1.0 - cdf(x);
