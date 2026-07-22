@@ -1,0 +1,81 @@
+package org.quant.definitions;
+
+import lombok.Getter;
+
+public enum Field {
+    PRECIOUS_METAL("Precious metal"),
+    ENERGY_EQUIPMENT_SERVICES("Energy Equipment & Services"),
+    OIL_GAS_CONSUMABLE_FUELS("Oil, Gas & Consumable Fuels"),
+    CHEMICALS("Chemicals"),
+    CONSTRUCTION_MATERIALS("Construction Materials"),
+    CONTAINERS_PACKAGING("Containers & Packaging"),
+    METALS_MINING("Metals & Mining"),
+    PAPER_FOREST_PRODUCTS("Paper & Forest Products"),
+    AEROSPACE_DEFENSE("Aerospace & Defense"),
+    BUILDING_PRODUCTS("Building Products"),
+    CONSTRUCTION_ENGINEERING("Construction & Engineering"),
+    ELECTRICAL_EQUIPMENT("Electrical Equipment"),
+    INDUSTRIAL_CONGLOMERATES("Industrial Conglomerates"),
+    MACHINERY("Machinery"),
+    PROFESSIONAL_SERVICES("Professional Services"),
+    TRADING_DISTRIBUTORS("Trading Companies & Distributors"),
+    TRANSPORTATION_INFRASTRUCTURE("Transportation Infrastructure"),
+    AIR_FREIGHT_LOGISTICS("Air Freight & Logistics"),
+    AIRLINES("Airlines"),
+    MARINE("Marine"),
+    ROAD_RAIL("Road & Rail"),
+    AUTO_COMPONENTS("Auto Components"),
+    AUTOMOBILES("Automobiles"),
+    HOUSEHOLD_DURABLES("Household Durables"),
+    LEISURE_PRODUCTS("Leisure Products"),
+    TEXTILES_APPAREL_LUXURY_GOODS("Textiles, Apparel & Luxury Goods"),
+    DIVERSIFIED_CONSUMER_SERVICES("Diversified Consumer Services"),
+    HOTELS_RESTAURANTS_LEISURE("Hotels, Restaurants & Leisure"),
+    MEDIA("Media"),
+    ENTERTAINMENT("Entertainment"),
+    DISTRIBUTORS("Distributors"),
+    INTERNET_DIRECT_MARKETING_RETAIL("Internet & Direct Marketing Retail"),
+    MULTILINE_RETAIL("Multiline Retail"),
+    SPECIALTY_RETAIL("Specialty Retail"),
+    FOOD_STAPLES_RETAILING("Food & Staples Retailing"),
+    BEVERAGES("Beverages"),
+    FOOD_PRODUCTS("Food Products"),
+    TOBACCO("Tobacco"),
+    HOUSEHOLD_PRODUCTS("Household Products"),
+    PERSONAL_PRODUCTS("Personal Products"),
+    HEALTHCARE_EQUIPMENT_SUPPLIES("Health Care Equipment & Supplies"),
+    HEALTHCARE_PROVIDERS_SERVICES("Health Care Providers & Services"),
+    BIOTECHNOLOGY("Biotechnology"),
+    PHARMACEUTICALS("Pharmaceuticals"),
+    LIFE_SCIENCES_TOOLS_SERVICES("Life Sciences Tools & Services"),
+    BANKS("Banks"),
+    DIVERSIFIED_FINANCIAL_SERVICES("Diversified Financial Services"),
+    CONSUMER_FINANCE("Consumer Finance"),
+    CAPITAL_MARKETS("Capital Markets"),
+    MORTGAGE_REAL_ESTATE_INVESTMENT_TRUSTS("Mortgage REITs"),
+    INSURANCE("Insurance"),
+    EQUITY_REAL_ESTATE_INVESTMENT_TRUSTS("Equity REITs"),
+    REAL_ESTATE_MANAGEMENT_DEVELOPMENT("Real Estate Management & Development"),
+    SOFTWARE("Software"),
+    IT_SERVICES("IT Services"),
+    COMMUNICATIONS_EQUIPMENT("Communications Equipment"),
+    TECHNOLOGY_HARDWARE_STORAGE_PERIPHERALS("Technology Hardware, Storage & Peripherals"),
+    ELECTRONIC_EQUIPMENT_INSTRUMENTS_COMPONENTS("Electronic Equipment, Instruments & Components"),
+    SEMICONDUCTORS("Semiconductors"),
+    SEMICONDUCTOR_EQUIPMENT("Semiconductor Equipment"),
+    DIVERSIFIED_TELECOMMUNICATION_SERVICES("Diversified Telecommunication Services"),
+    WIRELESS_TELECOMMUNICATION_SERVICES("Wireless Telecommunication Services"),
+    ELECTRIC_UTILITIES("Electric Utilities"),
+    GAS_UTILITIES("Gas Utilities"),
+    WATER_UTILITIES("Water Utilities"),
+    MULTI_UTILITIES("Multi-Utilities"),
+    INDEPENDENT_POWER_PRODUCERS_ENERGY_TRADERS("Independent Power Producers & Energy Traders");
+
+    @Getter
+    private final String label;
+
+
+    Field(String label) {
+        this.label = label;
+    }
+}
