@@ -36,20 +36,20 @@ public class BivariateKernelDensityDistribution implements BivariateContinuousDi
         Objects.requireNonNull(xVector, "Le tableau xVector ne peut pas être nul.");
         Objects.requireNonNull(yVector, "Le tableau yVector ne peut pas être nul.");
 
-        if (xVector.getSize() != yVector.getSize()) {
+        if (xVector.size() != yVector.size()) {
             throw new IllegalArgumentException(
                     "Les tableaux xVector et yVector doivent avoir la même dimension. ("
-                            + xVector.getSize() + " != " + yVector.getSize() + ")"
+                            + xVector.size() + " != " + yVector.size() + ")"
             );
         }
 
-        if (xVector.getSize() < 2) {
+        if (xVector.size() < 2) {
             throw new IllegalArgumentException("Il faut au moins 2 observations pour estimer un KDE.");
         }
 
         this.xData = xVector; // Invariabilité pour garantir la sécurité du thread
         this.yData = yVector;
-        this.n = xVector.getSize();
+        this.n = xVector.size();
 
         // 1. Calcul automatique des bandes passantes hX et hY (Silverman bivarié)
         this.hX = calculateSilvermanBandwidth(this.xData);
@@ -68,7 +68,7 @@ public class BivariateKernelDensityDistribution implements BivariateContinuousDi
         }
         this.xData = xVector;
         this.yData = yVector;
-        this.n = xData.getSize();
+        this.n = xData.size();
         this.hX = hX;
         this.hY = hY;
         this.normalizationFactor = 1.0 / (n * hX * hY * 2.0 * Math.PI);

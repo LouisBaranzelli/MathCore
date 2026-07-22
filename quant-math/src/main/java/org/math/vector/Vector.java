@@ -3,7 +3,7 @@ package org.math.vector;
 import org.math.common.Shapable;
 
 public interface Vector extends Shapable {
-    int getSize();
+    int size();
     double getValue(int index);
 
     // Les opérations retournent un Vector générique
@@ -17,6 +17,6 @@ public interface Vector extends Shapable {
     }
 
     default double getLast(){
-        return getValue(getSize() - 1);
+        return getValue(size() - 1);
     }
 }

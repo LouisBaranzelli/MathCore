@@ -8,7 +8,7 @@ public final class DescriptiveStatistics {
 
     public static double sum(Vector vector) {
         double sum = 0;
-        int n = vector.getSize();
+        int n = vector.size();
         for (int i = 0; i < n; i++) {
             sum += vector.getValue(i);
         }
@@ -16,12 +16,12 @@ public final class DescriptiveStatistics {
     }
 
     public static double mean(Vector vector) {
-        if (vector.getSize() == 0) return Double.NaN;
-        return sum(vector) / vector.getSize();
+        if (vector.size() == 0) return Double.NaN;
+        return sum(vector) / vector.size();
     }
 
     public static double variance(Vector vector) {
-        int n = vector.getSize();
+        int n = vector.size();
         if (n <= 1) return 0.0;
 
         double mu = mean(vector);
@@ -39,14 +39,14 @@ public final class DescriptiveStatistics {
     }
 
     public static double min(Vector vector) {
-        if (vector == null || vector.getSize() == 0) {
+        if (vector == null || vector.size() == 0) {
             throw new IllegalArgumentException("Le vecteur ne peut pas être nul ou vide.");
         }
 
         double min = vector.getValue(0); // ou vector.getFirst()
 
         // On commence à 1 car le premier élément (indice 0) sert déjà de référence
-        for (int i = 1; i < vector.getSize(); i++) {
+        for (int i = 1; i < vector.size(); i++) {
             double current = vector.getValue(i);
             if (current < min) {
                 min = current;
@@ -56,14 +56,14 @@ public final class DescriptiveStatistics {
     }
 
     public static double max(Vector vector) {
-        if (vector == null || vector.getSize() == 0) {
+        if (vector == null || vector.size() == 0) {
             throw new IllegalArgumentException("Le vecteur ne peut pas être nul ou vide.");
         }
 
         double max = vector.getValue(0); // ou vector.getFirst()
 
         // On commence également à i = 1
-        for (int i = 1; i < vector.getSize(); i++) {
+        for (int i = 1; i < vector.size(); i++) {
             double current = vector.getValue(i);
             if (current > max) {
                 max = current;

@@ -15,7 +15,7 @@ class ArrayVectorTest {
         double[] input = {1.0, 2.0, 3.0};
         ArrayVector vector = new ArrayVector(input);
 
-        assertEquals(3, vector.getSize());
+        assertEquals(3, vector.size());
         assertEquals(1.0, vector.getValue(0));
         assertEquals(2.0, vector.getValue(1));
         assertEquals(3.0, vector.getValue(2));
@@ -64,7 +64,7 @@ class ArrayVectorTest {
 
         Vector result = v1.add(v2);
 
-        assertEquals(3, result.getSize());
+        assertEquals(3, result.size());
         assertEquals(5.0, result.getValue(0));
         assertEquals(7.0, result.getValue(1));
         assertEquals(9.0, result.getValue(2));
@@ -161,7 +161,7 @@ class ArrayVectorTest {
 
         // On simule une implémentation mock/alternative de Vector
         Vector customVector = new Vector() {
-            @Override public int getSize() { return 2; }
+            @Override public int size() { return 2; }
             @Override public double getValue(int index) { return index == 0 ? 1.0 : 2.0; }
             @Override public Shape getShape() { return new Shape(2, 1); }
             @Override public Vector add(Vector other) { return null; }

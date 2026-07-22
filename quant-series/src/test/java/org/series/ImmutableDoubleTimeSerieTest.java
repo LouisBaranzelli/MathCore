@@ -96,7 +96,7 @@ class ImmutableDoubleTimeSerieTest {
 
         // Then
         assertNotNull(vector, "Le vecteur généré ne doit pas être null");
-        assertEquals(serie.size(), vector.getSize(), "Le vecteur doit avoir la même taille que la série");
+        assertEquals(serie.size(), vector.size(), "Le vecteur doit avoir la même taille que la série");
 
         for (int i = 0; i < values.length; i++) {
             assertEquals(serie.getValue(i), vector.getValue(i),

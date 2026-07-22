@@ -19,7 +19,7 @@ public final class ArrayVector implements Vector {
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return values.length;
     }
 
@@ -36,8 +36,8 @@ public final class ArrayVector implements Vector {
     @Override
     public Vector add(Vector other) {
         checkShapeCompatibility(other);
-        double[] result = new double[getSize()];
-        for (int i = 0; i < getSize(); i++) {
+        double[] result = new double[size()];
+        for (int i = 0; i < size(); i++) {
             result[i] = this.values[i] + other.getValue(i);
         }
         return new ArrayVector(result);
@@ -46,8 +46,8 @@ public final class ArrayVector implements Vector {
     @Override
     public Vector minus(Vector other) {
         checkShapeCompatibility(other);
-        double[] result = new double[getSize()];
-        for (int i = 0; i < getSize(); i++) {
+        double[] result = new double[size()];
+        for (int i = 0; i < size(); i++) {
             result[i] = this.values[i] - other.getValue(i);
         }
         return new ArrayVector(result);
@@ -57,7 +57,7 @@ public final class ArrayVector implements Vector {
     public double dot(Vector other) {
         checkShapeCompatibility(other);
         double result = 0;
-        for (int i = 0; i < getSize(); i++) {
+        for (int i = 0; i < size(); i++) {
             result += this.values[i] * other.getValue(i);
         }
         return result;
@@ -69,7 +69,7 @@ public final class ArrayVector implements Vector {
     }
 
     private void checkShapeCompatibility(Vector other) {
-        if (other.getSize() != this.getSize()) {
+        if (other.size() != this.size()) {
             throw new ShapeException(getShape(), other.getShape());
         }
     }
@@ -78,7 +78,7 @@ public final class ArrayVector implements Vector {
     public boolean equals(Object that) {
         if (this == that) return true;
         if (!(that instanceof Vector other)) return false;
-        if (this.getSize() != other.getSize()) return false;
+        if (this.size() != other.size()) return false;
 
         // Optimisation si les deux sont des ArrayVector
         if (other instanceof ArrayVector otherArray) {
@@ -86,7 +86,7 @@ public final class ArrayVector implements Vector {
         }
 
         // Comparaison générique sinon
-        for (int i = 0; i < getSize(); i++) {
+        for (int i = 0; i < size(); i++) {
             if (Double.compare(this.getValue(i), other.getValue(i)) != 0) {
                 return false;
             }

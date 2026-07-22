@@ -29,7 +29,7 @@ class DescriptiveStatisticsTest {
     void testMeanEmpty() {
         // Simulation d'un vecteur vide (si ton architecture le permet via un mock ou une sous-classe)
         Vector emptyVector = new Vector() {
-            @Override public int getSize() { return 0; }
+            @Override public int size() { return 0; }
             @Override public double getValue(int index) { throw new IndexOutOfBoundsException(); }
             @Override public org.math.common.Shape getShape() { return new org.math.common.Shape(0, 1); }
             @Override public Vector add(Vector other) { return null; }

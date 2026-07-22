@@ -24,7 +24,7 @@ class SliceVectorTest {
         // Tranche de l'index 1 à 4 -> contient [20.0, 30.0, 40.0] (taille = 3)
         SliceVector slice = new SliceVector(sourceVector, 1, 4);
 
-        assertEquals(3, slice.getSize());
+        assertEquals(3, slice.size());
         assertEquals(20.0, slice.getValue(0));
         assertEquals(30.0, slice.getValue(1));
         assertEquals(40.0, slice.getValue(2));
@@ -46,7 +46,7 @@ class SliceVectorTest {
         // Sous-tranche : [30.0, 40.0] (index 1 à 3 de la première tranche, càd index 2 à 4 de la source)
         SliceVector subSlice = new SliceVector(parentSlice, 1, 3);
 
-        assertEquals(2, subSlice.getSize());
+        assertEquals(2, subSlice.size());
         assertEquals(30.0, subSlice.getValue(0));
         assertEquals(40.0, subSlice.getValue(1));
 

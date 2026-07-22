@@ -132,7 +132,7 @@ class SliceDoubleTimeSerieTest {
         Vector resultVector = slice.toVector();
 
         assertNotNull(resultVector, "Le vecteur retourné ne doit pas être null");
-        assertEquals(3, resultVector.getSize(), "Le vecteur doit avoir la même taille que la tranche");
+        assertEquals(3, resultVector.size(), "Le vecteur doit avoir la même taille que la tranche");
 
         // Vérification des éléments extraits
         assertEquals(30.0, resultVector.getValue(0));
