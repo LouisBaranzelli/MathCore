@@ -1,7 +1,6 @@
-package org.quant.definitions;
+package org.quant.definitions.enums;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public enum FieldIndex implements FieldInstrument {

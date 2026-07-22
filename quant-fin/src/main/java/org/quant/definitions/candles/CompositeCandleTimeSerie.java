@@ -1,7 +1,8 @@
-package org.quant.definitions;
+package org.quant.definitions.candles;
 
 import lombok.Getter;
 import org.math.vector.Vector;
+import org.quant.definitions.enums.Instrument;
 import org.series.timeserie.DoubleTimeSerie;
 import org.series.timeserie.TimeFrame;
 

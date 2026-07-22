@@ -1,4 +1,4 @@
-package org.quant.definitions;
+package org.quant.definitions.enums;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package org.quant.definitions;
+package org.quant.definitions.candles;
 
 import org.series.timeserie.DoubleTimeSerie;
 
@@ -6,6 +6,13 @@ public interface CandleTimeSerie extends DoubleTimeSerie {
 
 
     Candle getCandle(int index);
+
+    default Candle getFirst(){
+        return getCandle(0);
+    }
+    default Candle getLast(){
+        return getCandle(size() - 1);
+    }
 
     DoubleTimeSerie getOpenTimeSerie();
 

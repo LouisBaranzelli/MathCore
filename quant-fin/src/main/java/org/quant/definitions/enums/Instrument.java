@@ -1,4 +1,4 @@
-package org.quant.definitions;
+package org.quant.definitions.enums;
 
 public interface Instrument {
     String getTicker();

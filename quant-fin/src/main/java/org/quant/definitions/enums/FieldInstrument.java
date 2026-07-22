@@ -1,4 +1,4 @@
-package org.quant.definitions;
+package org.quant.definitions.enums;
 
 public interface FieldInstrument extends Instrument {
     Field getField();

@@ -1,4 +1,6 @@
-package org.quant.definitions;
+package org.quant.definitions.candles;
+
+import org.quant.definitions.enums.Instrument;
 
 import java.time.Instant;
 
