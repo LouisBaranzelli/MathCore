@@ -37,4 +37,39 @@ public final class DescriptiveStatistics {
     public static double standardDeviation(Vector vector) {
         return Math.sqrt(variance(vector));
     }
-}
+
+    public static double min(Vector vector) {
+        if (vector == null || vector.getSize() == 0) {
+            throw new IllegalArgumentException("Le vecteur ne peut pas être nul ou vide.");
+        }
+
+        double min = vector.getValue(0); // ou vector.getFirst()
+
+        // On commence à 1 car le premier élément (indice 0) sert déjà de référence
+        for (int i = 1; i < vector.getSize(); i++) {
+            double current = vector.getValue(i);
+            if (current < min) {
+                min = current;
+            }
+        }
+        return min;
+    }
+
+    public static double max(Vector vector) {
+        if (vector == null || vector.getSize() == 0) {
+            throw new IllegalArgumentException("Le vecteur ne peut pas être nul ou vide.");
+        }
+
+        double max = vector.getValue(0); // ou vector.getFirst()
+
+        // On commence également à i = 1
+        for (int i = 1; i < vector.getSize(); i++) {
+            double current = vector.getValue(i);
+            if (current > max) {
+                max = current;
+            }
+        }
+        return max;
+    }
+
+    }
