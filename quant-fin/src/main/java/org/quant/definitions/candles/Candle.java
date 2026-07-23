@@ -1,5 +1,6 @@
 package org.quant.definitions.candles;
 
+import lombok.Getter;
 import org.quant.definitions.enums.Instrument;
 
 import java.time.Instant;
@@ -15,9 +16,10 @@ import java.time.Instant;
  * @param close       Prix de fermeture
  * @param volume      Volume échangé durant la période
  */
+
 public record Candle(
         Instrument instrument,
-        Instant timestamp,
+        long timestamp,
         double open,
         double high,
         double low,

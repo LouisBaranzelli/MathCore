@@ -69,7 +69,7 @@ public class CompositeCandleTimeSerie implements CandleTimeSerie {
     public Candle getCandle(int index) {
         return new Candle(
                 instrument,
-                Instant.ofEpochMilli(getTimestamp(index)),
+                getTimestamp(index),
                 openTimeSerie.getValue(index),
                 highTimeSerie.getValue(index),
                 lowTimeSerie.getValue(index),
