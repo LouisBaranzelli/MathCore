@@ -1,9 +1,9 @@
-package org.quant.definitions.enums;
+package org.quant.definitions.assets;
 
 import lombok.Getter;
 
 @Getter
-public enum Stock implements GeographicInstrument, FieldInstrument{
+public enum Stock implements Purchasable{
     SU("SU.PA", "Schneider Electric", Field.ELECTRICAL_EQUIPMENT, Country.FR, Currency.EUR);
 
     private final String ticker;

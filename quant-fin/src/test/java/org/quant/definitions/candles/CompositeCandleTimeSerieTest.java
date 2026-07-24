@@ -3,7 +3,7 @@ package org.quant.definitions.candles;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.math.vector.Vector;
-import org.quant.definitions.enums.Stock;
+import org.quant.definitions.assets.Stock;
 import org.series.InvalidTimeSerieException;
 import org.series.timegrid.TimeGrid;
 import org.series.timeserie.DoubleTimeSerie;

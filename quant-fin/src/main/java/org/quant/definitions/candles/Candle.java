@@ -1,9 +1,6 @@
 package org.quant.definitions.candles;
 
-import lombok.Getter;
-import org.quant.definitions.enums.Instrument;
-
-import java.time.Instant;
+import org.quant.definitions.assets.Instrument;
 
 /**
  * Représente un chandelier japonais (Candlestick / OHLCV).
