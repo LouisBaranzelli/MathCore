@@ -1,5 +1,6 @@
 package org.quant.definitions.candles;
 
+import org.quant.definitions.assets.Instrument;
 import org.series.timeserie.DoubleTimeSerie;
 
 public interface CandleTimeSerie extends DoubleTimeSerie {
@@ -23,6 +24,8 @@ public interface CandleTimeSerie extends DoubleTimeSerie {
     DoubleTimeSerie getLowTimeSerie();
 
     DoubleTimeSerie getVolumeTimeSerie();
+
+    Instrument getInstrument();
 
     @Override
     default double getValue(int index) {

@@ -5,6 +5,8 @@ import org.quant.definitions.assets.Instrument;
 import org.quant.definitions.assets.Purchasable;
 import org.series.timeserie.TimeFrame;
 
+import java.util.Set;
+
 public class SliceDataContext implements DataContext {
 
     public SliceDataContext(long start, long end, DataContext source){
@@ -22,8 +24,13 @@ public class SliceDataContext implements DataContext {
     }
 
     @Override
-    public Purchasable[] getPurchasables() {
-        return new Purchasable[0];
+    public Set<Instrument> getInstruments() {
+        return Set.of();
+    }
+
+    @Override
+    public String getDescription() {
+        return "";
     }
 
 

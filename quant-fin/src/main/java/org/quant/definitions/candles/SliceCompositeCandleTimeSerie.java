@@ -3,6 +3,7 @@ package org.quant.definitions.candles;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.math.vector.Vector;
+import org.quant.definitions.assets.Instrument;
 import org.series.timeserie.DoubleTimeSerie;
 import org.series.timeserie.SliceDoubleTimeSerie;
 
@@ -88,6 +89,11 @@ public class SliceCompositeCandleTimeSerie implements CandleTimeSerie {
     @Override
     public DoubleTimeSerie getVolumeTimeSerie() {
         return new SliceDoubleTimeSerie(source.getVolumeTimeSerie(), indexStart, indexEnd);
+    }
+
+    @Override
+    public Instrument getInstrument() {
+        return source.getInstrument();
     }
 
     @Override
