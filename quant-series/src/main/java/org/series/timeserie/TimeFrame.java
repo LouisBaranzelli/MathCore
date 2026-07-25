@@ -1,7 +1,12 @@
 package org.series.timeserie;
 
 import lombok.Getter;
+import org.series.TimeTools;
+import org.series.ZoneIdEnum;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.function.BiFunction;
 
@@ -45,4 +50,14 @@ public enum TimeFrame {
         return this.minusOperation.apply(dateTime, this.stepAmount);
     }
 
+    long getSize(){
+        return TimeTools.fromDurationToLong(getDuration());
+    }
+
+    public Duration getDuration() {
+        ZonedDateTime now = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
+        ZonedDateTime before = shiftBackward(now);
+        return Duration.between(before, now);
+
+    }
 }

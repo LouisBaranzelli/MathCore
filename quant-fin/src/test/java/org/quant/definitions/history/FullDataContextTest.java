@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.quant.definitions.LoadingException;
 import org.quant.definitions.assets.Stock;
 import org.quant.definitions.candles.CandleTimeSerie;
+import org.series.TimeTools;
+import org.series.ZoneIdEnum;
 import org.series.timeserie.TimeFrame;
 
 import java.util.List;
@@ -28,6 +30,13 @@ class FullDataContextTest {
         });
         assertThrows(IllegalArgumentException.class, () -> dataContext.getCandleTimeSerie(Stock.AI, TimeFrame.MI30));
         assertThrows(IllegalArgumentException.class, () -> dataContext.getCandleTimeSerie(Stock.SAF, TimeFrame.D));
+
+
+        FullDataContext dataContextInDays = new FullDataContext(TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
+                TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS), List.of(dataloader),
+                List.of(Stock.TTE, Stock.AI), List.of(TimeFrame.D, TimeFrame.HR));
+        assertEquals(100., dataContextInDays.getPercentLoaded());
+        assertEquals("Data context: 2 companies loaded (100,0 %), timeframes: 1 Day, 1 Hour, start date: 2020-01-01T00:00+01:00[Europe/Paris], end date: 2020-01-30T00:00+01:00[Europe/Paris]", dataContextInDays.getDescription());
 
     }
 }

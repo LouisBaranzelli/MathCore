@@ -19,10 +19,9 @@ public class DummyDataloader implements Dataloader{
     @Override
     public DataContainer load(long start, long end, Instrument instrument, TimeFrame... timeFrame) throws LoadingException {
         DataContainer dataContainer = new DataContainer(instrument);
-
         Arrays.stream(timeFrame).forEach(t -> {
             try {
-                dataContainer.addData(t, new RandomCandleTimeSerie(instrument, t));
+                dataContainer.addData(t, new RandomCandleTimeSerie(instrument, t, start, end));
             } catch (InvalidTimeSerieException e) {
                 throw new RuntimeException(e);
             }

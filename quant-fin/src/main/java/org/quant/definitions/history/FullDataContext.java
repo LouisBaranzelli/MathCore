@@ -1,5 +1,6 @@
 package org.quant.definitions.history;
 
+import lombok.Getter;
 import org.math.common.MathUtil;
 import org.quant.definitions.LoadingException;
 import org.quant.definitions.assets.DataContainer;
@@ -18,12 +19,18 @@ public class FullDataContext implements DataContext {
     private static final Logger logger = LoggerFactory.getLogger(FullDataContext.class);
 
     private final Map<Instrument, DataContainer> data = new HashMap<>();
+
+    @Getter
     private final long end;
+    @Getter
+    private final long start;
     private final int initialSizeInstruments;
+    @Getter
     private final List<TimeFrame> timeFrames;
 
     public FullDataContext(long start, long end, List<Dataloader> dataloaders, List<Instrument> instruments, List<TimeFrame> timeFrames) {
         this.end = end;
+        this.start = start;
         this.timeFrames = List.copyOf(timeFrames);
         this.initialSizeInstruments = instruments.size();
 
@@ -75,20 +82,9 @@ public class FullDataContext implements DataContext {
     }
 
     @Override
-    public String getDescription() {
-        double percent = initialSizeInstruments > 0
+    public double getPercentLoaded() {
+        return  initialSizeInstruments > 0
                 ? MathUtil.round((double) getInstruments().size() * 100 / initialSizeInstruments, 1)
                 : 0.0;
-
-        String timeframesString = this.timeFrames.stream()
-                .map(TimeFrame::getLabel)
-                .collect(Collectors.joining(", "));
-
-        return String.format("%d companies loaded (%.1f %%), timeframes: %s, end date: %s",
-                getInstruments().size(),
-                percent,
-                timeframesString,
-                TimeTools.fromLongToInstant(end)
-        );
     }
 }

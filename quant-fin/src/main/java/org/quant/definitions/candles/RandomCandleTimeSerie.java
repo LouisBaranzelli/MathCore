@@ -29,8 +29,10 @@ public class RandomCandleTimeSerie implements CandleTimeSerie{
 
 
     public RandomCandleTimeSerie(Instrument instrument,
-                                    TimeFrame timeframe) throws InvalidTimeSerieException {
+                                    TimeFrame timeframe, long start, long end) throws InvalidTimeSerieException {
 
+
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeframe);
         TimeGrid timeGrid = TimeGridFactory.create(
                 TimeTools.fromLongToZonedDateTime(1000, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
                 100,
