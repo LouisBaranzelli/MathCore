@@ -54,6 +54,13 @@ public class TimeTools {
         return TimeTools.fromZonedDateTimeToLong(targetZonedDateTime);
     }
 
+    public static long fromDateTimeStringToLong(String date, ZoneIdEnum zoneIdEnum){
+        // "2023-02-24T15:30:00"
+        LocalDateTime localDateTime = LocalDateTime.parse(date);
+        ZonedDateTime targetZonedDateTime = ZonedDateTime.of(localDateTime, zoneIdEnum.getZoneId());
+        return TimeTools.fromZonedDateTimeToLong(targetZonedDateTime);
+    }
+
 
 
 }

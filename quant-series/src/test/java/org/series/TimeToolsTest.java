@@ -157,10 +157,10 @@ class AllTimeFramesTests {
 
     @ParameterizedTest(name = "Date {0} en zone {1} -> timestamp {2}")
     @CsvSource({
-            "2023-01-01, UTC, 1672531200",               // 2023-01-01 00:00:00 UTC
-            "2023-02-24, UTC, 1677206400",               // 2023-02-24 00:00:00 UTC
-            "2023-02-24, EUROPE_PARIS, 1677196800",      // UTC+1 en hiver (Paris a 1h d'avance sur UTC -> timestamp plus petit)
-            "2023-02-24, AMERICA_NEW_YORK, 1677224400"   // UTC-5 en hiver (New York a 5h de retard -> timestamp plus grand)
+            "2023-01-01, UTC, 1672531200",  // 2023-01-01 00:00:00 UTC
+            "2023-02-24, UTC, 1677196800", // 2023-02-24 00:00:00 UTC
+            "2023-02-24, EUROPE_PARIS, 1677193200", // 00:00 à Paris = 23:00 UTC la veille (-3600s vs minuit UTC)
+            "2023-02-24, AMERICA_NEW_YORK, 1677214800"   // UTC-5 en hiver (New York a 5h de retard -> timestamp plus grand)
     })
     @DisplayName("Devrait calculer le bon timestamp pour différentes dates et fuseaux horaires")
     void shouldConvertVariousDatesAndZones(String day, ZoneIdEnum zone, long expectedSeconds) {
@@ -185,6 +185,62 @@ class AllTimeFramesTests {
     void shouldThrowExceptionForInvalidDateFormat(String invalidDay) {
         assertThrows(DateTimeParseException.class,
                 () -> TimeTools.fromDayStringToLong(invalidDay, ZoneIdEnum.UTC));
+    }
+
+    @Test
+    @DisplayName("Devrait convertir '2023-02-24T15:30:00' en UTC vers le bon timestamp Epoch")
+    void shouldConvertStandardIsoFormatInUtc() {
+        // Given
+        String date = "2023-02-24T15:30:00";
+        ZoneIdEnum zone = ZoneIdEnum.UTC;
+
+        // 2023-02-24T00:00:00Z (1677196800) + 15h30 (55800s) = 1677252600
+        long expectedTimestamp = 1677252600L;
+
+        long actualTimestamp = TimeTools.fromDateTimeStringToLong(date, zone);
+
+        assertEquals(expectedTimestamp, actualTimestamp);
+    }
+
+    @ParameterizedTest(name = "Date {0} en zone {1} -> timestamp {2}")
+    @CsvSource({
+            // Format complet avec secondes
+            "2023-02-24T15:30:00, UTC, 1677252600",
+            "2023-02-24T15:30:00, EUROPE_PARIS, 1677249000",      // Paris est UTC+1 en février -> 1h plus tôt qu'UTC (14:30Z)
+            "2023-02-24T15:30:00, AMERICA_NEW_YORK, 1677270600",  // NY est UTC-5 en février -> 5h plus tard qu'UTC (20:30Z)
+
+            // Format sans secondes (supporté nativement par ISO_LOCAL_DATE_TIME)
+            "2023-02-24T15:30, UTC, 1677252600",
+            "2023-02-24T15:30, EUROPE_PARIS, 1677249000"
+    })
+    @DisplayName("Devrait convertir correctement selon les fuseaux et les variantes ISO")
+    void shouldConvertVariousFormatsAndZones(String date, ZoneIdEnum zone, long expectedSeconds) {
+        long actual = TimeTools.fromDateTimeStringToLong(date, zone);
+        assertEquals(expectedSeconds, actual,
+                () -> String.format("Échec du calcul pour la date %s dans la zone %s", date, zone));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "2023-02-24 15:30:00", // Espace au lieu du 'T' (lève une exception avec parse par défaut)
+            "24/02/2023T15:30:00", // Format de date non ISO
+            "2023-02-24",          // Manque la partie heure
+            "invalid-datetime"
+    })
+    @DisplayName("Devrait lever une DateTimeParseException pour des formats non-ISO")
+    void shouldThrowExceptionForInvalidFormats(String invalidDate) {
+        assertThrows(DateTimeParseException.class,
+                () -> TimeTools.fromDateTimeStringToLong(invalidDate, ZoneIdEnum.UTC));
+    }
+
+    @Test
+    @DisplayName("Devrait lever une NullPointerException si un argument est null")
+    void shouldThrowExceptionOnNullInputs() {
+        assertThrows(NullPointerException.class,
+                () -> TimeTools.fromDateTimeStringToLong(null, ZoneIdEnum.UTC));
+
+        assertThrows(NullPointerException.class,
+                () -> TimeTools.fromDateTimeStringToLong("2023-02-24T15:30:00", null));
     }
 }
 
