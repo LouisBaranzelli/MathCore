@@ -34,8 +34,8 @@ public class RandomCandleTimeSerie implements CandleTimeSerie{
 
         int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeframe);
         TimeGrid timeGrid = TimeGridFactory.create(
-                TimeTools.fromLongToZonedDateTime(1000, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
-                100,
+                TimeTools.fromLongToZonedDateTime(end, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
+                size,
                 (ZonedDateTime z) -> true,
                 timeframe
         );
