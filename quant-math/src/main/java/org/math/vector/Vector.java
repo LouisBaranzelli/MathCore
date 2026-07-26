@@ -1,6 +1,8 @@
 package org.math.vector;
 
 
+import java.sql.Array;
+
 public interface Vector {
 
 
@@ -30,5 +32,13 @@ public interface Vector {
                     String.format("Vector dimensions mismatch: expected %d, got %d", this.size(), other.size())
             );
         }
+    }
+
+    default double[] toArray(){
+        double[] output = new double[size()];
+        for (int i=0 ; i<size();i++){
+            output[i] = getValue(i);
+        }
+        return output;
     }
 }

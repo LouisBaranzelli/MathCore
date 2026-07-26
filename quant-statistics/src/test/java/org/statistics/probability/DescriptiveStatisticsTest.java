@@ -31,7 +31,6 @@ class DescriptiveStatisticsTest {
         Vector emptyVector = new Vector() {
             @Override public int size() { return 0; }
             @Override public double getValue(int index) { throw new IndexOutOfBoundsException(); }
-            @Override public org.math.common.Shape getShape() { return new org.math.common.Shape(0, 1); }
             @Override public Vector add(Vector other) { return null; }
             @Override public Vector minus(Vector other) { return null; }
             @Override public double dot(Vector other) { return 0; }
