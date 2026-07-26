@@ -1,4 +1,4 @@
-package org.statistics.probability.distributions;
+package org.statistics.probability.distributions.monovariate;
 
 public class UniformDistribution implements ContinuousDistribution {
     private final double a;

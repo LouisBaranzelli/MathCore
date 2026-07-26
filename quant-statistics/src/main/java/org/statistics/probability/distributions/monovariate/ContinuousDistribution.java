@@ -1,4 +1,4 @@
-package org.statistics.probability.distributions;
+package org.statistics.probability.distributions.monovariate;
 
 import java.util.random.RandomGenerator;
 
