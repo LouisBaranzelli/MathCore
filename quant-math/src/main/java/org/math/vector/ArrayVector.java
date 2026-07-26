@@ -1,21 +1,16 @@
 package org.math.vector;
 
-import org.math.common.Shape;
-import org.math.common.exception.ShapeException;
 import java.util.Arrays;
 
 public final class ArrayVector implements Vector {
 
     private final double[] values;
-    private final Shape shape;
 
     public ArrayVector(double... values) {
         if (values == null || values.length == 0) {
             throw new IllegalArgumentException("Vector must have at least one dimension");
         }
-        // Copie défensive pour garantir l'immutabilité
         this.values = values.clone();
-        this.shape = new Shape(values.length, 1);
     }
 
     @Override
@@ -29,13 +24,8 @@ public final class ArrayVector implements Vector {
     }
 
     @Override
-    public Shape getShape() {
-        return this.shape;
-    }
-
-    @Override
     public Vector add(Vector other) {
-        checkShapeCompatibility(other);
+        checkDimensionCompatibility(other);
         double[] result = new double[size()];
         for (int i = 0; i < size(); i++) {
             result[i] = this.values[i] + other.getValue(i);
@@ -45,7 +35,7 @@ public final class ArrayVector implements Vector {
 
     @Override
     public Vector minus(Vector other) {
-        checkShapeCompatibility(other);
+        checkDimensionCompatibility(other);
         double[] result = new double[size()];
         for (int i = 0; i < size(); i++) {
             result[i] = this.values[i] - other.getValue(i);
@@ -54,8 +44,17 @@ public final class ArrayVector implements Vector {
     }
 
     @Override
+    public Vector multiply(double scalar) {
+        double[] result = new double[this.values.length];
+        for (int i = 0; i < this.values.length; i++) {
+            result[i] = this.values[i] * scalar;
+        }
+        return new ArrayVector(result);
+    }
+
+    @Override
     public double dot(Vector other) {
-        checkShapeCompatibility(other);
+        checkDimensionCompatibility(other);
         double result = 0;
         for (int i = 0; i < size(); i++) {
             result += this.values[i] * other.getValue(i);
@@ -68,11 +67,6 @@ public final class ArrayVector implements Vector {
         return Math.sqrt(dot(this));
     }
 
-    private void checkShapeCompatibility(Vector other) {
-        if (other.size() != this.size()) {
-            throw new ShapeException(getShape(), other.getShape());
-        }
-    }
 
     @Override
     public boolean equals(Object that) {
@@ -80,12 +74,10 @@ public final class ArrayVector implements Vector {
         if (!(that instanceof Vector other)) return false;
         if (this.size() != other.size()) return false;
 
-        // Optimisation si les deux sont des ArrayVector
         if (other instanceof ArrayVector otherArray) {
             return Arrays.equals(this.values, otherArray.values);
         }
 
-        // Comparaison générique sinon
         for (int i = 0; i < size(); i++) {
             if (Double.compare(this.getValue(i), other.getValue(i)) != 0) {
                 return false;

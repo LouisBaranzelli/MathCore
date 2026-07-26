@@ -2,8 +2,6 @@ package org.math.vector;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.math.common.Shape;
-import org.math.common.exception.ShapeException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,12 +18,6 @@ class ArrayVectorTest {
         assertEquals(2.0, vector.getValue(1));
         assertEquals(3.0, vector.getValue(2));
 
-        // Validation de la Shape avec ton implémentation réelle
-        Shape shape = vector.getShape();
-        assertNotNull(shape);
-        assertEquals(2, shape.countDimensions(), "Un vecteur doit avoir 2 dimensions (lignes x colonnes)");
-        assertEquals(3, shape.getDimension(0), "La première dimension (lignes) doit être de 3");
-        assertEquals(1, shape.getDimension(1), "La deuxième dimension (colonnes) doit être de 1");
     }
 
     @Test
@@ -76,7 +68,7 @@ class ArrayVectorTest {
         Vector v1 = new ArrayVector(1.0, 2.0);
         Vector v3 = new ArrayVector(1.0, 2.0, 3.0);
 
-        assertThrows(ShapeException.class, () -> v1.add(v3));
+        assertThrows(IllegalArgumentException.class, () -> v1.add(v3));
     }
 
     @Test
@@ -98,7 +90,7 @@ class ArrayVectorTest {
         Vector v1 = new ArrayVector(1.0, 2.0);
         Vector v3 = new ArrayVector(1.0, 2.0, 3.0);
 
-        assertThrows(ShapeException.class, () -> v1.minus(v3));
+        assertThrows(IllegalArgumentException.class, () -> v1.minus(v3));
     }
 
     @Test
@@ -117,7 +109,7 @@ class ArrayVectorTest {
         Vector v1 = new ArrayVector(1.0, 2.0);
         Vector v3 = new ArrayVector(1.0, 2.0, 3.0);
 
-        assertThrows(ShapeException.class, () -> v1.dot(v3));
+        assertThrows(IllegalArgumentException.class, () -> v1.dot(v3));
     }
 
     @Test
@@ -163,7 +155,6 @@ class ArrayVectorTest {
         Vector customVector = new Vector() {
             @Override public int size() { return 2; }
             @Override public double getValue(int index) { return index == 0 ? 1.0 : 2.0; }
-            @Override public Shape getShape() { return new Shape(2, 1); }
             @Override public Vector add(Vector other) { return null; }
             @Override public Vector minus(Vector other) { return null; }
             @Override public double dot(Vector other) { return 0; }
@@ -178,5 +169,19 @@ class ArrayVectorTest {
     void testToString() {
         ArrayVector vector = new ArrayVector(1.5, 2.0, -3.14);
         assertEquals("[1.5, 2.0, -3.14]", vector.toString());
+    }
+
+    @Test
+    @DisplayName("Vérification de la logique equals, hashCode et toString")
+    void testMultiply() {
+        ArrayVector v1 = new ArrayVector(1.0, 2.0);
+        ArrayVector v2 = new ArrayVector(2.0, 4.0);
+        ArrayVector v3 = new ArrayVector(1.5, 3.2, 5);
+        ArrayVector v4 = new ArrayVector(3.0, 6.4, 10);
+        ArrayVector v5 = new ArrayVector(2.2, 4.4);
+
+        assertEquals(v2, v1.multiply(2));
+        assertEquals(v4, v3.multiply(2));
+        assertEquals(v5, v1.multiply(2.2));
     }
 }

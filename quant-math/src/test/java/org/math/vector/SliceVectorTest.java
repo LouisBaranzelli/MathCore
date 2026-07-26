@@ -3,8 +3,6 @@ package org.math.vector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.math.common.Shape;
-import org.math.common.exception.ShapeException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,12 +27,6 @@ class SliceVectorTest {
         assertEquals(30.0, slice.getValue(1));
         assertEquals(40.0, slice.getValue(2));
 
-        // Validation de la Shape
-        Shape shape = slice.getShape();
-        assertNotNull(shape);
-        assertEquals(2, shape.countDimensions());
-        assertEquals(3, shape.getDimension(0)); // 3 lignes
-        assertEquals(1, shape.getDimension(1)); // 1 colonne
     }
 
     @Test
@@ -103,7 +95,7 @@ class SliceVectorTest {
         SliceVector slice = new SliceVector(sourceVector, 0, 3); // taille = 3
         Vector smallVector = new ArrayVector(1.0, 2.0); // taille = 2
 
-        assertThrows(ShapeException.class, () -> slice.add(smallVector));
+        assertThrows(IllegalArgumentException.class, () -> slice.add(smallVector));
     }
 
     @Test
@@ -167,5 +159,14 @@ class SliceVectorTest {
     void testToString() {
         SliceVector slice = new SliceVector(sourceVector, 1, 4); // [20.0, 30.0, 40.0]
         assertEquals("[20.0, 30.0, 40.0]", slice.toString());
+    }
+
+    @Test
+    @DisplayName("Vérification de la logique equals, hashCode et toString")
+    //         sourceVector = new ArrayVector(10.0, 20.0, 30.0, 40.0, 50.0);
+    void testMultiply() {
+        SliceVector slice = new SliceVector(sourceVector, 1, 3); // [20.0, 30.0]
+        ArrayVector v2 = new ArrayVector(40.0, 60.0);
+        assertEquals(v2, slice.multiply(2));
     }
 }

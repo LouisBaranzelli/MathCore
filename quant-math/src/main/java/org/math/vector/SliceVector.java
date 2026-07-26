@@ -1,13 +1,10 @@
 package org.math.vector;
 
-import org.math.common.Shape;
-import org.math.common.exception.ShapeException;
 
 public final class SliceVector implements Vector {
     private final Vector source;
     private final int offset;
     private final int size;
-    private final Shape shape;
 
     /**
      * Crée une vue (tranche) sur un vecteur existant sans copie de données.
@@ -22,7 +19,6 @@ public final class SliceVector implements Vector {
         }
 
         this.size = end - start;
-        this.shape = new Shape(this.size, 1);
 
         // Validation rigoureuse des bornes géométriques du sous-espace
         if (start < 0 || this.size <= 0 || end > source.size()) {
@@ -55,14 +51,10 @@ public final class SliceVector implements Vector {
         return size;
     }
 
-    @Override
-    public Shape getShape() {
-        return this.shape;
-    }
 
     @Override
     public Vector add(Vector other) {
-        checkShapeCompatibility(other);
+        checkDimensionCompatibility(other);
         double[] result = new double[size];
         for (int i = 0; i < size; i++) {
             result[i] = this.getValue(i) + other.getValue(i);
@@ -72,7 +64,7 @@ public final class SliceVector implements Vector {
 
     @Override
     public Vector minus(Vector other) {
-        checkShapeCompatibility(other);
+        checkDimensionCompatibility(other);
         double[] result = new double[size];
         for (int i = 0; i < size; i++) {
             result[i] = this.getValue(i) - other.getValue(i);
@@ -80,9 +72,10 @@ public final class SliceVector implements Vector {
         return new ArrayVector(result);
     }
 
+
     @Override
     public double dot(Vector other) {
-        checkShapeCompatibility(other);
+        checkDimensionCompatibility(other);
         double result = 0;
         for (int i = 0; i < size; i++) {
             result += this.getValue(i) * other.getValue(i);
@@ -93,12 +86,6 @@ public final class SliceVector implements Vector {
     @Override
     public double norm() {
         return Math.sqrt(dot(this));
-    }
-
-    private void checkShapeCompatibility(Vector other) {
-        if (other.size() != this.size) {
-            throw new ShapeException(this.getShape(), other.getShape());
-        }
     }
 
 
@@ -135,4 +122,6 @@ public final class SliceVector implements Vector {
         }
         return sb.append("]").toString();
     }
+
+
 }

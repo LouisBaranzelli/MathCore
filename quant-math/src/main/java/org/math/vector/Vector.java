@@ -1,22 +1,34 @@
 package org.math.vector;
 
-import org.math.common.Shapable;
 
-public interface Vector extends Shapable {
+public interface Vector {
+
+
     int size();
+
     double getValue(int index);
 
-    // Les opérations retournent un Vector générique
     Vector add(Vector other);
-    Vector minus(Vector other);
-    double dot(Vector other);
-    double norm();
 
-    default double getFirst(){
-        return getValue(0);
+    Vector minus(Vector other);
+
+    default Vector multiply(double scalar){
+        double[] result = new double[size()];
+        for (int i = 0; i < size(); i++) {
+            result[i] = getValue(i) * scalar;
+        }
+        return new ArrayVector(result);
     }
 
-    default double getLast(){
-        return getValue(size() - 1);
+    double dot(Vector other);
+
+    double norm();
+
+    default void checkDimensionCompatibility(Vector other) {
+        if (other.size() != this.size()) {
+            throw new IllegalArgumentException(
+                    String.format("Vector dimensions mismatch: expected %d, got %d", this.size(), other.size())
+            );
+        }
     }
 }
