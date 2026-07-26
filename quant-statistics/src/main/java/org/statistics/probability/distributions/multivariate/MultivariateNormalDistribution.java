@@ -23,7 +23,17 @@ import java.util.Random;
  *    Cela permet de mesurer si une observation est courante ou rare/anormale,
  *    en tenant compte à la fois des moyennes individuelles et des corrélations
  *    définies dans la matrice de covariance.
+ *
+ *    * 1. LOI NORMALE (MultivariateNormalDistribution) :
+ *         *    - Utilisation : Modèles classiques, régression linéaire, filtres de Kalman,
+ *         *      optimisation de portefeuille type Markowitz (moyenne-variance).
+ *         *    - Quand ? Si les données ne présentent pas de krachs extrêmes ou de valeurs
+ *  *      aberrantes (outliers), et pour privilégier la rapidité de calcul.
+ *
+ *
  */
+
+
 
 public final class MultivariateNormalDistribution implements MultivariateDistribution {
 
