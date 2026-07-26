@@ -11,20 +11,20 @@ public final class SliceVector implements Vector {
      *
      * @param source Le vecteur d'origine
      * @param start  L'index de départ (inclus)
-     * @param end    L'index de fin (exclu)
+     * @param endExcluded    L'index de fin (exclu)
      */
-    public SliceVector(Vector source, int start, int end) {
+    public SliceVector(Vector source, int start, int endExcluded) {
         if (source == null) {
             throw new IllegalArgumentException("Source vector cannot be null");
         }
 
-        this.size = end - start;
+        this.size = endExcluded - start;
 
         // Validation rigoureuse des bornes géométriques du sous-espace
-        if (start < 0 || this.size <= 0 || end > source.size()) {
+        if (start < 0 || this.size <= 0 || endExcluded > source.size()) {
             throw new IndexOutOfBoundsException(
                     String.format("Invalid slice boundaries: start=%d, end=%d, sourceSize=%d",
-                            start, end, source.size())
+                            start, endExcluded, source.size())
             );
         }
 
