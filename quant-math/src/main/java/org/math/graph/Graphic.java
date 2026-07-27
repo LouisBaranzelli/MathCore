@@ -2,13 +2,12 @@ package org.math.graph;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.math.graph.GraphicSeries;
-import org.math.graph.GraphicSeriesStyle;
 import org.math.vector.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.util.List;
  * Conteneur principal d'un graphique (titre, axes, quadrillage, séries de données).
  * Inclut la capacité d'affichage (show) et d'export sous forme d'image (save).
  */
-
 @Getter
 @Setter
 public class Graphic {
@@ -112,16 +110,10 @@ public class Graphic {
 
     // --- Méthodes d'Affichage et d'Exportation ---
 
-    /**
-     * Ouvre une fenêtre pour afficher le graphique à l'écran.
-     */
     public void show() {
         show(800, 600);
     }
 
-    /**
-     * Ouvre une fenêtre d'affichage avec dimensions spécifiques.
-     */
     public void show(int width, int height) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame(this.getTitle());
@@ -133,9 +125,6 @@ public class Graphic {
         });
     }
 
-    /**
-     * Sauvegarde le graphique sous forme d'image (PNG, JPG, etc.).
-     */
     public void save(File file, int width, int height) throws IOException {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         GraphicPanel panel = new GraphicPanel(this);
@@ -179,7 +168,7 @@ public class Graphic {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int padding = 60;
+            int padding = 70; // Espacement suffisant pour les graduations et libellés
             int width = getWidth() - 2 * padding;
             int height = getHeight() - 2 * padding;
 
@@ -190,58 +179,141 @@ public class Graphic {
             double yMin = graphic.getYMin();
             double yMax = graphic.getYMax();
 
-            // Titre principal
+            // Gestion du cas où Min == Max (évite la division par zéro)
+            if (xMin == xMax) { xMin -= 1.0; xMax += 1.0; }
+            if (yMin == yMax) { yMin -= 1.0; yMax += 1.0; }
+
+            // 1. Titre principal
             g2.setColor(Color.BLACK);
             g2.setFont(new Font("SansSerif", Font.BOLD, 16));
-            FontMetrics fm = g2.getFontMetrics();
-            int titleWidth = fm.stringWidth(graphic.getTitle());
+            FontMetrics fmTitle = g2.getFontMetrics();
+            int titleWidth = fmTitle.stringWidth(graphic.getTitle());
             g2.drawString(graphic.getTitle(), (getWidth() - titleWidth) / 2, padding / 2);
 
-            // Quadrillage
-            if (graphic.isShowGrid()) {
-                g2.setColor(new Color(230, 230, 230));
-                for (int i = 0; i <= 10; i++) {
-                    int x = padding + (i * width / 10);
-                    int y = padding + (i * height / 10);
+            // 2. Quadrillage & Graduations (Ticks)
+            int numTicks = 10;
+            g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
+            FontMetrics fmTicks = g2.getFontMetrics();
+
+            for (int i = 0; i <= numTicks; i++) {
+                // --- Axe X ---
+                int x = padding + (i * width / numTicks);
+                double xVal = xMin + (i * (xMax - xMin) / numTicks);
+                String xLabel = String.format("%.2f", xVal);
+
+                if (graphic.isShowGrid()) {
+                    g2.setColor(new Color(230, 230, 230));
                     g2.drawLine(x, padding, x, padding + height);
+                }
+
+                // Petite coche + Valeur sous l'axe X
+                g2.setColor(Color.BLACK);
+                g2.drawLine(x, padding + height, x, padding + height + 5);
+                int labelWidth = fmTicks.stringWidth(xLabel);
+                g2.drawString(xLabel, x - labelWidth / 2, padding + height + 18);
+
+                // --- Axe Y ---
+                int y = padding + height - (i * height / numTicks);
+                double yVal = yMin + (i * (yMax - yMin) / numTicks);
+                String yLabel = String.format("%.2f", yVal);
+
+                if (graphic.isShowGrid()) {
+                    g2.setColor(new Color(230, 230, 230));
                     g2.drawLine(padding, y, padding + width, y);
                 }
+
+                // Petite coche + Valeur à gauche de l'axe Y
+                g2.setColor(Color.BLACK);
+                g2.drawLine(padding - 5, y, padding, y);
+                g2.drawString(yLabel, padding - 10 - fmTicks.stringWidth(yLabel), y + 4);
             }
 
-            // Axes
+            // 3. Axes
             g2.setColor(Color.DARK_GRAY);
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawLine(padding, padding + height, padding + width, padding + height); // Axe X
             g2.drawLine(padding, padding, padding, padding + height);                  // Axe Y
 
-            // Dessin des séries
+            // 4. Libellés des axes (xAxisLabel / yAxisLabel)
+            g2.setFont(new Font("SansSerif", Font.BOLD, 12));
+            FontMetrics fmLabel = g2.getFontMetrics();
+
+            // Libellé Axe X (En bas au centre)
+            if (graphic.getXAxisLabel() != null) {
+                int xLabelWidth = fmLabel.stringWidth(graphic.getXAxisLabel());
+                g2.drawString(graphic.getXAxisLabel(), padding + (width - xLabelWidth) / 2, getHeight() - 15);
+            }
+
+            // Libellé Axe Y (À gauche, pivoté à 90°)
+            if (graphic.getYAxisLabel() != null) {
+                AffineTransform oldTransform = g2.getTransform();
+                g2.rotate(-Math.PI / 2);
+                int yLabelWidth = fmLabel.stringWidth(graphic.getYAxisLabel());
+                g2.drawString(graphic.getYAxisLabel(), -(padding + (height + yLabelWidth) / 2), 20);
+                g2.setTransform(oldTransform);
+            }
+
+            // 5. Dessin des séries (Lignes et/ou Nuages de points)
             for (GraphicSeries series : graphic.getSeriesList()) {
                 GraphicSeriesStyle style = series.getStyle();
-
-                Stroke stroke;
-                if (style.getLineStyle() == GraphicSeriesStyle.LineStyle.DASHED) {
-                    stroke = new BasicStroke(style.getStrokeWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{8.0f, 4.0f}, 0.0f);
-                } else {
-                    stroke = new BasicStroke(style.getStrokeWidth());
-                }
-
-                g2.setColor(style.getColor());
-                g2.setStroke(stroke);
-
                 Vector xData = series.getXData();
                 Vector yData = series.getYData();
 
-                for (int i = 0; i < series.getItemCount() - 1; i++) {
-                    int x1 = (int) (padding + (xData.getValue(i) - xMin) / (xMax - xMin) * width);
-                    int y1 = (int) (padding + height - (yData.getValue(i) - yMin) / (yMax - yMin) * height);
-                    int x2 = (int) (padding + (xData.getValue(i + 1) - xMin) / (xMax - xMin) * width);
-                    int y2 = (int) (padding + height - (yData.getValue(i + 1) - yMin) / (yMax - yMin) * height);
+                // DESSIN DE LA LIGNE
+                if (style.getLineStyle() != GraphicSeriesStyle.LineStyle.NONE) {
+                    Stroke stroke;
+                    if (style.getLineStyle() == GraphicSeriesStyle.LineStyle.DASHED) {
+                        stroke = new BasicStroke(style.getStrokeWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{8.0f, 4.0f}, 0.0f);
+                    } else {
+                        stroke = new BasicStroke(style.getStrokeWidth());
+                    }
 
-                    g2.drawLine(x1, y1, x2, y2);
+                    g2.setColor(style.getColor());
+                    g2.setStroke(stroke);
+
+                    for (int i = 0; i < series.getItemCount() - 1; i++) {
+                        int x1 = (int) (padding + (xData.getValue(i) - xMin) / (xMax - xMin) * width);
+                        int y1 = (int) (padding + height - (yData.getValue(i) - yMin) / (yMax - yMin) * height);
+                        int x2 = (int) (padding + (xData.getValue(i + 1) - xMin) / (xMax - xMin) * width);
+                        int y2 = (int) (padding + height - (yData.getValue(i + 1) - yMin) / (yMax - yMin) * height);
+
+                        g2.drawLine(x1, y1, x2, y2);
+                    }
+                }
+
+                // DESSIN DES POINTS / MARQUEURS
+                if (style.getMarkerStyle() != GraphicSeriesStyle.MarkerStyle.NONE) {
+                    g2.setColor(style.getColor());
+
+                    float size = (series instanceof GraphicScatterSeries)
+                            ? ((GraphicScatterSeries) series).getMarkerSize()
+                            : 6.0f;
+                    int halfSize = (int) (size / 2.0f);
+
+                    for (int i = 0; i < series.getItemCount(); i++) {
+                        int x = (int) (padding + (xData.getValue(i) - xMin) / (xMax - xMin) * width);
+                        int y = (int) (padding + height - (yData.getValue(i) - yMin) / (yMax - yMin) * height);
+
+                        switch (style.getMarkerStyle()) {
+                            case CIRCLE:
+                                g2.fillOval(x - halfSize, y - halfSize, (int) size, (int) size);
+                                break;
+                            case SQUARE:
+                                g2.fillRect(x - halfSize, y - halfSize, (int) size, (int) size);
+                                break;
+                            case CROSS:
+                                g2.setStroke(new BasicStroke(1.5f));
+                                g2.drawLine(x - halfSize, y, x + halfSize, y);
+                                g2.drawLine(x, y - halfSize, x, y + halfSize);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
             }
 
-            // Légende
+            // 6. Légende
             if (graphic.isShowLegend()) {
                 int legendX = padding + 20;
                 int legendY = padding + 20;
