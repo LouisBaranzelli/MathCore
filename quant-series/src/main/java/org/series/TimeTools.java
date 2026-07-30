@@ -2,65 +2,76 @@ package org.series;
 
 import org.series.timeserie.TimeFrame;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
-public class TimeTools {
+public final class TimeTools {
 
-    public static long fromInstantToLong(Instant instant){
-        return instant.getEpochSecond();
+    public static final Duration ONE_SECOND = Duration.ofSeconds(1);
+
+    private TimeTools() {
+    }
+
+    public static long fromInstantToLong(Instant instant) {
+        return Objects.requireNonNull(instant).getEpochSecond();
     }
 
     public static long fromDurationToLong(Duration duration) {
-        Instant instantFromDuration = Instant.EPOCH.plus(duration);
-        return fromInstantToLong(instantFromDuration);
+        return Objects.requireNonNull(duration).toSeconds();
     }
 
-    public static Instant fromLongToInstant(long longValue){
-        return Instant.ofEpochSecond(longValue);
+    public static Instant fromLongToInstant(long epochSeconds) {
+        return Instant.ofEpochSecond(epochSeconds);
     }
 
-    public static ZonedDateTime fromLongToZonedDateTime(long longValue, ZoneId zoneId){
-        return ZonedDateTime.ofInstant(fromLongToInstant(longValue), zoneId);
+    public static ZonedDateTime fromLongToZonedDateTime(long epochSeconds, ZoneId zoneId) {
+        return ZonedDateTime.ofInstant(fromLongToInstant(epochSeconds), zoneId);
     }
 
-    public static long fromZonedDateTimeToLong(ZonedDateTime zone){
-        return zone.toInstant().getEpochSecond() ;
+    public static long fromZonedDateTimeToLong(ZonedDateTime zonedDateTime) {
+        return Objects.requireNonNull(zonedDateTime).toInstant().getEpochSecond();
     }
 
-    public static long fromZonedDateTimeToIndex(ZonedDateTime zone){
-        return zone.toInstant().getEpochSecond() ;
+    public static long fromZonedDateTimeToIndex(ZonedDateTime zonedDateTime) {
+        return fromZonedDateTimeToLong(zonedDateTime);
     }
 
-    public static int getNumberValuesStartingFromEndBetween(long start, long end, TimeFrame timeframe){
-        if (start > end){
-            long tmp = end;
-            end = start;
-            start = tmp;
+    public static int getNumberValuesStartingFromEndBetween(long startSeconds, long endSeconds, TimeFrame timeFrame) {
+        long start = Math.min(startSeconds, endSeconds);
+        long end = Math.max(startSeconds, endSeconds);
+
+        long deltaSeconds = fromDurationToLong(timeFrame.getDuration());
+        if (deltaSeconds <= 0) {
+            throw new IllegalArgumentException("TimeFrame duration must be positive");
         }
-        long delta = TimeTools.fromDurationToLong(timeframe.getDuration());
-        long i = end;
-        int size = 1;
-        while (i - delta >= start){
-            i = i - delta;
-            size++;
-        }
-        return size;
+
+        return (int) ((end - start) / deltaSeconds) + 1;
     }
 
-    public static long fromDayStringToLong(String day, ZoneIdEnum zoneIdEnum){
-        LocalDate localDate = LocalDate.parse(day);
-        LocalDateTime localDateTime = LocalDateTime.of(localDate, LocalTime.of(0, 0, 0));
+    public static long fromDayStringToLong(String dayString, ZoneIdEnum zoneIdEnum) {
+        LocalDate localDate = LocalDate.parse(dayString);
+        LocalDateTime localDateTime = localDate.atStartOfDay();
         ZonedDateTime targetZonedDateTime = ZonedDateTime.of(localDateTime, zoneIdEnum.getZoneId());
-        return TimeTools.fromZonedDateTimeToLong(targetZonedDateTime);
+        return fromZonedDateTimeToLong(targetZonedDateTime);
     }
 
-    public static long fromDateTimeStringToLong(String date, ZoneIdEnum zoneIdEnum){
-        // "2023-02-24T15:30:00"
-        LocalDateTime localDateTime = LocalDateTime.parse(date);
+    public static long fromDateTimeStringToLong(String dateTimeString, ZoneIdEnum zoneIdEnum) {
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString);
         ZonedDateTime targetZonedDateTime = ZonedDateTime.of(localDateTime, zoneIdEnum.getZoneId());
-        return TimeTools.fromZonedDateTimeToLong(targetZonedDateTime);
+        return fromZonedDateTimeToLong(targetZonedDateTime);
     }
 
+    public static Duration getOneTick() {
+        return ONE_SECOND;
+    }
 
-
+    public static ZonedDateTime truncate(ZonedDateTime dt) {
+        return dt.truncatedTo(ChronoUnit.SECONDS);
+    }
 }
