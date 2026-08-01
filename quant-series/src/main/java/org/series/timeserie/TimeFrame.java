@@ -55,9 +55,14 @@ public enum TimeFrame {
     }
 
     public Duration getDuration() {
-        ZonedDateTime now = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
-        ZonedDateTime before = shiftBackward(now);
-        return Duration.between(before, now);
+
+        if (this != TimeFrame.MO) {
+            ZonedDateTime now = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
+            ZonedDateTime before = shiftBackward(now);
+            return Duration.between(before, now);
+        } else {
+            throw new RuntimeException("this function can not take in charge: " + this.getLabel());
+        }
 
     }
 }

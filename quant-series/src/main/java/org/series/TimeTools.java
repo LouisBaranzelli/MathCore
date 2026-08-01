@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public final class TimeTools {
 
@@ -40,6 +41,18 @@ public final class TimeTools {
 
     public static long fromZonedDateTimeToIndex(ZonedDateTime zonedDateTime) {
         return fromZonedDateTimeToLong(zonedDateTime);
+    }
+
+    public static int getNumberValuesStartingFromEndBetween(long startSeconds, long endSeconds, TimeFrame timeFrame, Predicate<Long> validDate) {
+        int size = getNumberValuesStartingFromEndBetween(startSeconds, endSeconds, timeFrame);
+        long deltaSeconds = fromDurationToLong(timeFrame.getDuration());
+        int unValidDates = 0;
+        for (Long end=endSeconds; end>=startSeconds ;end=end-deltaSeconds){
+            if (!validDate.test(end)){
+                unValidDates++;
+            }
+        }
+        return size - unValidDates;
     }
 
     public static int getNumberValuesStartingFromEndBetween(long startSeconds, long endSeconds, TimeFrame timeFrame) {

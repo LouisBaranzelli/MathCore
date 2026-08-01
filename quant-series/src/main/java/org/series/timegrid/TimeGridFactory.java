@@ -4,6 +4,7 @@ import org.series.timeserie.TimeFrame;
 import org.series.TimeTools;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public final class TimeGridFactory {
@@ -39,4 +40,13 @@ public final class TimeGridFactory {
 
         return new IrregularTimeGrid(dates);
     }
+
+    public static TimeGrid create
+            (ZonedDateTime start, ZonedDateTime end, Predicate<ZonedDateTime> validDate, TimeFrame timeFrame) {
+        Objects.requireNonNull(start, "start can not be null");
+        Objects.requireNonNull(end, "end can not be null");
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(TimeTools.fromZonedDateTimeToLong(start), TimeTools.fromZonedDateTimeToLong(end), timeFrame);
+        return TimeGridFactory.create(end, size, validDate, timeFrame);
+    }
+
 }
