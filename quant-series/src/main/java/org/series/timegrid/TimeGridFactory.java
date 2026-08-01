@@ -13,14 +13,14 @@ public final class TimeGridFactory {
 
 
     public static TimeGrid create
-            (ZonedDateTime end, int size, Predicate<ZonedDateTime> validDate, TimeFrame timeFrame) {
+            (long end, int size, Predicate<Long> validDate, TimeFrame timeFrame) {
         if (size <= 0) {
             throw new IllegalArgumentException("Size must be strictly positive");
         }
 
         long[] dates = new long[size];
         int index = size - 1;
-        ZonedDateTime currentDateIndex = end;
+        long currentDateIndex = end;
 
         int maxAttempts = size * 20;
         int attempts = 0;
@@ -32,20 +32,23 @@ public final class TimeGridFactory {
                 );
             }
             if (validDate.test(currentDateIndex)) {
-                dates[index] = TimeTools.fromZonedDateTimeToLong(currentDateIndex);
+                dates[index] = currentDateIndex;
                 index--;
             }
-            currentDateIndex = timeFrame.shiftBackward(currentDateIndex);
+            currentDateIndex = currentDateIndex - TimeTools.fromDurationToLong(timeFrame.getDuration());
         }
 
         return new IrregularTimeGrid(dates);
     }
 
     public static TimeGrid create
-            (ZonedDateTime start, ZonedDateTime end, Predicate<ZonedDateTime> validDate, TimeFrame timeFrame) {
-        Objects.requireNonNull(start, "start can not be null");
-        Objects.requireNonNull(end, "end can not be null");
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(TimeTools.fromZonedDateTimeToLong(start), TimeTools.fromZonedDateTimeToLong(end), timeFrame);
+            (long start, long end, Predicate<Long> validDate, TimeFrame timeFrame) {
+        if (start > end){
+            throw new IllegalArgumentException(String.format("start must be before the end, got start: %s and end: %s", start, end));
+        }
+
+
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, validDate);
         return TimeGridFactory.create(end, size, validDate, timeFrame);
     }
 

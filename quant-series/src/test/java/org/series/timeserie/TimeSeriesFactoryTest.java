@@ -17,7 +17,7 @@ class TimeSeriesFactoryTest {
     private TimeSeriesFactory factory;
     private ImputationStrategy stubStrategy;
     private TimeFrame stubTimeFrame;
-    private Predicate<ZonedDateTime> dummyPredicate;
+    private Predicate<Long> dummyPredicate;
 
     @BeforeEach
     void setUp() {
