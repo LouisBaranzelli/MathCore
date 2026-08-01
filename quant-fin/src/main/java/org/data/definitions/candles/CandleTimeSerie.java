@@ -2,6 +2,7 @@ package org.data.definitions.candles;
 
 import org.data.definitions.assets.Instrument;
 import org.series.timeserie.DoubleTimeSerie;
+import org.series.timeserie.TimeFrame;
 
 public interface CandleTimeSerie extends DoubleTimeSerie {
 
@@ -26,6 +27,8 @@ public interface CandleTimeSerie extends DoubleTimeSerie {
     DoubleTimeSerie getVolumeTimeSerie();
 
     Instrument getInstrument();
+
+    TimeFrame getTimeFrame();
 
     @Override
     default double getValue(int index) {

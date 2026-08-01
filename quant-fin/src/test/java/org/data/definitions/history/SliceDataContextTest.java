@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.data.definitions.assets.Stock;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
+import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
 import java.util.List;
@@ -22,13 +23,14 @@ class SliceDataContextTest {
         @DisplayName("Devrait charger correctement le contexte parent et extraire la sous-tranche")
         void shouldCreateFullAndSliceDataContextCorrectly() {
             // Given
-            Dataloader dataloader = new DummyDataloader();
+            DataLoader dataloader = new DummyDataLoader();
             long startFull = TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS);
             long endFull = TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS);
 
             FullDataContext dataContextInDays = new FullDataContext(
                     startFull,
                     endFull,
+                    new StubImputationStrategy(),
                     List.of(dataloader),
                     List.of(Stock.TTE, Stock.AI),
                     List.of(TimeFrame.D, TimeFrame.HR)
@@ -58,10 +60,11 @@ class SliceDataContextTest {
         @Test
         @DisplayName("Devrait lever une IllegalArgumentException si la date de debut du slice est hors bornes")
         void shouldThrowExceptionWhenSliceStartIsBeforeParentStart() {
-            Dataloader dataloader = new DummyDataloader();
+            DataLoader dataloader = new DummyDataLoader();
             FullDataContext dataContextInDays = new FullDataContext(
                     TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
                     TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),
+                    new StubImputationStrategy(),
                     List.of(dataloader),
                     List.of(Stock.TTE),
                     List.of(TimeFrame.D)
@@ -77,10 +80,11 @@ class SliceDataContextTest {
         @Test
         @DisplayName("Devrait lever une IllegalArgumentException si la date de fin du slice est hors bornes")
         void shouldThrowExceptionWhenSliceEndIsAfterParentEnd() {
-            Dataloader dataloader = new DummyDataloader();
+            DataLoader dataloader = new DummyDataLoader();
             FullDataContext dataContextInDays = new FullDataContext(
                     TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
                     TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),
+                    new StubImputationStrategy(),
                     List.of(dataloader),
                     List.of(Stock.TTE),
                     List.of(TimeFrame.D)

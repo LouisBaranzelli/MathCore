@@ -3,16 +3,16 @@ package org.series.timeserie;
 import java.time.ZonedDateTime;
 
 public class StubObservation implements Observation {
-    private final ZonedDateTime dateTime;
+    private final long dateTime;
     private final double value;
 
-    public StubObservation(ZonedDateTime dateTime, double value) {
+    public StubObservation(long dateTime, double value) {
         this.dateTime = dateTime;
         this.value = value;
     }
 
     @Override
-    public ZonedDateTime getZonedDateTime() {
+    public long getDateTime() {
         return dateTime;
     }
 

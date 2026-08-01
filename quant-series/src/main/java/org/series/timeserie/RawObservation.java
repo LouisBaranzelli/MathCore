@@ -8,13 +8,13 @@ import java.util.Objects;
 public class RawObservation implements Observation {
 
     @Getter
-    private final ZonedDateTime zonedDateTime;
+    private final long dateTime;
 
     @Getter
     private final double doubleValue;
 
-    public RawObservation(ZonedDateTime zonedDateTime, double value) {
-        this.zonedDateTime = Objects.requireNonNull(zonedDateTime, "Instant cannot be null");
+    public RawObservation(long dateTime, double value) {
+        this.dateTime = dateTime;
         this.doubleValue = value;
     }
 

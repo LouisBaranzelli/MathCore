@@ -6,6 +6,7 @@ import org.data.definitions.LoadingException;
 import org.data.definitions.assets.DataContainer;
 import org.data.definitions.candles.CandleTimeSerie;
 import org.data.definitions.assets.Instrument;
+import org.series.imputation.ImputationStrategy;
 import org.series.timeserie.TimeFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,34 +25,21 @@ public class FullDataContext implements DataContext {
     private final long start;
     private final int initialSizeInstruments;
     @Getter
-    private final List<TimeFrame> timeFrames;
+    private final TimeFrame[] timeFrames;
 
-    public FullDataContext(long start, long end, List<Dataloader> dataloaders, List<Instrument> instruments, List<TimeFrame> timeFrames) {
+    public FullDataContext(long start, long end, ImputationStrategy imputationStrategy,  List<DataLoader> dataLoaders, List<Instrument> instruments, List<TimeFrame> timeFrames) {
         this.end = end;
         this.start = start;
-        this.timeFrames = List.copyOf(timeFrames);
+        DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy, dataLoaders.toArray(DataLoader[]::new));
+        this.timeFrames =timeFrames.toArray(TimeFrame[]::new);
         this.initialSizeInstruments = instruments.size();
-
-        TimeFrame[] timeFrameArray = this.timeFrames.toArray(TimeFrame[]::new);
-
         for (Instrument instrument : instruments) {
             DataContainer dataContainer = null;
-
-            for (Dataloader dataloader : dataloaders) {
-                try {
-                    dataContainer = dataloader.load(start, end, instrument, timeFrameArray);
-                    if (dataContainer != null) {
-                        break;
-                    }
-                } catch (LoadingException e) {
-                    logger.debug("Failed to load {} with {}: {}", instrument.getLabel(), dataloader.getLabel(), e.getMessage());
-                }
-            }
-
-            if (dataContainer == null) {
-                logger.debug("Failed to load {}", instrument.getLabel());
-            } else {
+            try {
+                dataContainer = dataContainerFactory.create(start, end, instrument,  this.timeFrames);
                 data.put(instrument, dataContainer);
+            } catch (LoadingException e) {
+                logger.debug("Failed to load {}: {}", instrument.getLabel(), e.getMessage());
             }
         }
     }

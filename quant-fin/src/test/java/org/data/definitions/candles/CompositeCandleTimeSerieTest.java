@@ -114,7 +114,7 @@ class CompositeCandleTimeSerieTest {
 
         // Then
         assertEquals(Stock.SU, composite.getInstrument());
-        assertEquals(TimeFrame.D, composite.getTimeframe());
+        assertEquals(TimeFrame.D, composite.getTimeFrame());
 
         Candle candle = composite.getCandle(1);
         assertNotNull(candle);

@@ -16,6 +16,7 @@
     <module>quant-data</module>
     <module>quant-fin</module>
     <module>quant-app</module>
+      <module>common</module>
   </modules>
 
   <properties>

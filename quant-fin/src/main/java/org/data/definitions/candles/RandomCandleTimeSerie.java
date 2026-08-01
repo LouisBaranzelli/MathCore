@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
 public class RandomCandleTimeSerie implements CandleTimeSerie{
 
     private final Instrument instrument;
-    private final TimeFrame timeframe;
+    private final TimeFrame timeFrame;
 
     private final DoubleTimeSerie openTimeSerie;
     private final DoubleTimeSerie highTimeSerie;
@@ -29,20 +29,20 @@ public class RandomCandleTimeSerie implements CandleTimeSerie{
 
 
     public RandomCandleTimeSerie(Instrument instrument,
-                                    TimeFrame timeframe, long start, long end) throws InvalidTimeSerieException {
+                                 TimeFrame timeFrame, long start, long end) throws InvalidTimeSerieException {
 
 
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeframe);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame);
         TimeGrid timeGrid = TimeGridFactory.create(
-                TimeTools.fromLongToZonedDateTime(end, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
+                end,
                 size,
-                (ZonedDateTime z) -> true,
-                timeframe
+                ( z) -> true,
+                timeFrame
         );
 
 
         this.instrument = instrument;
-        this.timeframe = timeframe;
+        this.timeFrame = timeFrame;
         this.openTimeSerie = new RandomDoubleTimeSerie(timeGrid, 1, 0.5);
         this.highTimeSerie = new RandomDoubleTimeSerie(timeGrid, 1, 0.5);
         this.lowTimeSerie = new RandomDoubleTimeSerie(timeGrid, 1, 0.5);

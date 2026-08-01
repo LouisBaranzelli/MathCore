@@ -6,6 +6,7 @@ import org.series.TimeTools;
 import org.series.ZoneIdEnum;
 import org.series.timeserie.TimeFrame;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public interface DataContext {
 
     default public String getDescription(){
 
-            String timeframesString = getTimeFrames().stream()
+            String timeframesString = Arrays.stream(getTimeFrames())
                     .map(TimeFrame::getLabel)
                     .collect(Collectors.joining(", "));
 
@@ -35,7 +36,7 @@ public interface DataContext {
 
     double getPercentLoaded();
 
-    List<TimeFrame> getTimeFrames();
+    TimeFrame[] getTimeFrames();
 
     public long getStart();
     public long getEnd();

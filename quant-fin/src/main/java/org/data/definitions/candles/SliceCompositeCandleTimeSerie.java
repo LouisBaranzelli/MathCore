@@ -6,6 +6,7 @@ import org.math.vector.Vector;
 import org.data.definitions.assets.Instrument;
 import org.series.timeserie.DoubleTimeSerie;
 import org.series.timeserie.SliceDoubleTimeSerie;
+import org.series.timeserie.TimeFrame;
 
 @Getter
 public class SliceCompositeCandleTimeSerie implements CandleTimeSerie {
@@ -94,6 +95,11 @@ public class SliceCompositeCandleTimeSerie implements CandleTimeSerie {
     @Override
     public Instrument getInstrument() {
         return source.getInstrument();
+    }
+
+    @Override
+    public TimeFrame getTimeFrame() {
+       return source.getTimeFrame();
     }
 
     @Override

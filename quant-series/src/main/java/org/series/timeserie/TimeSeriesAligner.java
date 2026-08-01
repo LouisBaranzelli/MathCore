@@ -28,7 +28,7 @@ public class TimeSeriesAligner {
         }
 
         Observation[] observations = values.clone();
-        Arrays.sort(observations, Comparator.comparing(Observation::getZonedDateTime));
+        Arrays.sort(observations, Comparator.comparing(Observation::getDateTime));
 
         int m = observations.length;
         long[] sortedRawDates = new long[m];
@@ -36,7 +36,7 @@ public class TimeSeriesAligner {
 
         for (int i = 0; i < m; i++) {
             Observation obs = observations[i];
-            sortedRawDates[i] = TimeTools.fromZonedDateTimeToIndex(obs.getZonedDateTime());
+            sortedRawDates[i] = obs.getDateTime();
             sortedValues[i] = obs.getDoubleValue();
         }
 

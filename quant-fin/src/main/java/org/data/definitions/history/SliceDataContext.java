@@ -61,7 +61,7 @@ public class SliceDataContext implements DataContext {
     }
 
     @Override
-    public List<TimeFrame> getTimeFrames() {
+    public TimeFrame[] getTimeFrames() {
         return source.getTimeFrames();
     }
 }

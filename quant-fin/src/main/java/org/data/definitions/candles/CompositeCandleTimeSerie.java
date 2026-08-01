@@ -11,7 +11,7 @@ import org.series.timeserie.TimeFrame;
 public class CompositeCandleTimeSerie implements CandleTimeSerie {
 
     private final Instrument instrument;
-    private final TimeFrame timeframe;
+    private final TimeFrame timeFrame;
 
     private final DoubleTimeSerie openTimeSerie;
     private final DoubleTimeSerie highTimeSerie;
@@ -21,7 +21,7 @@ public class CompositeCandleTimeSerie implements CandleTimeSerie {
 
 
     public CompositeCandleTimeSerie(Instrument instrument,
-                                    TimeFrame timeframe,
+                                    TimeFrame timeFrame,
                                     DoubleTimeSerie openTimeSerie,
                                     DoubleTimeSerie highTimeSerie,
                                     DoubleTimeSerie lowTimeSerie,
@@ -55,7 +55,7 @@ public class CompositeCandleTimeSerie implements CandleTimeSerie {
         }
 
         this.instrument = instrument;
-        this.timeframe = timeframe;
+        this.timeFrame = timeFrame;
         this.openTimeSerie = openTimeSerie;
         this.highTimeSerie = highTimeSerie;
         this.lowTimeSerie = lowTimeSerie;

@@ -3,6 +3,7 @@ package org.series.timeserie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.series.InvalidTimeSerieException;
+import org.series.TimeTools;
 import org.series.imputation.ImputationStrategy;
 import org.series.timegrid.TimeGrid;
 
@@ -30,7 +31,7 @@ class TimeSeriesAlignerTest {
 
     @Test
     void should_throw_exception_on_null_inputs() {
-        Observation[] validObservations = { new StubRawObservation(ZonedDateTime.now(), 10.0) };
+        Observation[] validObservations = { new StubRawObservation(TimeTools.fromZonedDateTimeToLong(ZonedDateTime.now()), 10.0) };
 
         assertThrows(IllegalArgumentException.class, () -> aligner.align(null, stubGrid));
         assertThrows(IllegalArgumentException.class, () -> aligner.align(validObservations, null));
@@ -50,9 +51,9 @@ class TimeSeriesAlignerTest {
         ZonedDateTime sunday = ZonedDateTime.parse("2026-03-08T10:00:00Z");
         ZonedDateTime thursday = ZonedDateTime.parse("2026-03-12T10:00:00Z");
 
-        Observation obs1 = new StubRawObservation(tuesday, 20.0);
-        Observation obs2 = new StubRawObservation(sunday, 10.0);
-        Observation obs3 = new StubRawObservation(thursday, 30.0);
+        Observation obs1 = new StubRawObservation(TimeTools.fromZonedDateTimeToLong(tuesday), 20.0);
+        Observation obs2 = new StubRawObservation(TimeTools.fromZonedDateTimeToLong(sunday), 10.0);
+        Observation obs3 = new StubRawObservation(TimeTools.fromZonedDateTimeToLong(thursday), 30.0);
 
         Observation[] input = { obs1, obs2, obs3 };
 
@@ -63,7 +64,7 @@ class TimeSeriesAlignerTest {
         aligner.align(input, stubGrid);
 
         // 1. Vérification que le tableau d'origine n'a pas été modifié (immuabilité / clone)
-        assertEquals(tuesday, input[0].getZonedDateTime(), "Le tableau d'entrée ne doit pas être réordonné (effet de bord)");
+        assertEquals(TimeTools.fromZonedDateTimeToLong(tuesday), input[0].getDateTime(), "Le tableau d'entrée ne doit pas être réordonné (effet de bord)");
 
         // 2. Vérification que la stratégie a reçu les données TRÈS EXACTEMENT triées par ordre chronologique
         long[] receivedDates = mockStrategy.getCapturedDates();
@@ -83,7 +84,7 @@ class TimeSeriesAlignerTest {
     @Test
     void should_return_immutable_time_serie_with_aligned_values_from_strategy() throws InvalidTimeSerieException {
         ZonedDateTime now = ZonedDateTime.now();
-        Observation[] input = { new StubRawObservation(now, 42.0) };
+        Observation[] input = { new StubRawObservation(TimeTools.fromZonedDateTimeToLong(now), 42.0) };
 
         // On simule une réponse de la stratégie d'imputation
         double[] simulatedImputedValues = { 1.0, 2.0, 3.0, 4.0, 5.0 };
@@ -108,16 +109,16 @@ class TimeSeriesAlignerTest {
 
     // Stub pour RawObservation
     private static class StubRawObservation implements Observation {
-        private final ZonedDateTime date;
+        private final long date;
         private final double value;
 
-        public StubRawObservation(ZonedDateTime date, double value) {
+        public StubRawObservation(long date, double value) {
             this.date = date;
             this.value = value;
         }
 
         @Override
-        public ZonedDateTime getZonedDateTime() {
+        public long getDateTime() {
             return date;
         }
 

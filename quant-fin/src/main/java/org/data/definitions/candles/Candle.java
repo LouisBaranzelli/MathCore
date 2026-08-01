@@ -1,6 +1,9 @@
 package org.data.definitions.candles;
 
 import org.data.definitions.assets.Instrument;
+import org.data.definitions.assets.Stock;
+
+import java.util.Random;
 
 /**
  * Représente un chandelier japonais (Candlestick / OHLCV).
@@ -14,7 +17,7 @@ import org.data.definitions.assets.Instrument;
  * @param volume      Volume échangé durant la période
  */
 
-public record Candle(
+public record Candle (
         Instrument instrument,
         long timestamp,
         double open,
@@ -22,7 +25,7 @@ public record Candle(
         double low,
         double close,
         double volume
-) {
+) implements Comparable<Candle> {
 
     /**
      * Compact constructor pour valider la cohérence des prix OHLC.
@@ -59,5 +62,20 @@ public record Candle(
 
     public double getBodySize() {
         return Math.abs(close - open);
+    }
+
+    @Override
+    public int compareTo(Candle o) {
+        return Long.compare(timestamp, o.timestamp);
+    }
+
+    public static Candle randomCandle(long timestamp){
+        Random random = new Random();
+        double high = random.nextDouble();
+        double low = high / 2;
+        double open = (high - low) * 0.3 + low;
+        double close = (high - low) * 0.5 + low;
+
+        return new Candle(Stock.SU, timestamp, open,  high,  low, close,  random.nextDouble());
     }
 }

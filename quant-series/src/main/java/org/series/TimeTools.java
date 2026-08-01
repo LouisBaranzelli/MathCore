@@ -74,6 +74,12 @@ public final class TimeTools {
         return fromZonedDateTimeToLong(targetZonedDateTime);
     }
 
+    /**
+     * ex "2023-02-24T15:30:00"
+     * @param dateTimeString
+     * @param zoneIdEnum
+     * @return
+     */
     public static long fromDateTimeStringToLong(String dateTimeString, ZoneIdEnum zoneIdEnum) {
         LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString);
         ZonedDateTime targetZonedDateTime = ZonedDateTime.of(localDateTime, zoneIdEnum.getZoneId());
