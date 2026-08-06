@@ -48,7 +48,7 @@ public final class TimeGridFactory {
         }
 
 
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, validDate);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, validDate); // start included
         return TimeGridFactory.create(end, size, validDate, timeFrame);
     }
 

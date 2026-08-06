@@ -47,7 +47,7 @@ public final class TimeTools {
         int size = getNumberValuesStartingFromEndBetween(startSeconds, endSeconds, timeFrame);
         long deltaSeconds = fromDurationToLong(timeFrame.getDuration());
         int unValidDates = 0;
-        for (Long end=endSeconds; end>=startSeconds ;end=end-deltaSeconds){
+        for (long end=endSeconds; end>=startSeconds ;end=end-deltaSeconds){
             if (!validDate.test(end)){
                 unValidDates++;
             }

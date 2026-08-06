@@ -46,7 +46,9 @@ public class DataContainerFactory {
                 volumes[i] = new RawObservation(dateTime, candles.get(i).volume());
             }
 
-
+            //timeGridValidDatePredicate.test(TimeTools.fromDayStringToLong("2000-01-01", ZoneIdEnum.EUROPE_PARIS))
+            //FinancialTimeFrameAligner.alignFloor(TimeTools.fromLongToZonedDateTime(TimeTools.fromDayStringToLong("2000-01-01", ZoneIdEnum.EUROPE_PARIS), ZoneIdEnum.EUROPE_PARIS.getZoneId()), TimeFrame.HR)
+            // les timesstanps doivent tomber juste, il doivent correspondrent à leurs valeurs arrondis vers le bas
             Predicate<Long> timeGridValidDatePredicate = (date) -> Objects.equals(TimeTools.fromLongToZonedDateTime(date, instrument.getZoneIdEnum().getZoneId()),
                     FinancialTimeFrameAligner.alignFloor(TimeTools.fromLongToZonedDateTime(date, instrument.getZoneIdEnum().getZoneId()), timeFrame));
 

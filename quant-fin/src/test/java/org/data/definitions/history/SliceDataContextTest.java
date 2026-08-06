@@ -22,7 +22,7 @@ class SliceDataContextTest {
         @Test
         @DisplayName("Devrait charger correctement le contexte parent et extraire la sous-tranche")
         void shouldCreateFullAndSliceDataContextCorrectly() {
-            // Given
+            // Given 01 Janvier 2020: Mercredi
             DataLoader dataloader = new DummyDataLoader();
             long startFull = TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS);
             long endFull = TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS);
@@ -33,15 +33,20 @@ class SliceDataContextTest {
                     new StubImputationStrategy(),
                     List.of(dataloader),
                     List.of(Stock.TTE, Stock.AI),
-                    List.of(TimeFrame.D, TimeFrame.HR)
+                    List.of(TimeFrame.HR, TimeFrame.D, TimeFrame.MI5)
             );
 
             // Then : Vérification du contexte parent
-            int expectedDailyFullSize = 29 + 1;       // 30 points
-            int expectedHourlyFullSize = 29 * 24 + 1; // 697 points
+            int expectedDailyFullSize =21;       // hors samedi et dimanche et le 1er esr ferié, 30 inclus car présent
+            int expectedHourlyFullSize = 20 * 24 + 1; // 30 exclus car présent mais à minuit (+1)
+            int expected5minlyFullSize = (20 * 24) * 12 + 1;
+
+            int hourSize = dataContextInDays.getCandleTimeSerie(Stock.TTE, TimeFrame.HR).size();
+
 
             assertEquals(expectedDailyFullSize, dataContextInDays.getCandleTimeSerie(Stock.TTE, TimeFrame.D).size());
-            assertEquals(expectedHourlyFullSize, dataContextInDays.getCandleTimeSerie(Stock.TTE, TimeFrame.HR).size());
+            assertEquals(expected5minlyFullSize, dataContextInDays.getCandleTimeSerie(Stock.TTE, TimeFrame.MI5).size());
+            assertEquals(expectedHourlyFullSize, hourSize);
 
             // When : Découpage du 10 au 20 janvier
             long startSlice = TimeTools.fromDayStringToLong("2020-01-10", ZoneIdEnum.EUROPE_PARIS);
@@ -50,8 +55,8 @@ class SliceDataContextTest {
             SliceDataContext sliceDataContext = new SliceDataContext(startSlice, endSlice, dataContextInDays);
 
             // Then : Vérification de la tranche
-            int expectedDailySliceSize = 10 + 1;       // 11 points
-            int expectedHourlySliceSize = 10 * 24 + 1; // 241 points
+            int expectedDailySliceSize = 7;       // 11 points
+            int expectedHourlySliceSize = 6 * 24 + 1; // 241 points
 
             assertEquals(expectedDailySliceSize, sliceDataContext.getCandleTimeSerie(Stock.TTE, TimeFrame.D).size());
             assertEquals(expectedHourlySliceSize, sliceDataContext.getCandleTimeSerie(Stock.TTE, TimeFrame.HR).size());
