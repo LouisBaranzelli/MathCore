@@ -2,6 +2,7 @@ package org.data.csv;
 
 import lombok.Getter;
 import org.common.CsvService;
+import org.common.TriConsumer;
 import org.data.definitions.LoadingException;
 import org.data.definitions.TickEnum;
 import org.data.definitions.TickService;
@@ -23,12 +24,21 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     @Getter
     private final Path rootPath;
 
+    @Getter
+    private final TriConsumer<Instrument, TimeFrame, List<Candle>> triConsumerOnSuccessLoading;
+
+
     private final CandleMapper candleMapper = new CandleMapper();
     private final CsvService<Candle> csvService = new CsvService<>(candleMapper);
 
     public CsvInstrumentDataBase(Path path) {
+        this(path, null);
+    }
+
+    public CsvInstrumentDataBase(Path path, TriConsumer<Instrument, TimeFrame, List<Candle>> triConsumerOnSuccessLoading) {
         Objects.requireNonNull(path, "csv loader path can not be null");
         this.rootPath = path;
+        this.triConsumerOnSuccessLoading = triConsumerOnSuccessLoading;
     }
 
     public List<Candle> loadAll(Instrument instrument, TickEnum tickEnum) throws LoadingException {
@@ -45,6 +55,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     @Override
     public List<Candle> load(long start, long end, Instrument instrument, TimeFrame timeFrame) throws LoadingException {
         List<Candle> candles = loadAll(instrument, TickService.getTick(timeFrame));
+        onSuccessLoading(instrument, timeFrame, candles);
         return candles.stream().filter(c -> c.timestamp() >= start && c.timestamp() <= end).toList();
     }
 
