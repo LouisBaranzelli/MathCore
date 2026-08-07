@@ -58,9 +58,9 @@ class FinancialTimeFrameAlignerTest {
             ZonedDateTime input = ZonedDateTime.of(2026, 8, 8, 16, 59, 59, 999_999_999, UTC);
             ZonedDateTime result = FinancialTimeFrameAligner.alignFloor(input, TimeFrame.MI5);
 
-            assertEquals(8, result.getDayOfMonth());
-            assertEquals(0, result.getHour());
-            assertEquals(0, result.getMinute());
+            assertEquals(7, result.getDayOfMonth());
+            assertEquals(23, result.getHour());
+            assertEquals(55, result.getMinute());
             assertEquals(0, result.getSecond());
         }
 

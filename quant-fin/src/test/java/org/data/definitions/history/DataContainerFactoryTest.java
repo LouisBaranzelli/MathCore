@@ -24,8 +24,9 @@ class DataContainerFactoryTest {
 
         DataLoader dummyLoader = new DummyDataLoader();
         ImputationStrategy imputationStrategy = new StubImputationStrategy();
+        TimeGridPredicate timeGridPredicate = new BuisnessDay();
         // Mercredi 1er Janvier 2020
-        DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy, dummyLoader);
+        DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy, timeGridPredicate ,dummyLoader);
         long start = TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS);
         long end = TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS);
         DataContainer tteDataContainer = dataContainerFactory.create(start, end, Stock.TTE,  TimeFrame.HR);

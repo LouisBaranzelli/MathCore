@@ -23,7 +23,7 @@ class FullDataContextTest {
         long start = TimeTools.fromDateTimeStringToLong("2023-02-23T00:00:00", ZoneIdEnum.EUROPE_PARIS);
         long end = TimeTools.fromDateTimeStringToLong("2023-02-24T00:00:00", ZoneIdEnum.EUROPE_PARIS);
         DataLoader dataloader = new DummyDataLoader();
-        FullDataContext dataContext = new FullDataContext(start, end,new StubImputationStrategy(), List.of(dataloader), List.of(Stock.TTE, Stock.AI), List.of(TimeFrame.D, TimeFrame.HR));
+        FullDataContext dataContext = new FullDataContext(start, end,new StubImputationStrategy(), new BuisnessDay(), List.of(dataloader), List.of(Stock.TTE, Stock.AI), List.of(TimeFrame.D, TimeFrame.HR));
         // Then
         assertEquals(2, dataContext.getInstruments().size());
         assertTrue(dataContext.getInstruments().contains(Stock.AI));
@@ -36,7 +36,7 @@ class FullDataContextTest {
 
 
         FullDataContext dataContextInDays = new FullDataContext(TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
-                TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),new StubImputationStrategy(), List.of(dataloader),
+                TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),new StubImputationStrategy(),  new BuisnessDay(), List.of(dataloader),
                 List.of(Stock.TTE, Stock.AI), List.of(TimeFrame.D, TimeFrame.HR));
         assertEquals(100., dataContextInDays.getPercentLoaded());
         assertEquals("Data context: 2 companies loaded (100,0 %), timeframes: 1 Day, 1 Hour, start date: 2020-01-01T00:00+01:00[Europe/Paris], end date: 2020-01-30T00:00+01:00[Europe/Paris]", dataContextInDays.getDescription());

@@ -31,6 +31,7 @@ class SliceDataContextTest {
                     startFull,
                     endFull,
                     new StubImputationStrategy(),
+                    new BuisnessDay(),
                     List.of(dataloader),
                     List.of(Stock.TTE, Stock.AI),
                     List.of(TimeFrame.HR, TimeFrame.D, TimeFrame.MI5)
@@ -70,6 +71,7 @@ class SliceDataContextTest {
                     TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
                     TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),
                     new StubImputationStrategy(),
+                    new BuisnessDay(),
                     List.of(dataloader),
                     List.of(Stock.TTE),
                     List.of(TimeFrame.D)
@@ -90,6 +92,7 @@ class SliceDataContextTest {
                     TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
                     TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),
                     new StubImputationStrategy(),
+                    new BuisnessDay(),
                     List.of(dataloader),
                     List.of(Stock.TTE),
                     List.of(TimeFrame.D)
