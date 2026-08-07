@@ -10,12 +10,14 @@ import org.data.definitions.assets.Instrument;
 import org.data.definitions.candles.Candle;
 import org.data.definitions.history.DataLoader;
 
+import org.series.TimeTools;
 import org.series.timeserie.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -46,6 +48,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
         try {
             Path csvPath = getCsvPath(instrument, tickEnum);
             candles.addAll(csvService.readFromFile(csvPath));
+            Collections.sort(candles);
             return candles;
         } catch (IOException e) {
             throw new LoadingException("Failed to open the csv file: " + instrument.getLabel() +" in " + rootPath.getParent().toAbsolutePath());
@@ -55,8 +58,22 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     @Override
     public List<Candle> load(long start, long end, Instrument instrument, TimeFrame timeFrame) throws LoadingException {
         List<Candle> candles = loadAll(instrument, TickService.getTick(timeFrame));
+        if (candles.isEmpty()){
+            throw new LoadingException(String.format("No data available for %s, %s.",
+                    instrument.getLabel(),
+                    timeFrame.getLabel()));
+        }
+
         onSuccessLoading(instrument, timeFrame, candles);
-        return candles.stream().filter(c -> c.timestamp() >= start && c.timestamp() <= end).toList();
+        candles = candles.stream().filter(c -> c.timestamp() >= start && c.timestamp() <= end).toList();
+        long lastCandleTimeStamp = candles.get(candles.size()-1).timestamp();
+        if (end != lastCandleTimeStamp){
+            ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
+            throw new LoadingException(String.format("Date requested: %s, date received: %s",
+                    TimeTools.fromLongToZonedDateTime(end, zoneId),
+                    TimeTools.fromLongToZonedDateTime(lastCandleTimeStamp, zoneId)));
+        }
+        return candles;
     }
 
     @Override
