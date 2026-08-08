@@ -27,14 +27,14 @@ public class FullDataContext implements DataContext {
     @Getter
     private final TimeFrame[] timeFrames;
 
-    public FullDataContext(long start, long end, ImputationStrategy imputationStrategy, TimeGridPredicate timeGridPredicate,  List<DataLoader> dataLoaders, List<Instrument> instruments, List<TimeFrame> timeFrames) {
+    public FullDataContext(long start, long end, ImputationStrategy imputationStrategy,  List<DataLoader> dataLoaders, List<Instrument> instruments, List<TimeFrame> timeFrames) {
         this.end = end;
         this.start = start;
-        DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy, timeGridPredicate,dataLoaders.toArray(DataLoader[]::new));
+        DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy, dataLoaders.toArray(DataLoader[]::new));
         this.timeFrames =timeFrames.toArray(TimeFrame[]::new);
         this.initialSizeInstruments = instruments.size();
         for (Instrument instrument : instruments) {
-            DataContainer dataContainer = null;
+            DataContainer dataContainer;
             try {
                 dataContainer = dataContainerFactory.create(start, end, instrument,  this.timeFrames);
                 data.put(instrument, dataContainer);

@@ -10,6 +10,7 @@ import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +32,6 @@ class SliceDataContextTest {
                     startFull,
                     endFull,
                     new StubImputationStrategy(),
-                    new BuisnessDay(),
                     List.of(dataloader),
                     List.of(Stock.TTE, Stock.AI),
                     List.of(TimeFrame.HR, TimeFrame.D, TimeFrame.MI5)
@@ -39,8 +39,8 @@ class SliceDataContextTest {
 
             // Then : Vérification du contexte parent
             int expectedDailyFullSize =21;       // hors samedi et dimanche et le 1er esr ferié, 30 inclus car présent
-            int expectedHourlyFullSize = 20 * 24 + 1; // 30 exclus car présent mais à minuit (+1)
-            int expected5minlyFullSize = (20 * 24) * 12 + 1;
+            int expectedHourlyFullSize = 20 * (8 + 1); // 9h-17h les 2 bornes incluse
+            int expected5minlyFullSize = 20 * (8 * 12 + 1);
 
             int hourSize = dataContextInDays.getCandleTimeSerie(Stock.TTE, TimeFrame.HR).size();
 
@@ -56,11 +56,26 @@ class SliceDataContextTest {
             SliceDataContext sliceDataContext = new SliceDataContext(startSlice, endSlice, dataContextInDays);
 
             // Then : Vérification de la tranche
-            int expectedDailySliceSize = 7;       // 11 points
-            int expectedHourlySliceSize = 6 * 24 + 1; // 241 points
+            int expectedDailySliceSize = 7;
+            int expectedHourlySliceSize = 6 * (8 + 1) + 1; // + 1 car débute à minuit donc integre 17h de la journée précédente
 
             assertEquals(expectedDailySliceSize, sliceDataContext.getCandleTimeSerie(Stock.TTE, TimeFrame.D).size());
             assertEquals(expectedHourlySliceSize, sliceDataContext.getCandleTimeSerie(Stock.TTE, TimeFrame.HR).size());
+
+            startSlice = TimeTools.fromDateTimeStringToLong("2020-01-10T10:06:00", ZoneIdEnum.EUROPE_PARIS);
+            endSlice = TimeTools.fromDateTimeStringToLong("2020-01-20T16:00:00", ZoneIdEnum.EUROPE_PARIS);
+
+            sliceDataContext = new SliceDataContext(startSlice, endSlice, dataContextInDays);
+
+            // Then : Vérification de la tranche
+            expectedDailySliceSize = 7;
+            expectedHourlySliceSize = 7 * (8 + 1) - 2;
+
+            assertEquals(expectedDailySliceSize, sliceDataContext.getCandleTimeSerie(Stock.TTE, TimeFrame.D).size());
+            assertEquals(expectedHourlySliceSize, sliceDataContext.getCandleTimeSerie(Stock.TTE, TimeFrame.HR).size());
+
+            long targetStart =  TimeTools.fromDateTimeStringToLong("2020-01-10T10:00:00", ZoneIdEnum.EUROPE_PARIS);
+            assertEquals(targetStart,  sliceDataContext.getCandleTimeSerie(Stock.TTE, TimeFrame.HR).getFirst().timestamp());
         }
 
         @Test
@@ -71,7 +86,6 @@ class SliceDataContextTest {
                     TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
                     TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),
                     new StubImputationStrategy(),
-                    new BuisnessDay(),
                     List.of(dataloader),
                     List.of(Stock.TTE),
                     List.of(TimeFrame.D)
@@ -92,7 +106,6 @@ class SliceDataContextTest {
                     TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS),
                     TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS),
                     new StubImputationStrategy(),
-                    new BuisnessDay(),
                     List.of(dataloader),
                     List.of(Stock.TTE),
                     List.of(TimeFrame.D)

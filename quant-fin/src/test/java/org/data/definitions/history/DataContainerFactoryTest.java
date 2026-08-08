@@ -24,35 +24,34 @@ class DataContainerFactoryTest {
 
         DataLoader dummyLoader = new DummyDataLoader();
         ImputationStrategy imputationStrategy = new StubImputationStrategy();
-        TimeGridPredicate timeGridPredicate = new BuisnessDay();
         // Mercredi 1er Janvier 2020
-        DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy, timeGridPredicate ,dummyLoader);
+        DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy ,dummyLoader);
         long start = TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS);
         long end = TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS);
         DataContainer tteDataContainer = dataContainerFactory.create(start, end, Stock.TTE,  TimeFrame.HR);
         ZonedDateTime firstDateTime = TimeTools.fromLongToZonedDateTime(tteDataContainer.getCandleTimeSerie(TimeFrame.HR).getFirst().timestamp(), ZoneIdEnum.EUROPE_PARIS.getZoneId());
         assertEquals(2, firstDateTime.getDayOfMonth());
-        assertEquals(0, firstDateTime.getHour());
+        assertEquals(9, firstDateTime.getHour());
         assertEquals(0, firstDateTime.getMinute());
 
         tteDataContainer = dataContainerFactory.create(start, end, Stock.TTE,  TimeFrame.MI5);
         firstDateTime = TimeTools.fromLongToZonedDateTime(tteDataContainer.getCandleTimeSerie(TimeFrame.MI5).getFirst().timestamp(), ZoneIdEnum.EUROPE_PARIS.getZoneId());
         assertEquals(2, firstDateTime.getDayOfMonth());
-        assertEquals(0, firstDateTime.getHour());
+        assertEquals(9, firstDateTime.getHour());
         assertEquals(0, firstDateTime.getMinute());
 
         start = TimeTools.fromDayStringToLong("2019-12-31", ZoneIdEnum.EUROPE_PARIS);
         tteDataContainer = dataContainerFactory.create(start, end, Stock.TTE,  TimeFrame.MI5);
         firstDateTime = TimeTools.fromLongToZonedDateTime(tteDataContainer.getCandleTimeSerie(TimeFrame.MI5).getFirst().timestamp(), ZoneIdEnum.EUROPE_PARIS.getZoneId());
         assertEquals(31, firstDateTime.getDayOfMonth());
-        assertEquals(0, firstDateTime.getHour());
+        assertEquals(9, firstDateTime.getHour());
         assertEquals(0, firstDateTime.getMinute());
 
-        start = TimeTools.fromDateTimeStringToLong("2020-01-02T00:05:00", ZoneIdEnum.EUROPE_PARIS);
+        start = TimeTools.fromDateTimeStringToLong("2020-01-02T09:05:00", ZoneIdEnum.EUROPE_PARIS);
         tteDataContainer = dataContainerFactory.create(start, end, Stock.TTE,  TimeFrame.MI5);
         firstDateTime = TimeTools.fromLongToZonedDateTime(tteDataContainer.getCandleTimeSerie(TimeFrame.MI5).getFirst().timestamp(), ZoneIdEnum.EUROPE_PARIS.getZoneId());
         assertEquals(2, firstDateTime.getDayOfMonth());
-        assertEquals(0, firstDateTime.getHour());
+        assertEquals(9, firstDateTime.getHour());
         assertEquals(5, firstDateTime.getMinute());
 
     }

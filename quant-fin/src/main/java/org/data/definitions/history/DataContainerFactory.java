@@ -8,9 +8,12 @@ import org.data.definitions.candles.CandleTimeSerie;
 import org.data.definitions.candles.CompositeCandleTimeSerie;
 import org.series.InvalidTimeSerieException;
 import org.series.TimeTools;
+import org.series.ZoneIdEnum;
 import org.series.imputation.ImputationStrategy;
+import org.series.timegrid.TimeFrameAligner;
 import org.series.timeserie.*;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,12 +23,10 @@ public class DataContainerFactory {
 
     private final DataLoader[] dataLoaders;
     private final ImputationStrategy imputationStrategy;
-    private final TimeGridPredicate timeGridPredicate;
 
-    public DataContainerFactory(ImputationStrategy imputationStrategy,  TimeGridPredicate timeGridPredicate, DataLoader... loaders){
+    public DataContainerFactory(ImputationStrategy imputationStrategy, DataLoader... loaders){
         this.dataLoaders = loaders;
         this.imputationStrategy = imputationStrategy;
-        this.timeGridPredicate = timeGridPredicate;
     }
 
     public  DataContainer create(long start, long end, Instrument instrument, TimeFrame... timeFrames) throws LoadingException {
@@ -47,8 +48,12 @@ public class DataContainerFactory {
                 lows[i] = new RawObservation(dateTime, candles.get(i).low());
                 volumes[i] = new RawObservation(dateTime, candles.get(i).volume());
             }
-
-            Predicate<Long> timeGridValidDatePredicate = (date) -> timeGridPredicate.test(TimeTools.fromLongToZonedDateTime(date, instrument.getZoneIdEnum().getZoneId()), timeFrame);
+            ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
+            TimeFrameAligner timeFrameAligner = AlignerService.get(instrument);
+            Predicate<Long> timeGridValidDatePredicate = (date) -> Objects.equals(
+                    TimeTools.fromLongToZonedDateTime(date, zoneId),
+                    timeFrameAligner.alignFloor(TimeTools.fromLongToZonedDateTime(date, zoneId), timeFrame)
+            );
 
             try {
                 DoubleTimeSerie openTs = TimeSeriesFactory.create(opens,

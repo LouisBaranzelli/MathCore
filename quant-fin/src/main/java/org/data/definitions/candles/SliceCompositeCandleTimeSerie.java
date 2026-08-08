@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.math.vector.Vector;
 import org.data.definitions.assets.Instrument;
+import org.series.TimeTools;
 import org.series.timeserie.DoubleTimeSerie;
 import org.series.timeserie.SliceDoubleTimeSerie;
 import org.series.timeserie.TimeFrame;
@@ -41,10 +42,10 @@ public class SliceCompositeCandleTimeSerie implements CandleTimeSerie {
         }
 
         if (foundStart == -1) {
-            throw new IllegalArgumentException("Timestamp de début (" + start + ") introuvable.");
+            throw new IllegalArgumentException("Timestamp de début (" + start + ": " + TimeTools.fromLongToZonedDateTime(start, source.getInstrument().getZoneIdEnum().getZoneId()) + ") introuvable.");
         }
         if (foundEnd == -1) {
-            throw new IllegalArgumentException("Timestamp de fin (" + end + ") introuvable.");
+            throw new IllegalArgumentException("Timestamp de fin (" + end + ": " + TimeTools.fromLongToZonedDateTime(start, source.getInstrument().getZoneIdEnum().getZoneId()) + ") introuvable.");
         }
         if (foundStart > foundEnd) {
             throw new IllegalArgumentException("Le timestamp de début doit être inférieur ou égal au timestamp de fin.");

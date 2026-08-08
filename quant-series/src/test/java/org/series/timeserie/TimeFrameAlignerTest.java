@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TimeSeriesAlignerTest {
+class TimeFrameAlignerTest {
 
     private TimeSeriesAligner aligner;
     private MockImputationStrategy mockStrategy;

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.series.InvalidTimeSerieException;
+import org.series.TimeTools;
+import org.series.ZoneIdEnum;
 import org.series.imputation.ImputationStrategy;
 import org.series.imputation.StubImputationStrategy;
 
@@ -50,9 +52,9 @@ class TimeSeriesFactoryTest {
     @DisplayName("Devrait identifier correctement la date maximale parmi des observations désordonnées")
     void shouldCorrectlyFindMaxZoneDateTime() throws InvalidTimeSerieException {
         // Préparation de 3 observations désordonnées dans le temps
-        ZonedDateTime past = ZonedDateTime.parse("2026-07-15T12:00:00Z");
-        ZonedDateTime future = ZonedDateTime.parse("2026-07-18T12:00:00Z"); // La plus récente
-        ZonedDateTime present = ZonedDateTime.parse("2026-07-16T12:00:00Z");
+        long past = TimeTools.fromDateTimeStringToLong("2026-07-15T12:00:00Z", ZoneIdEnum.AMERICA_NEW_YORK);
+        long future = TimeTools.fromDateTimeStringToLong("2026-07-18T12:00:00Z", ZoneIdEnum.AMERICA_NEW_YORK); // La plus récente
+        long present = TimeTools.fromDateTimeStringToLong("2026-07-16T12:00:00Z", ZoneIdEnum.AMERICA_NEW_YORK);
 
         Observation obs1 = new StubObservation(past, 10.0);
         Observation obs2 = new StubObservation(future, 20.0); // Placé au milieu exprès
@@ -71,7 +73,7 @@ class TimeSeriesFactoryTest {
     @Test
     @DisplayName("Devrait créer avec succès une DoubleTimeSerie valide dans un cas nominal")
     void shouldCreateDoubleTimeSerieSuccessfully() throws InvalidTimeSerieException {
-        ZonedDateTime now = ZonedDateTime.now();
+        long now = TimeTools.fromZonedDateTimeToLong(ZonedDateTime.now());
         Observation[] observations = {new StubObservation(now, 42.0)};
         int targetSize = 3;
 

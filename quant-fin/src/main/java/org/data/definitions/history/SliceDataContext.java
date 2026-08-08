@@ -4,8 +4,11 @@ import lombok.Getter;
 import org.data.definitions.assets.Instrument;
 import org.data.definitions.candles.CandleTimeSerie;
 import org.data.definitions.candles.SliceCompositeCandleTimeSerie;
+import org.series.TimeTools;
 import org.series.timeserie.TimeFrame;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -21,6 +24,7 @@ public class SliceDataContext implements DataContext {
     private final long end;
 
     public SliceDataContext(long start, long end, DataContext source) {
+
         this.source = Objects.requireNonNull(source, "Source DataContext cannot be null");
 
         if (start > end) {
@@ -42,7 +46,10 @@ public class SliceDataContext implements DataContext {
     @Override
     public CandleTimeSerie getCandleTimeSerie(Instrument instrument, TimeFrame timeFrame) {
         CandleTimeSerie candleTimeSerie = source.getCandleTimeSerie(instrument, timeFrame);
-        return new SliceCompositeCandleTimeSerie(candleTimeSerie, start, end);
+        ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
+        ZonedDateTime sliceStart = AlignerService.get(instrument).alignFloor(TimeTools.fromLongToZonedDateTime(start, zoneId), timeFrame);
+        ZonedDateTime sliceEnd = AlignerService.get(instrument).alignFloor(TimeTools.fromLongToZonedDateTime(end, zoneId), timeFrame);
+        return new SliceCompositeCandleTimeSerie(candleTimeSerie, TimeTools.fromZonedDateTimeToLong(sliceStart), TimeTools.fromZonedDateTimeToLong(sliceEnd));
     }
 
     @Override
