@@ -48,12 +48,7 @@ public class DataContainerFactory {
                 lows[i] = new RawObservation(dateTime, candles.get(i).low());
                 volumes[i] = new RawObservation(dateTime, candles.get(i).volume());
             }
-            ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
-            TimeFrameAligner timeFrameAligner = AlignerService.get(instrument);
-            Predicate<Long> timeGridValidDatePredicate = (date) -> Objects.equals(
-                    TimeTools.fromLongToZonedDateTime(date, zoneId),
-                    timeFrameAligner.alignFloor(TimeTools.fromLongToZonedDateTime(date, zoneId), timeFrame)
-            );
+            Predicate<Long> timeGridValidDatePredicate = AlignerService.getValidDatePredicateBasedOnAligner(instrument, timeFrame);
 
             try {
                 DoubleTimeSerie openTs = TimeSeriesFactory.create(opens,

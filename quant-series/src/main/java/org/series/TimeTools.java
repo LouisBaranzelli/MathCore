@@ -43,15 +43,19 @@ public final class TimeTools {
         return fromZonedDateTimeToLong(zonedDateTime);
     }
 
-    public static int getNumberValuesStartingFromEndBetween(long startSeconds, long endSeconds, TimeFrame timeFrame, Predicate<Long> validDate) {
-        int size = getNumberValuesStartingFromEndBetween(startSeconds, endSeconds, timeFrame);
+    public static int getNumberValuesStartingFromEndBetween(long start, long end, TimeFrame timeFrame, Predicate<Long> validDate) {
+        int size = getNumberValuesStartingFromEndBetween(start, end, timeFrame);
         long deltaSeconds = fromDurationToLong(timeFrame.getDuration());
         int unValidDates = 0;
-        for (long end=endSeconds; end>=startSeconds ;end=end-deltaSeconds){
-            if (!validDate.test(end)){
+        for (long i=end; i>=start ;i=i-deltaSeconds){
+            if (!validDate.test(i)){
                 unValidDates++;
             }
         }
+        if (size != 0 && size - unValidDates == 0){
+            throw new RuntimeException(
+                    "The predicate for valid dates and available dates is completely out of sync"
+            );        }
         return size - unValidDates;
     }
 
