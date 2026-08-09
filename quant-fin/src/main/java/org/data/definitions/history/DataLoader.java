@@ -17,11 +17,5 @@ public interface DataLoader {
 
     String getLabel();
 
-    default void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) {
-        if (getTriConsumerOnSuccessLoading() != null){
-            getTriConsumerOnSuccessLoading().accept(instrument, timeFrame, candles);
-        }
-    }
-
-    TriConsumer<Instrument, TimeFrame, List<Candle>> getTriConsumerOnSuccessLoading();
+    void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles);
 }

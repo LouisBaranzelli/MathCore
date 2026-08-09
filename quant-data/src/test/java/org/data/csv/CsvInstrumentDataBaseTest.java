@@ -9,19 +9,14 @@ import org.data.definitions.candles.CompositeCandleTimeSerie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.series.InvalidTimeSerieException;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
-import org.series.imputation.StubImputationStrategy;
-import org.series.timegrid.TimeGrid;
-import org.series.timeserie.DoubleTimeSerie;
-import org.series.timeserie.ImmutableDoubleTimeSerie;
+
 import org.series.timeserie.TimeFrame;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 

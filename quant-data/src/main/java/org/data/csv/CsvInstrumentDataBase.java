@@ -3,6 +3,7 @@ package org.data.csv;
 import lombok.Getter;
 import org.common.CsvService;
 import org.common.TriConsumer;
+import org.data.SavingException;
 import org.data.definitions.LoadingException;
 import org.data.definitions.TickEnum;
 import org.data.definitions.TickService;
@@ -26,21 +27,15 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     @Getter
     private final Path rootPath;
 
-    @Getter
-    private final TriConsumer<Instrument, TimeFrame, List<Candle>> triConsumerOnSuccessLoading;
 
 
     private final CandleMapper candleMapper = new CandleMapper();
     private final CsvService<Candle> csvService = new CsvService<>(candleMapper);
 
-    public CsvInstrumentDataBase(Path path) {
-        this(path, null);
-    }
 
-    public CsvInstrumentDataBase(Path path, TriConsumer<Instrument, TimeFrame, List<Candle>> triConsumerOnSuccessLoading) {
+    public CsvInstrumentDataBase(Path path) {
         Objects.requireNonNull(path, "csv loader path can not be null");
         this.rootPath = path;
-        this.triConsumerOnSuccessLoading = triConsumerOnSuccessLoading;
     }
 
     public List<Candle> loadAll(Instrument instrument, TickEnum tickEnum) throws LoadingException {
@@ -82,17 +77,23 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     }
 
     @Override
-    public void save(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) throws LoadingException {
+    public void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) {
+
+    }
+
+    @Override
+    public void save(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) throws SavingException {
         TickEnum tickEnum = TickService.getTick(timeFrame);
+        try {
         List<Candle> existingSavedCandles = loadAll(instrument, tickEnum);
         List<Candle> allCandles = Stream.concat(existingSavedCandles.stream(), candles.stream())
                 .distinct()
                 .sorted()
                 .toList();
-        try {
+
             csvService.writeToFile(getCsvPath(instrument, tickEnum), allCandles);
-        } catch (IOException e) {
-            throw new LoadingException(e.toString());
+        } catch (IOException | LoadingException e) {
+            throw new SavingException(e.toString());
         }
     }
 

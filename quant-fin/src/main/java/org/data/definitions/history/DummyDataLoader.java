@@ -29,4 +29,9 @@ public class DummyDataLoader implements DataLoader {
     public String getLabel() {
         return "dummy Dataloader";
     }
+
+    @Override
+    public void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) {
+
+    }
 }
