@@ -68,14 +68,17 @@ public record Candle (
     public int compareTo(Candle o) {
         return Long.compare(timestamp, o.timestamp);
     }
-
     public static Candle randomCandle(long timestamp){
+        return Candle.randomCandle(timestamp, Stock.SU);
+    }
+
+    public static Candle randomCandle(long timestamp, Instrument instrument){
         Random random = new Random();
         double high = random.nextDouble();
         double low = high / 2;
         double open = (high - low) * 0.3 + low;
         double close = (high - low) * 0.5 + low;
 
-        return new Candle(Stock.SU, timestamp, open,  high,  low, close,  random.nextDouble());
+        return new Candle(instrument, timestamp, open,  high,  low, close,  random.nextDouble());
     }
 }

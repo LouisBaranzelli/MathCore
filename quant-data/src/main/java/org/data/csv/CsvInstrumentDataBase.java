@@ -65,7 +65,11 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
 
     public List<Candle> load(long start, long end, Instrument instrument, TimeFrame timeFrame, Predicate<Long> validDates) throws LoadingException {
         List<Candle> candles = loadAll(instrument, timeFrame);
-
+        // pour les timeframes mois/week end comme on charge les jours on aura necessairement plus de données que nécessaire
+        if (timeFrame.equals(TimeFrame.WK) || timeFrame.equals(TimeFrame.MO)){
+            Predicate<Long> validDatesPredicate = AlignerService.getValidDatePredicateBasedOnAligner(instrument, timeFrame);
+            candles = candles.stream().filter(candle -> validDatesPredicate.test(candle.timestamp())).toList();
+        }
         if (candles.isEmpty()){
             throw new LoadingException(String.format("No data available for %s, %s.",
                     instrument.getLabel(),

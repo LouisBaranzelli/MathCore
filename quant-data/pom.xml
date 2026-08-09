@@ -48,5 +48,10 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.sstrickx</groupId>
+            <artifactId>yahoofinance-api</artifactId>
+            <version>3.17.0</version>
+        </dependency>
     </dependencies>
 </project>
