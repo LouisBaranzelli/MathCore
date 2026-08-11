@@ -7,16 +7,11 @@ import org.data.definitions.candles.Candle;
 import org.data.definitions.candles.CandleTimeSerie;
 import org.data.definitions.candles.CompositeCandleTimeSerie;
 import org.series.InvalidTimeSerieException;
-import org.series.TimeTools;
-import org.series.ZoneIdEnum;
 import org.series.imputation.ImputationStrategy;
-import org.series.timegrid.TimeFrameAligner;
 import org.series.timeserie.*;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 public class DataContainerFactory {
@@ -42,11 +37,11 @@ public class DataContainerFactory {
 
             for (int i = 0; i < candles.size(); i++) {
                 long dateTime = candles.get(i).timestamp();
-                opens[i] = new RawObservation(dateTime, candles.get(i).open());
-                closes[i] = new RawObservation(dateTime, candles.get(i).close());
-                highs[i] = new RawObservation(dateTime, candles.get(i).high());
-                lows[i] = new RawObservation(dateTime, candles.get(i).low());
-                volumes[i] = new RawObservation(dateTime, candles.get(i).volume());
+                opens[i] = new RawObservation(dateTime, candles.get(i).open(), instrument.getZoneIdEnum().getZoneId());
+                closes[i] = new RawObservation(dateTime, candles.get(i).close(),  instrument.getZoneIdEnum().getZoneId());
+                highs[i] = new RawObservation(dateTime, candles.get(i).high(),  instrument.getZoneIdEnum().getZoneId());
+                lows[i] = new RawObservation(dateTime, candles.get(i).low(),  instrument.getZoneIdEnum().getZoneId());
+                volumes[i] = new RawObservation(dateTime, candles.get(i).volume(),  instrument.getZoneIdEnum().getZoneId());
             }
             Predicate<Long> timeGridValidDatePredicate = AlignerService.getValidDatePredicateBasedOnAligner(instrument, timeFrame);
 
@@ -86,21 +81,21 @@ public class DataContainerFactory {
         }
         return  dataContainer;
     }
-
     private List<Candle> useLoaders(Instrument instrument, TimeFrame timeFrame, long start, long end) throws LoadingException {
         List<Candle> outputs = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         for (DataLoader loader: dataLoaders){
             try {
                 outputs.addAll(loader.load(start, end, instrument,timeFrame));
+                return outputs;
             } catch (LoadingException e) {
                 stringBuilder.append(e.getMessage());
                 stringBuilder.append(";");
             }
         }
-        if (outputs.isEmpty()){
-            throw new LoadingException("failed to load: " + instrument.getLabel() + " with " + timeFrame.getLabel() + " because: " + stringBuilder.toString());
-        }
-        return outputs;
+
+        throw new LoadingException("failed to load: " + instrument.getLabel() + " with " + timeFrame.getLabel() + " because: " + stringBuilder.toString());
+
+
     }
 }

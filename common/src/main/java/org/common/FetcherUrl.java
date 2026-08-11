@@ -21,7 +21,7 @@ public class FetcherUrl {
     private static Logger logger = LoggerFactory.getLogger(FetcherUrl.class);
 
     public JSONObject fetch() throws IOException {
-        logger.debug("url: " + this.url);
+        logger.trace("url: {}", this.url);
         URL url = new URL(this.url);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");

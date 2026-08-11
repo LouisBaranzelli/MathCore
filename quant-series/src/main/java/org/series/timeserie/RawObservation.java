@@ -2,8 +2,8 @@ package org.series.timeserie;
 
 import lombok.Getter;
 
-import java.time.ZonedDateTime;
-import java.util.Objects;
+import java.time.ZoneId;
+
 
 public class RawObservation implements Observation {
 
@@ -13,9 +13,14 @@ public class RawObservation implements Observation {
     @Getter
     private final double doubleValue;
 
-    public RawObservation(long dateTime, double value) {
+    @Getter
+    private final ZoneId zoneId;
+
+    public RawObservation(long dateTime, double value, ZoneId zoneId) {
         this.dateTime = dateTime;
         this.doubleValue = value;
+        this.zoneId = zoneId;
+
     }
 
     @Override

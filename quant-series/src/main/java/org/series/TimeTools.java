@@ -43,11 +43,11 @@ public final class TimeTools {
         return fromZonedDateTimeToLong(zonedDateTime);
     }
 
-    public static int getNumberValuesStartingFromEndBetween(long start, long end, TimeFrame timeFrame, Predicate<Long> validDate) {
+    public static int getNumberValuesStartingFromEndBetween(long start, long end, TimeFrame timeFrame, Predicate<Long> validDate, ZoneId zoneId) {
         int size = getNumberValuesStartingFromEndBetween(start, end, timeFrame);
         long deltaSeconds = fromDurationToLong(timeFrame.getDuration());
         int unValidDates = 0;
-        for (long i=end; i>=start ;i=i-deltaSeconds){
+        for (long i=end; i>=start ;i=getMinusPeriod(i, timeFrame, zoneId)){
             if (!validDate.test(i)){
                 unValidDates++;
             }
@@ -57,6 +57,22 @@ public final class TimeTools {
                     "The predicate for valid dates and available dates is completely out of sync"
             );        }
         return size - unValidDates;
+    }
+
+    private static long getMinusPeriod(long i, TimeFrame timeFrame, ZoneId zoneId) {
+        ZonedDateTime zonedDateTime = TimeTools.fromLongToZonedDateTime(i, zoneId);
+        ZonedDateTime previousZonedDateTime = null;
+        switch (timeFrame){
+            case MI -> previousZonedDateTime = zonedDateTime.minusMinutes(1);
+            case MI5 -> previousZonedDateTime = zonedDateTime.minusMinutes(5);
+            case MI15 -> previousZonedDateTime = zonedDateTime.minusMinutes(15);
+            case MI30 -> previousZonedDateTime = zonedDateTime.minusMinutes(30);
+            case HR -> previousZonedDateTime = zonedDateTime.minusHours(1);
+            case D -> previousZonedDateTime = zonedDateTime.minusDays(1);
+            case WK -> previousZonedDateTime = zonedDateTime.minusDays(7);
+            case MO -> previousZonedDateTime = zonedDateTime.minusMonths(1);
+        }
+        return TimeTools.fromZonedDateTimeToLong(previousZonedDateTime);
     }
 
     public static int getNumberValuesStartingFromEndBetween(long startSeconds, long endSeconds, TimeFrame timeFrame) {

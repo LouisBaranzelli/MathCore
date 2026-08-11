@@ -6,6 +6,7 @@ import org.series.imputation.ImputationStrategy;
 import org.series.timegrid.TimeGrid;
 import org.series.timegrid.TimeGridFactory;
 
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Predicate;
@@ -25,7 +26,12 @@ public class TimeSeriesFactory {
 
         Long lastZoneDateTime = getLastZoneDateTime(observations);
         Long firstZoneDateTime = getFirstZoneDateTime(observations);
-        TimeGrid timeGrid = TimeGridFactory.create(firstZoneDateTime, lastZoneDateTime, timeGridValidDatePredicate, timeFrame);
+        ZoneId zoneId = observations[0].getZoneId();
+        if (!Arrays.stream(observations).allMatch(o -> zoneId.equals(o.getZoneId()))){
+            throw new RuntimeException("All the observation must have the same ID zone");
+        }
+
+        TimeGrid timeGrid = TimeGridFactory.create(firstZoneDateTime, lastZoneDateTime, timeGridValidDatePredicate, timeFrame, zoneId);
         TimeSeriesAligner timeSeriesAligner = new TimeSeriesAligner(imputationStrategy);
         return timeSeriesAligner.align(observations, timeGrid);
     }

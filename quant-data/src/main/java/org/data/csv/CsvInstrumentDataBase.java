@@ -15,8 +15,9 @@ import org.data.definitions.history.DataLoader;
 
 import org.math.common.MathUtil;
 import org.series.TimeTools;
-import org.series.timegrid.TimeFrameAligner;
 import org.series.timeserie.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.stream.Stream;
 
 public class CsvInstrumentDataBase implements DataLoader, DataSaver {
 
+    Logger logger = LoggerFactory.getLogger(CsvInstrumentDataBase.class);
     @Getter
     private final Path rootPath;
 
@@ -45,6 +47,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     public CsvInstrumentDataBase(Path path) {
         Objects.requireNonNull(path, "csv loader path can not be null");
         this.rootPath = path;
+        logger.debug("{} set to path {}", getLabel(), rootPath.toFile().getAbsoluteFile());
     }
 
     public List<Candle> loadAll(Instrument instrument, TimeFrame timeFrame) throws LoadingException {
@@ -64,6 +67,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     }
 
     public List<Candle> load(long start, long end, Instrument instrument, TimeFrame timeFrame, Predicate<Long> validDates) throws LoadingException {
+        logger.debug(logLoading(start, end, instrument, timeFrame));
         List<Candle> candles = loadAll(instrument, timeFrame);
         // pour les timeframes mois/week end comme on charge les jours on aura necessairement plus de données que nécessaire
         if (timeFrame.equals(TimeFrame.WK) || timeFrame.equals(TimeFrame.MO)){
@@ -79,9 +83,9 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
         int targetSize;
         Predicate<Long> predicateValidDate = validDates == null ? AlignerService.getValidDatePredicateBasedOnAligner(instrument, timeFrame) : validDates;
         if (TickService.getTick(timeFrame).equals(TickEnum.DAY)){
-            targetSize = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.D, predicateValidDate);
+            targetSize = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.D, predicateValidDate,instrument.getZoneIdEnum().getZoneId());
         } else {
-            targetSize = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, predicateValidDate);
+            targetSize = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, predicateValidDate,instrument.getZoneIdEnum().getZoneId());
         }
         double availableDataRatio = MathUtil.round((double) candles.size() / targetSize, 1);
         if (availableDataRatio < thresholdLoadingError || availableDataRatio > 1){
@@ -94,9 +98,6 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
             );
         }
 
-
-
-        onSuccessLoading(instrument, timeFrame, candles);
         candles = candles.stream().filter(c -> c.timestamp() >= start && c.timestamp() <= end).toList();
         long lastCandleTimeStamp = candles.get(candles.size()-1).timestamp();
         if (end != lastCandleTimeStamp){
@@ -105,6 +106,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
                     TimeTools.fromLongToZonedDateTime(end, zoneId),
                     TimeTools.fromLongToZonedDateTime(lastCandleTimeStamp, zoneId)));
         }
+        onSuccessLoading(instrument, timeFrame, candles);
         return candles;
     }
 
@@ -115,7 +117,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
 
     @Override
     public void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) {
-
+        logger.trace("{} ({}): {} [LOADING SUCCEED]", instrument.getLabel(), timeFrame.getLabel(), getLabel());
     }
 
     @Override

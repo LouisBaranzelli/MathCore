@@ -6,12 +6,16 @@ import org.data.definitions.LoadingException;
 import org.data.definitions.assets.DataContainer;
 import org.data.definitions.candles.CandleTimeSerie;
 import org.data.definitions.assets.Instrument;
+import org.series.TimeTools;
+import org.series.ZoneIdEnum;
 import org.series.imputation.ImputationStrategy;
 import org.series.timeserie.TimeFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FullDataContext implements DataContext {
 
@@ -28,6 +32,15 @@ public class FullDataContext implements DataContext {
     private final TimeFrame[] timeFrames;
 
     public FullDataContext(long start, long end, ImputationStrategy imputationStrategy,  List<DataLoader> dataLoaders, List<Instrument> instruments, List<TimeFrame> timeFrames) {
+
+        logger.debug("Full Context loading between {} and {} for {} instruments ({}), with: {}",
+                TimeTools.fromLongToZonedDateTime(start, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
+                TimeTools.fromLongToZonedDateTime(end, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
+                instruments.size(),
+                timeFrames.stream().map(TimeFrame::getLabel).collect(Collectors.joining(", ")),
+                dataLoaders.stream().map(DataLoader::getLabel).collect(Collectors.joining(", "))
+        );
+
         this.end = end;
         this.start = start;
         DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy, dataLoaders.toArray(DataLoader[]::new));
@@ -39,9 +52,10 @@ public class FullDataContext implements DataContext {
                 dataContainer = dataContainerFactory.create(start, end, instrument,  this.timeFrames);
                 data.put(instrument, dataContainer);
             } catch (LoadingException e) {
-                logger.debug("Failed to load {}: {}", instrument.getLabel(), e.getMessage());
+                logger.warn("Failed to load {}: {}", instrument.getLabel(), e.getMessage());
             }
         }
+        logger.info("End of the loading context - {}", getDescription());
     }
 
     @Override

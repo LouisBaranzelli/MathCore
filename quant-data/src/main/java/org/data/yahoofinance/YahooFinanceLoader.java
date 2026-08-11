@@ -33,6 +33,7 @@ public class YahooFinanceLoader implements DataLoader {
     private final DataSaver[] savers;
     private final DataLoader defaultLoader;
     private static Logger logger = LoggerFactory.getLogger(YahooFinanceLoader.class);
+    private static final int REST_TIME = 500; // délai d'attente en ms pour ne pas surcharcher l'API
 
     public YahooFinanceLoader() {
         this(null);
@@ -45,8 +46,7 @@ public class YahooFinanceLoader implements DataLoader {
 
     @Override
     public List<Candle> load(long start, long end, Instrument instrument, TimeFrame timeFrame) throws LoadingException {
-
-
+        logger.debug(logLoading(start, end, instrument, timeFrame));
         if (timeFrame == TimeFrame.MO || timeFrame == TimeFrame.WK){
             try {
                 return defaultLoader.load(start, end, instrument, timeFrame);
@@ -69,16 +69,25 @@ public class YahooFinanceLoader implements DataLoader {
 
         FetcherUrl fetcherUrl = new FetcherUrl(urlStr);
         JSONObject root;
+        String baseErrorMessage = String.format("Fetching data failed for %s (%s): ", instrument.getLabel(), timeFrame.getLabel());
         try {
             root = fetcherUrl.fetch();
-        } catch (IOException e) {
-            throw new LoadingException(e.toString());
+            Thread.sleep(YahooFinanceLoader.REST_TIME);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(baseErrorMessage + e.getMessage());
         }
-
-        JSONArray timestamps = root.getJSONObject("chart")
-                .getJSONArray("result")
-                .getJSONObject(0)
-                .getJSONArray("timestamp");
+        catch (Exception e) {
+            throw new LoadingException(baseErrorMessage + e.getMessage());
+        }
+        JSONArray timestamps;
+        try {
+            timestamps = root.getJSONObject("chart")
+                    .getJSONArray("result")
+                    .getJSONObject(0)
+                    .getJSONArray("timestamp");
+        } catch (Exception e){
+            throw new LoadingException(String.format("Mauvais format de données reçu: ", e.getMessage()));
+        }
 
         long endDateReached = timestamps.getLong(timestamps.length() - 1);
         endDateReached = adaptTimeStamp(endDateReached, 0, timeFrame, instrument.getZoneIdEnum().getZoneId());
@@ -90,6 +99,8 @@ public class YahooFinanceLoader implements DataLoader {
                     TimeTools.fromLongToZonedDateTime(end, instrument.getZoneIdEnum().getZoneId()
                     ), TimeTools.fromLongToZonedDateTime(endDateReached, instrument.getZoneIdEnum().getZoneId())));
         }
+
+
 
         JSONObject indicators = root.getJSONObject("chart")
                 .getJSONArray("result")
@@ -110,15 +121,29 @@ public class YahooFinanceLoader implements DataLoader {
 
             long ts = timestamps.getLong(i);
             ts = adaptTimeStamp(ts, 0, timeFrame, instrument.getZoneIdEnum().getZoneId());
+            try {
+                double o = value(opens, i, instrument, timeFrame);
+                double h = value(highs, i, instrument, timeFrame);
+                double l = value(lows, i, instrument, timeFrame);
+                double c = value(closes, i, instrument, timeFrame);
+                double v = value(volumes, i, instrument, timeFrame);
+                candles.add(new Candle(instrument,ts, o, h, l, c, v));
+            } catch (LoadingException e) {
+               // ne fais rien, sera traité par l'imputation
+            } catch (IllegalArgumentException e){
+                //Peut arriver sur certaines valeurs, ne rien faire, sera traité par l'imputation
 
-            double o = value(opens, i, instrument, timeFrame);
-            double h = value(highs, i, instrument, timeFrame);
-            double l = value(lows, i, instrument, timeFrame);
-            double c = value(closes, i, instrument, timeFrame);
-            double v = value(volumes, i, instrument, timeFrame);
+            }
 
-            candles.add(new Candle(instrument,ts, o, h, l, c, v));
         }
+
+        if (candles.isEmpty()){
+            throw new LoadingException(String.format("No data available for %s, %s.",
+                    instrument.getLabel(),
+                    timeFrame.getLabel()));
+        }
+
+        onSuccessLoading(instrument, timeFrame, candles);
         return candles;
     }
 
@@ -144,6 +169,7 @@ public class YahooFinanceLoader implements DataLoader {
 
     @Override
     public void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) {
+        logger.debug("{} ({}): {} [LOADING SUCCEED]", instrument.getLabel(), timeFrame.getLabel(), getLabel());
         if (this.savers != null){
             Arrays.stream(this.savers).forEach(s -> {
                 try {

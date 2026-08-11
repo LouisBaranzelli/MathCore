@@ -1,12 +1,15 @@
 package org.series.timeserie;
 
+import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.series.InvalidTimeSerieException;
 import org.series.TimeTools;
+import org.series.ZoneIdEnum;
 import org.series.imputation.ImputationStrategy;
 import org.series.timegrid.TimeGrid;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,9 +115,13 @@ class TimeFrameAlignerTest {
         private final long date;
         private final double value;
 
+        @Getter
+        private final ZoneId zoneId;
+
         public StubRawObservation(long date, double value) {
             this.date = date;
             this.value = value;
+            this.zoneId = ZoneIdEnum.UTC.getZoneId();
         }
 
         @Override

@@ -140,7 +140,7 @@ class TimeGridFactoryBoundedCreateTest {
         long end = Instant.parse("2026-07-17T11:00:00Z").getEpochSecond();
 
         // WHEN
-        TimeGrid grid = TimeGridFactory.create(start, end, acceptAll, TimeFrame.MI15);
+        TimeGrid grid = TimeGridFactory.create(start, end, acceptAll, TimeFrame.MI15,  ZoneIdEnum.UTC.getZoneId());
 
         // THEN
         assertEquals(5, grid.size());
@@ -157,7 +157,7 @@ class TimeGridFactoryBoundedCreateTest {
         long monday = Instant.parse("2026-07-20T17:00:00Z").getEpochSecond();
 
         // WHEN
-        TimeGrid grid = TimeGridFactory.create(friday, monday, businessDaysOnly, TimeFrame.D);
+        TimeGrid grid = TimeGridFactory.create(friday, monday, businessDaysOnly, TimeFrame.D, ZoneIdEnum.UTC.getZoneId());
 
         // THEN : Seuls Vendredi et Lundi sont valides -> size = 2
         assertEquals(2, grid.size());
@@ -174,7 +174,7 @@ class TimeGridFactoryBoundedCreateTest {
         long monday = Instant.parse("2026-07-20T17:00:00Z").getEpochSecond();
 
         // WHEN
-        TimeGrid grid = TimeGridFactory.create(fridayMinusOneHour, monday, businessDaysOnly, TimeFrame.D);
+        TimeGrid grid = TimeGridFactory.create(fridayMinusOneHour, monday, businessDaysOnly, TimeFrame.D, ZoneIdEnum.UTC.getZoneId());
 
         // THEN : Seuls Vendredi et Lundi sont valides -> size = 2
         assertEquals(2, grid.size());
@@ -189,7 +189,7 @@ class TimeGridFactoryBoundedCreateTest {
         long timestamp = Instant.parse("2026-07-17T12:00:00Z").getEpochSecond();
 
         // WHEN
-        TimeGrid grid = TimeGridFactory.create(timestamp, timestamp, acceptAll, TimeFrame.HR);
+        TimeGrid grid = TimeGridFactory.create(timestamp, timestamp, acceptAll, TimeFrame.HR, ZoneIdEnum.UTC.getZoneId());
 
         // THEN
         assertEquals(1, grid.size());
@@ -207,7 +207,7 @@ class TimeGridFactoryBoundedCreateTest {
         // getNumberValuesStartingFromEndBetween renvoie 0 -> create(end, 0, ...) lève IllegalArgumentException
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> TimeGridFactory.create(start, end, acceptAll, TimeFrame.MI5)
+                () -> TimeGridFactory.create(start, end, acceptAll, TimeFrame.MI5, ZoneIdEnum.UTC.getZoneId())
         );
         assertEquals("start must be before the end, got start: 1784289600 and end: 1784282400", ex.getMessage());
     }
@@ -223,7 +223,7 @@ class TimeGridFactoryBoundedCreateTest {
         // WHEN & THEN
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> TimeGridFactory.create(start, end, rejectAll, TimeFrame.MI15)
+                () -> TimeGridFactory.create(start, end, rejectAll, TimeFrame.MI15, ZoneIdEnum.UTC.getZoneId())
         );
     }
 }
