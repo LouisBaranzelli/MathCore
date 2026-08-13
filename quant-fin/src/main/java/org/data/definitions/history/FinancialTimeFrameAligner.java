@@ -40,7 +40,6 @@ public class FinancialTimeFrameAligner {
             case HR  -> alignHour(truncated);
             case D   -> alignDay(truncated);
             case WK  -> alignWeek(truncated);
-            case MO  -> alignMonth(truncated);
         };
     }
 

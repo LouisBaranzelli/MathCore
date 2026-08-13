@@ -5,8 +5,7 @@ import org.common.FetcherUrl;
 import org.data.SavingException;
 import org.data.csv.DataSaver;
 import org.data.definitions.LoadingException;
-import org.data.definitions.TickEnum;
-import org.data.definitions.TickService;
+
 import org.data.definitions.assets.Instrument;
 import org.data.definitions.candles.Candle;
 import org.data.definitions.history.DataLoader;
@@ -17,15 +16,9 @@ import org.series.timeserie.TimeFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class YahooFinanceLoader implements DataLoader {
@@ -47,7 +40,7 @@ public class YahooFinanceLoader implements DataLoader {
     @Override
     public List<Candle> load(long start, long end, Instrument instrument, TimeFrame timeFrame) throws LoadingException {
         logger.debug(logLoading(start, end, instrument, timeFrame));
-        if (timeFrame == TimeFrame.MO || timeFrame == TimeFrame.WK){
+        if (timeFrame == TimeFrame.WK){
             try {
                 return defaultLoader.load(start, end, instrument, timeFrame);
             } catch (LoadingException e){
@@ -57,7 +50,7 @@ public class YahooFinanceLoader implements DataLoader {
 
         long startAdapted = start;
         long endAdapted = end;
-        if (List.of(TimeFrame.D, TimeFrame.WK, TimeFrame.MO).contains(timeFrame)) {
+        if (List.of(TimeFrame.D, TimeFrame.WK).contains(timeFrame)) {
             startAdapted = YahooFinanceTimeService.setHourAt(0, start, instrument.getZoneIdEnum().getZoneId());
             endAdapted = YahooFinanceTimeService.setHourAt(23, end, instrument.getZoneIdEnum().getZoneId());
         }
@@ -156,7 +149,7 @@ public class YahooFinanceLoader implements DataLoader {
     }
 
     private long adaptTimeStamp(long timestamp, int targetHour, TimeFrame timeFrame, ZoneId zoneId){
-        if (List.of(TimeFrame.D, TimeFrame.WK, TimeFrame.MO).contains(timeFrame)) {
+        if (List.of(TimeFrame.D, TimeFrame.WK).contains(timeFrame)) {
             return YahooFinanceTimeService.setHourAt(targetHour, timestamp, zoneId);
         }
         return timestamp;

@@ -2,12 +2,7 @@ package org.series;
 
 import org.series.timeserie.TimeFrame;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -44,8 +39,7 @@ public final class TimeTools {
     }
 
     public static int getNumberValuesStartingFromEndBetween(long start, long end, TimeFrame timeFrame, Predicate<Long> validDate, ZoneId zoneId) {
-        int size = getNumberValuesStartingFromEndBetween(start, end, timeFrame);
-        long deltaSeconds = fromDurationToLong(timeFrame.getDuration());
+        int size = getNumberValuesStartingFromEndBetween(start, end, timeFrame, zoneId);
         int unValidDates = 0;
         for (long i=end; i>=start ;i=getMinusPeriod(i, timeFrame, zoneId)){
             if (!validDate.test(i)){
@@ -70,21 +64,20 @@ public final class TimeTools {
             case HR -> previousZonedDateTime = zonedDateTime.minusHours(1);
             case D -> previousZonedDateTime = zonedDateTime.minusDays(1);
             case WK -> previousZonedDateTime = zonedDateTime.minusDays(7);
-            case MO -> previousZonedDateTime = zonedDateTime.minusMonths(1);
         }
         return TimeTools.fromZonedDateTimeToLong(previousZonedDateTime);
     }
 
-    public static int getNumberValuesStartingFromEndBetween(long startSeconds, long endSeconds, TimeFrame timeFrame) {
-        long start = Math.min(startSeconds, endSeconds);
-        long end = Math.max(startSeconds, endSeconds);
+    public static int getNumberValuesStartingFromEndBetween(long startSeconds, long endSeconds, TimeFrame timeFrame, ZoneId zoneId) {
+        ZonedDateTime start = TimeTools.fromLongToZonedDateTime(Math.min(startSeconds, endSeconds), zoneId);
+        ZonedDateTime end =  TimeTools.fromLongToZonedDateTime(Math.max(startSeconds, endSeconds), zoneId);
 
         long deltaSeconds = fromDurationToLong(timeFrame.getDuration());
         if (deltaSeconds <= 0) {
             throw new IllegalArgumentException("TimeFrame duration must be positive");
         }
-
-        return (int) ((end - start) / deltaSeconds) + 1;
+        long seconds = Duration.between(start, end).toSeconds();
+        return (int) (seconds / deltaSeconds) + 1;
     }
 
     public static long fromDayStringToLong(String dayString, ZoneIdEnum zoneIdEnum) {

@@ -51,8 +51,8 @@ class TimeToolsTest {
             case HR  -> 3600L;             // 1 heure = 3600s
             case D   -> 86400L;            // 1 jour = 86400s
             case WK  -> 7 * 86400L;        // 1 semaine = 604800s
-            case MO  -> 31 * 86400L;       // 1 mois standard (Duration basée sur 31 jours)
         };
+
 
         long actualSeconds = TimeTools.fromDurationToLong(timeFrame.getDuration());
 
@@ -67,7 +67,7 @@ class TimeToolsTest {
         long start = 1000L;
         long end = 1000L;
 
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.MI);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.MI, ZoneIdEnum.UTC.getZoneId());
 
         assertEquals(1, size, "Pour start == end, il doit y avoir exactement 1 valeur");
     }
@@ -80,8 +80,8 @@ class TimeToolsTest {
         long end = 0L;
 
         // start > end : l'algorithme doit permuter les bornes et trouver la même taille
-        int sizeInverted = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.MI5); // step = 300s
-        int sizeNormal = TimeTools.getNumberValuesStartingFromEndBetween(end, start, TimeFrame.MI5);
+        int sizeInverted = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.MI5, ZoneIdEnum.UTC.getZoneId()); // step = 300s
+        int sizeNormal = TimeTools.getNumberValuesStartingFromEndBetween(end, start, TimeFrame.MI5, ZoneIdEnum.UTC.getZoneId());
 
         assertEquals(sizeNormal, sizeInverted);
         assertEquals(7, sizeInverted); // 1800 / 300 = 6 pas -> 7 points inclus
@@ -95,7 +95,7 @@ class TimeToolsTest {
         long start = 0L;
         long end = 700L;
 
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.MI5);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, TimeFrame.MI5, ZoneIdEnum.UTC.getZoneId());
 
         assertEquals(3, size);
     }
@@ -109,14 +109,12 @@ class AllTimeFramesTests {
     @EnumSource(TimeFrame.class)
     @DisplayName("Devrait calculer la bonne taille pour exactement 1 pas complet pour chaque TimeFrame")
     void shouldReturnTwoValuesForExactlyOneStep(TimeFrame timeFrame) {
-        if (timeFrame.equals(TimeFrame.MO)){
-            return;
-        }
+
         long delta = TimeTools.fromDurationToLong(timeFrame.getDuration()); // ou TimeTools.fromDurationToLong(...)
         long start = 0L;
         long end = delta; // exact 1 pas de temps
 
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, ZoneIdEnum.UTC.getZoneId());
 
         assertEquals(2, size, "Pour un intervalle égal à 1 pas, il doit y avoir 2 points (début et fin)");
     }
@@ -125,14 +123,11 @@ class AllTimeFramesTests {
     @EnumSource(TimeFrame.class)
     @DisplayName("Devrait calculer la bonne taille pour exactement 5 pas complets pour chaque TimeFrame")
     void shouldReturnSixValuesForFiveSteps(TimeFrame timeFrame) {
-        if (timeFrame == TimeFrame.MO){
-            return;
-        }
         long delta = TimeTools.fromDurationToLong(timeFrame.getDuration());
         long start = 0L;
         long end = delta * 5; // exact 5 pas de temps
 
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, ZoneIdEnum.UTC.getZoneId());
 
         assertEquals(6, size, "Pour 5 pas de temps, il doit y avoir 6 points inclus");
     }

@@ -7,9 +7,12 @@ import org.data.definitions.candles.Candle;
 import org.data.definitions.candles.CandleTimeSerie;
 import org.data.definitions.candles.CompositeCandleTimeSerie;
 import org.series.InvalidTimeSerieException;
+import org.series.TimeTools;
 import org.series.imputation.ImputationStrategy;
+import org.series.timegrid.TimeFrameAligner;
 import org.series.timeserie.*;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -27,7 +30,13 @@ public class DataContainerFactory {
     public  DataContainer create(long start, long end, Instrument instrument, TimeFrame... timeFrames) throws LoadingException {
         DataContainer dataContainer = new DataContainer(instrument);
         for (TimeFrame timeFrame : timeFrames) {
-            List<Candle> candles = useLoaders(instrument, timeFrame, start, end);
+
+            ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
+            TimeFrameAligner aligner = AlignerService.get(instrument);
+            long roundStart = TimeTools.fromZonedDateTimeToLong(aligner.alignFloor(TimeTools.fromLongToZonedDateTime(start, zoneId), timeFrame));
+            long roundEnd = TimeTools.fromZonedDateTimeToLong(AlignerService.get(instrument).alignFloor(TimeTools.fromLongToZonedDateTime(end, zoneId), timeFrame));
+
+            List<Candle> candles = useLoaders(instrument, timeFrame, roundStart, roundEnd);
 
             Observation[] opens = new Observation[candles.size()];
             Observation[] closes = new Observation[candles.size()];
@@ -94,7 +103,7 @@ public class DataContainerFactory {
             }
         }
 
-        throw new LoadingException("failed to load: " + instrument.getLabel() + " with " + timeFrame.getLabel() + " because: " + stringBuilder.toString());
+        throw new LoadingException(stringBuilder.toString());
 
 
     }

@@ -70,7 +70,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
         logger.debug(logLoading(start, end, instrument, timeFrame));
         List<Candle> candles = loadAll(instrument, timeFrame);
         // pour les timeframes mois/week end comme on charge les jours on aura necessairement plus de données que nécessaire
-        if (timeFrame.equals(TimeFrame.WK) || timeFrame.equals(TimeFrame.MO)){
+        if (timeFrame.equals(TimeFrame.WK)){
             Predicate<Long> validDatesPredicate = AlignerService.getValidDatePredicateBasedOnAligner(instrument, timeFrame);
             candles = candles.stream().filter(candle -> validDatesPredicate.test(candle.timestamp())).toList();
         }
@@ -102,7 +102,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
         long lastCandleTimeStamp = candles.get(candles.size()-1).timestamp();
         if (end != lastCandleTimeStamp){
             ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
-            throw new LoadingException(String.format("Date requested: %s, date received: %s",
+            throw new LoadingException(String.format("date requested: %s, date received: %s",
                     TimeTools.fromLongToZonedDateTime(end, zoneId),
                     TimeTools.fromLongToZonedDateTime(lastCandleTimeStamp, zoneId)));
         }

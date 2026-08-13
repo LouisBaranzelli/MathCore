@@ -13,7 +13,7 @@ public class TickService {
      * @return
      */
     public static TickEnum getTick(TimeFrame timeFrame){
-        List<TimeFrame> daysRelative = List.of(TimeFrame.D, TimeFrame.WK, TimeFrame.MO);
+        List<TimeFrame> daysRelative = List.of(TimeFrame.D, TimeFrame.WK);
         List<TimeFrame> secondRelative = List.of(TimeFrame.HR, TimeFrame.MI30, TimeFrame.MI15, TimeFrame.MI5);
 
         if (daysRelative.contains(timeFrame)){

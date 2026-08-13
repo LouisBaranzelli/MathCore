@@ -20,7 +20,7 @@ public class DummyDataLoader implements DataLoader {
     @Override
     public List<Candle> load(long start, long end, Instrument instrument, TimeFrame timeFrame) throws LoadingException {
         List<Candle> output = new ArrayList<>();
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, instrument.getZoneIdEnum().getZoneId());
         IntStream.range(0, size).forEach(i -> output.add(Candle.randomCandle(i * TimeTools.fromDurationToLong(timeFrame.getDuration()) +  start)));
         return output;
     }

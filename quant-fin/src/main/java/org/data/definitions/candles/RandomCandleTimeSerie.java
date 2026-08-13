@@ -32,7 +32,7 @@ public class RandomCandleTimeSerie implements CandleTimeSerie{
                                  TimeFrame timeFrame, long start, long end) throws InvalidTimeSerieException {
 
 
-        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame);
+        int size = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, instrument.getZoneIdEnum().getZoneId());
         TimeGrid timeGrid = TimeGridFactory.create(
                 end,
                 size,

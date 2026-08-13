@@ -22,7 +22,6 @@ public interface TimeFrameAligner {
             case HR  -> this.alignHour(truncated);
             case D   -> this.alignDay(truncated);
             case WK  -> this.alignWeek(truncated);
-            case MO  -> this.alignMonth(truncated);
         };
     }
 

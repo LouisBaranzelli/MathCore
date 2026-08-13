@@ -18,8 +18,7 @@ public enum TimeFrame {
     MI30("Mi30", "30 Minutes", 30, ZonedDateTime::minusMinutes, "yyyy-MM-dd HH:mm"),
     HR("Hr", "1 Hour", 1, ZonedDateTime::minusHours, "yyyy-MM-dd HH:mm"),
     D("D1", "1 Day", 1, ZonedDateTime::minusDays, "yyyy-MM-dd"),
-    WK("Wk", "1 Week", 1, ZonedDateTime::minusWeeks, "yyyy-MM-dd"),
-    MO("Mo", "1 Month", 1, ZonedDateTime::minusMonths, "yyyy-MM");
+    WK("Wk", "1 Week", 1, ZonedDateTime::minusWeeks, "yyyy-MM-dd");
 
     @Getter
     private final String code;
@@ -55,14 +54,8 @@ public enum TimeFrame {
     }
 
     public Duration getDuration() {
-
-        if (this != TimeFrame.MO) {
-            ZonedDateTime now = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
-            ZonedDateTime before = shiftBackward(now);
-            return Duration.between(before, now);
-        } else {
-            throw new RuntimeException("this function can not take in charge: " + this.getLabel());
-        }
-
+        ZonedDateTime now = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
+        ZonedDateTime before = shiftBackward(now);
+        return Duration.between(before, now);
     }
 }

@@ -12,9 +12,6 @@ public class YahooFinanceIntervalService {
             case WK -> {
                 return "1wk";
             }
-            case MO -> {
-                return "1mo";
-            }
             default -> throw new RuntimeException("à implémenter");
         }
     }
