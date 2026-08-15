@@ -58,7 +58,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
             Collections.sort(candles);
             return candles;
         } catch (IOException e) {
-            throw new LoadingException("Failed to open the csv file: " + instrument.getLabel() +" in " + rootPath.getParent().toAbsolutePath());
+            throw new LoadingException("( "+ getLabel() + ") Failed to open the csv file: " + instrument.getLabel() +" in " + rootPath.getParent().toAbsolutePath());
         }
     }
     @Override
@@ -75,10 +75,12 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
             candles = candles.stream().filter(candle -> validDatesPredicate.test(candle.timestamp())).toList();
         }
         if (candles.isEmpty()){
-            throw new LoadingException(String.format("No data available for %s, %s.",
+            throw new LoadingException(String.format("(%s) No data available for %s, %s.",
+                    getLabel(),
                     instrument.getLabel(),
                     timeFrame.getLabel()));
         }
+        candles = candles.stream().filter(c -> c.timestamp() >= start && c.timestamp() <= end).toList();
 
         int targetSize;
         Predicate<Long> predicateValidDate = validDates == null ? AlignerService.getValidDatePredicateBasedOnAligner(instrument, timeFrame) : validDates;
@@ -88,17 +90,18 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
             targetSize = TimeTools.getNumberValuesStartingFromEndBetween(start, end, timeFrame, predicateValidDate,instrument.getZoneIdEnum().getZoneId());
         }
         double availableDataRatio = MathUtil.round((double) candles.size() / targetSize, 1);
+
         if (availableDataRatio < thresholdLoadingError || availableDataRatio > 1){
             throw new LoadingException(
                     String.format(
-                            "Only %s%% of data available for %s.",
+                            "(%s) Only %s%% of data available for %s.",
+                            getLabel(),
                             availableDataRatio * 100,
                             instrument.getLabel()
                     )
             );
         }
 
-        candles = candles.stream().filter(c -> c.timestamp() >= start && c.timestamp() <= end).toList();
         long lastCandleTimeStamp = candles.get(candles.size()-1).timestamp();
         if (end != lastCandleTimeStamp){
             ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
@@ -124,7 +127,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     public void save(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) throws SavingException {
         try {
         List<Candle> existingSavedCandles = loadAll(instrument, timeFrame);
-        List<Candle> allCandles = Stream.concat(existingSavedCandles.stream(), candles.stream())
+        List<Candle> allCandles = Stream.concat( candles.stream(), existingSavedCandles.stream())
                 .filter(distinctBy(Candle::timestamp))
                 .sorted()
                 .toList();
@@ -147,7 +150,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     private Path getCsvPath(Instrument instrument, TimeFrame timeFrame) throws IOException {
         Files.createDirectories(rootPath);
 
-        String endStr = TickService.getTick(timeFrame) == TickEnum.DAY ? TimeFrame.D.getLabel() : timeFrame.getLabel();
+        String endStr = TickService.getTick(timeFrame) == TickEnum.DAY ? TimeFrame.D.getLabel() : " " + timeFrame.getLabel();
         File csvFile = new File(rootPath.toFile(), getCsvFileName(instrument, endStr));
         csvFile.createNewFile();
         return csvFile.toPath();

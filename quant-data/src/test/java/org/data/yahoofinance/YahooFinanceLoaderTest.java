@@ -3,16 +3,23 @@ package org.data.yahoofinance;
 import org.data.csv.CsvInstrumentDataBase;
 import org.data.csv.DataSaver;
 import org.data.definitions.LoadingException;
+import org.data.definitions.TickEnum;
+import org.data.definitions.TickService;
 import org.data.definitions.assets.Stock;
 import org.data.definitions.candles.Candle;
 import org.data.definitions.history.DataLoader;
+import org.data.definitions.history.FullDataContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
+import org.series.imputation.ImputationStrategy;
+import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
 import java.nio.file.Path;
@@ -129,5 +136,85 @@ class YahooFinanceLoaderTest {
             List<Candle> weeklyCandles = yahooFinanceLoader.load(start, end7th, Stock.TTE, TimeFrame.WK);
             assertEquals(injectedCandle, weeklyCandles.get(weeklyCandles.size() - 1));
         }
+    }
+
+    @Test
+    @DisplayName("Devrait charger les données de week avec des données manquante pour les jours")
+    void shouldLoadWeekWithWmissingThrewAmputation() throws LoadingException {
+
+        long start = TimeTools.fromDayStringToLong("2026-07-01", ZoneIdEnum.EUROPE_PARIS);
+        long end = TimeTools.fromDayStringToLong("2026-08-10", ZoneIdEnum.EUROPE_PARIS); // dans ce chargement le Vendredi 31 est manquant
+        DataLoader csvLoader = new CsvInstrumentDataBase(tempDir);
+        DataLoader yahooFinanceLoader = new YahooFinanceLoader(csvLoader, (DataSaver) csvLoader);
+        ImputationStrategy imputationStrategy = new StubImputationStrategy();
+        FullDataContext context = new FullDataContext(start, end, imputationStrategy, List.of(csvLoader, yahooFinanceLoader), List.of(Stock.TTE), List.of(TimeFrame.D));
+        // erreur car Vendredi Manquant
+        assertThrows(LoadingException.class, () -> csvLoader.load(start, end, Stock.TTE, TimeFrame.WK)); // manque de data exception
+
+    }
+
+    @Test
+    @DisplayName("Devrait utiliser les données 'WEEK' pour la fréquence 'DAY'")
+    void shouldUseWeekDataAlsoForDayTick() throws LoadingException {
+        // Given
+        ZoneIdEnum zone = ZoneIdEnum.EUROPE_PARIS;
+        long start = TimeTools.fromDayStringToLong("2026-08-11", zone);
+        long end = TimeTools.fromDayStringToLong("2026-08-15", zone);
+
+        DataLoader csvLoader = new CsvInstrumentDataBase(tempDir);
+        DataLoader yahooFinanceLoader = new YahooFinanceLoader(csvLoader, (DataSaver) csvLoader);
+        ImputationStrategy imputationStrategy = new StubImputationStrategy();
+
+        FullDataContext context = new FullDataContext(
+                start,
+                end,
+                imputationStrategy,
+                List.of(csvLoader, yahooFinanceLoader),
+                List.of(Stock.TTE),
+                List.of(TimeFrame.WK)
+        );
+
+        long startFriday = TimeTools.fromDayStringToLong("2026-08-14", zone);
+        long endFriday = TimeTools.fromDayStringToLong("2026-08-14", zone);
+        List<?> ticks = csvLoader.load(start, endFriday, Stock.TTE, TimeFrame.WK);
+        assertEquals(1, ticks.size());
+
+
+        // When
+        ticks = csvLoader.load(startFriday, endFriday, Stock.TTE, TimeFrame.D);
+
+        // Then
+        assertEquals(1, ticks.size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(TimeFrame.class)
+    @DisplayName("Devrait charger correctement les données pour chaque TimeFrame")
+    void shouldLoadDataForEveryTimeFrame(TimeFrame timeFrame) throws LoadingException {
+
+        if (TickService.getTick(timeFrame).equals(TickEnum.DAY)){
+            return;
+        }
+        ZoneIdEnum zone = ZoneIdEnum.EUROPE_PARIS;
+        long start = TimeTools.fromDateTimeStringToLong("2026-08-14T10:30:00", zone);
+        long end = TimeTools.fromDateTimeStringToLong("2026-08-14T15:30:00", zone);
+
+        DataLoader csvLoader = new CsvInstrumentDataBase(tempDir);
+        DataLoader yahooFinanceLoader = new YahooFinanceLoader(csvLoader, (DataSaver) csvLoader);
+        ImputationStrategy imputationStrategy = new StubImputationStrategy();
+
+        // When
+        FullDataContext context = new FullDataContext(
+                start,
+                end,
+                imputationStrategy,
+                List.of(csvLoader, yahooFinanceLoader),
+                List.of(Stock.TTE),
+                List.of(timeFrame)
+        );
+
+        // Then
+        assertTrue(context.getCandleTimeSerie(Stock.TTE, timeFrame).size() >= 5);
+        // Ajoutez ici vos assertions spécifiques (ex: vérifier le nombre de ticks chargés)
     }
 }

@@ -53,6 +53,9 @@ public class YahooFinanceLoader implements DataLoader {
         if (List.of(TimeFrame.D, TimeFrame.WK).contains(timeFrame)) {
             startAdapted = YahooFinanceTimeService.setHourAt(0, start, instrument.getZoneIdEnum().getZoneId());
             endAdapted = YahooFinanceTimeService.setHourAt(23, end, instrument.getZoneIdEnum().getZoneId());
+        } else {
+            // yahoo finance exclu la dernière valeur donc je rajoute une periode pour l'inclure Tick min 15h30 -> 15h30 et non 15h29
+            endAdapted = end + TimeTools.fromDurationToLong(timeFrame.getDuration());
         }
 
 
@@ -85,8 +88,9 @@ public class YahooFinanceLoader implements DataLoader {
         long endDateReached = timestamps.getLong(timestamps.length() - 1);
         endDateReached = adaptTimeStamp(endDateReached, 0, timeFrame, instrument.getZoneIdEnum().getZoneId());
 
-        if (endDateReached != end){
-            throw new LoadingException(String.format("Loading of %s (%s) failed to reach %s, got %s instead.",
+        if (endDateReached < end){
+            throw new LoadingException(String.format("(%s) Loading of %s (%s) failed to reach %s, got %s instead.",
+                    getLabel(),
                     instrument.getLabel(),
                     timeFrame.getLabel(),
                     TimeTools.fromLongToZonedDateTime(end, instrument.getZoneIdEnum().getZoneId()
@@ -111,9 +115,11 @@ public class YahooFinanceLoader implements DataLoader {
         List<Candle> candles = new ArrayList<>();
 
         for (int i = 0; i < timestamps.length(); i++) {
-
             long ts = timestamps.getLong(i);
             ts = adaptTimeStamp(ts, 0, timeFrame, instrument.getZoneIdEnum().getZoneId());
+            if (ts < start || ts > end){
+                continue;
+            }
             try {
                 double o = value(opens, i, instrument, timeFrame);
                 double h = value(highs, i, instrument, timeFrame);
@@ -131,9 +137,19 @@ public class YahooFinanceLoader implements DataLoader {
         }
 
         if (candles.isEmpty()){
-            throw new LoadingException(String.format("No data available for %s, %s.",
+            throw new LoadingException(String.format("(%s) No data available for %s, %s.",
+                    getLabel(),
                     instrument.getLabel(),
                     timeFrame.getLabel()));
+        }
+        endDateReached = candles.getLast().timestamp();
+        if (endDateReached != end){
+            throw new LoadingException(String.format("(%s) Loading of %s (%s) failed to reach %s, got %s instead.",
+                    getLabel(),
+                    instrument.getLabel(),
+                    timeFrame.getLabel(),
+                    TimeTools.fromLongToZonedDateTime(end, instrument.getZoneIdEnum().getZoneId()
+                    ), TimeTools.fromLongToZonedDateTime(endDateReached, instrument.getZoneIdEnum().getZoneId())));
         }
 
         onSuccessLoading(instrument, timeFrame, candles);
@@ -143,7 +159,7 @@ public class YahooFinanceLoader implements DataLoader {
     private double value(JSONArray arr, int idx, Instrument instrument, TimeFrame timeFrame) throws LoadingException {
         if (arr.isNull(idx)) {
             throw new LoadingException(
-                    "Data loaded for %s (%s) contains null values".formatted(instrument.getLabel(), timeFrame.getLabel())
+                    "(%s) Data loaded for %s (%s) contains null values".formatted(getLabel(), instrument.getLabel(), timeFrame.getLabel())
             );        }
         return arr.getDouble(idx);
     }

@@ -3,6 +3,7 @@ package org.data.csv;
 import org.data.definitions.LoadingException;
 import org.data.definitions.assets.Stock;
 import org.data.definitions.candles.Candle;
+import org.data.definitions.history.AlignerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -10,8 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
+import org.series.imputation.ImputationStrategy;
+import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -146,29 +150,31 @@ class CsvInstrumentDataBaseTest {
     @Test
     @DisplayName("Devrait convertir la résolution lors du passage de Daily à Weekly")
     void shouldSwitchFromDaysToWeeks() throws LoadingException {
-        ZoneIdEnum zurichZone = ZoneIdEnum.EUROPE_ZURICH;
-        long day1 = TimeTools.fromDayStringToLong("2026-08-09", zurichZone);
+        ZoneIdEnum parisZone = ZoneIdEnum.EUROPE_PARIS;
+        long day1 = TimeTools.fromDayStringToLong("2026-08-07", parisZone);
 
         Candle candle1 = Candle.randomCandle(day1);
         csvDataBase.save(Stock.TTE, TimeFrame.D, List.of(candle1));
 
-        List<Candle> loadedWeekly = csvDataBase.load(day1, day1, Stock.TTE, TimeFrame.WK, date -> true);
+        List<Candle> loadedWeekly = csvDataBase.load(day1, day1, Stock.TTE, TimeFrame.WK, AlignerService.getValidDatePredicateBasedOnAligner(Stock.TTE, TimeFrame.WK));
         assertEquals(1, loadedWeekly.size());
 
         List<Candle> fullWeekCandles = List.of(
                 candle1,
-                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-10", zurichZone)),
-                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-11", zurichZone)),
-                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-12", zurichZone)),
-                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-13", zurichZone)),
-                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-14", zurichZone))
+                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-10", parisZone)),
+                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-11", parisZone)),
+                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-12", parisZone)),
+                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-13", parisZone)),
+                Candle.randomCandle(TimeTools.fromDayStringToLong("2026-08-14", parisZone))
         );
 
         csvDataBase.save(Stock.TTE, TimeFrame.D, fullWeekCandles);
 
-        long endWeek = TimeTools.fromDayStringToLong("2026-08-14", zurichZone);
-        List<Candle> reloadedWeekly = csvDataBase.load(day1, endWeek, Stock.TTE, TimeFrame.WK, date -> true);
+        long endWeek = TimeTools.fromDayStringToLong("2026-08-14", parisZone);
+        List<Candle> reloadedWeekly = csvDataBase.load(day1, endWeek, Stock.TTE, TimeFrame.WK, AlignerService.getValidDatePredicateBasedOnAligner(Stock.TTE, TimeFrame.WK));
 
-        assertEquals(6, reloadedWeekly.size());
+        assertEquals(2, reloadedWeekly.size());
     }
+
+
 }
