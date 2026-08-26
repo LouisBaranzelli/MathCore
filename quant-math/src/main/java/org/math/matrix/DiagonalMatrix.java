@@ -6,68 +6,53 @@ import org.math.vector.Vector;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class DiagonalMatrix implements Matrix {
+public class DiagonalMatrix extends AbstractMatrix implements SymmetricMatrix {
 
-    private final double[] diagonal; // Uniquement N éléments en mémoire O(N)
+    private final double[] diagonal;
 
     public DiagonalMatrix(double[] diagonal) {
         if (diagonal == null || diagonal.length == 0) {
             throw new IllegalArgumentException("Diagonal data cannot be empty or null");
         }
-        this.diagonal = diagonal.clone(); // Copie défensive
+        this.diagonal = diagonal.clone();
     }
 
     private DiagonalMatrix(double[] diagonal, boolean unsafeUnchecked) {
         this.diagonal = diagonal;
     }
 
-    @Override
-    public int rowCount() {
-        return diagonal.length;
-    }
+    @Override public int rowCount() { return diagonal.length; }
+    @Override public int columnCount() { return diagonal.length; }
 
     @Override
-    public int columnCount() {
-        return diagonal.length;
+    public boolean isSquare() {
+        return super.isSquare();
     }
 
     @Override
     public double get(int row, int col) {
-        checkIndices(row, col);
+        checkRowIndex(row);
+        checkColumnIndex(col);
         return (row == col) ? diagonal[row] : 0.0;
     }
+
 
     @Override
     public Matrix add(Matrix other) {
         checkSameDimensions(other);
-
         if (other instanceof DiagonalMatrix diagOther) {
             double[] result = new double[diagonal.length];
             for (int i = 0; i < diagonal.length; i++) {
                 result[i] = this.diagonal[i] + diagOther.diagonal[i];
             }
-            return new DiagonalMatrix(result, true); // Reste une matrice diagonale
+            return new DiagonalMatrix(result, true);
         }
-
-        // Si l'autre matrice est dense, l'addition produit une matrice dense
-        int n = diagonal.length;
-        double[] result = new double[n * n];
-        for (int r = 0; r < n; r++) {
-            for (int c = 0; c < n; c++) {
-                double val = other.get(r, c);
-                if (r == c) {
-                    val += this.diagonal[r];
-                }
-                result[r * n + c] = val;
-            }
-        }
-        return new DenseMatrix(n, n, result);
+        return super.add(other); // Laisse AbstractMatrix gérer le cas général/Dense
     }
 
     @Override
     public Matrix subtract(Matrix other) {
         checkSameDimensions(other);
-
         if (other instanceof DiagonalMatrix diagOther) {
             double[] result = new double[diagonal.length];
             for (int i = 0; i < diagonal.length; i++) {
@@ -75,16 +60,7 @@ public class DiagonalMatrix implements Matrix {
             }
             return new DiagonalMatrix(result, true);
         }
-
-        int n = diagonal.length;
-        double[] result = new double[n * n];
-        for (int r = 0; r < n; r++) {
-            for (int c = 0; c < n; c++) {
-                double val = (r == c ? this.diagonal[r] : 0.0) - other.get(r, c);
-                result[r * n + c] = val;
-            }
-        }
-        return new DenseMatrix(n, n, result);
+        return super.subtract(other);
     }
 
     @Override
@@ -98,30 +74,38 @@ public class DiagonalMatrix implements Matrix {
 
     @Override
     public Matrix multiply(Matrix other) {
-        checkMultiplicationDimensions(other);
+        if (this.columnCount() != other.rowCount()) {
+            throw new IllegalArgumentException(
+                    String.format("Matrix multiplication dimension mismatch: %dx%d * %dx%d",
+                            diagonal.length, diagonal.length, other.rowCount(), other.columnCount())
+            );
+        }
 
-        int n = diagonal.length;
-        int targetCols = other.columnCount();
-
-        // 1. Fast path: Diagonale x Diagonale -> O(N)
+        // Fast-path 1: Diagonale x Diagonale -> O(N)
         if (other instanceof DiagonalMatrix diagOther) {
-            double[] result = new double[n];
-            for (int i = 0; i < n; i++) {
+            double[] result = new double[diagonal.length];
+            for (int i = 0; i < diagonal.length; i++) {
                 result[i] = this.diagonal[i] * diagOther.diagonal[i];
             }
             return new DiagonalMatrix(result, true);
         }
 
-        // 2. Fast path: Diagonale x Dense -> O(N x C) au lieu de O(N x N x C)
-        double[] result = new double[n * targetCols];
-        for (int r = 0; r < n; r++) {
-            double d = this.diagonal[r];
-            int rowOffset = r * targetCols;
-            for (int c = 0; c < targetCols; c++) {
-                result[rowOffset + c] = d * other.get(r, c);
+        // Fast-path 2: Diagonale x DenseMatrix -> Mise à l'échelle des lignes
+        int n = diagonal.length;
+        int targetCols = other.columnCount();
+        if (other instanceof DenseMatrix denseOther) {
+            double[] result = new double[n * targetCols];
+            for (int r = 0; r < n; r++) {
+                double factor = diagonal[r];
+                int offset = r * targetCols;
+                for (int c = 0; c < targetCols; c++) {
+                    result[offset + c] = factor * denseOther.get(r, c);
+                }
             }
+            return new DenseMatrix(n, targetCols, result);
         }
-        return new DenseMatrix(n, targetCols, result);
+
+        return super.multiply(other);
     }
 
     @Override
@@ -131,13 +115,16 @@ public class DiagonalMatrix implements Matrix {
                     String.format("Matrix-Vector dimension mismatch: matrix size %d, vector size %d", diagonal.length, vector.size())
             );
         }
-
-        // Produit matrice-vecteur en O(N)
         double[] result = new double[diagonal.length];
         for (int i = 0; i < diagonal.length; i++) {
             result[i] = diagonal[i] * vector.getValue(i);
         }
         return new ArrayVector(result);
+    }
+
+    @Override
+    public int getDimension() {
+        return diagonal.length;
     }
 
     @Override
@@ -149,21 +136,18 @@ public class DiagonalMatrix implements Matrix {
     public Vector getRow(int row) {
         checkRowIndex(row);
         double[] rowData = new double[diagonal.length];
-        rowData[row] = diagonal[row]; // Un seul élément non nul
+        rowData[row] = diagonal[row];
         return new ArrayVector(rowData);
     }
 
     @Override
     public Vector getColumn(int col) {
-        checkColIndex(col);
+        checkColumnIndex(col);
         double[] colData = new double[diagonal.length];
-        colData[col] = diagonal[col]; // Un seul élément non nul
+        colData[col] = diagonal[col];
         return new ArrayVector(colData);
     }
 
-    /**
-     * Méthode spécifique aux matrices diagonales : Inversion directe en O(N).
-     */
     public DiagonalMatrix inverse() {
         double[] invResult = new double[diagonal.length];
         for (int i = 0; i < diagonal.length; i++) {
@@ -175,42 +159,6 @@ public class DiagonalMatrix implements Matrix {
         return new DiagonalMatrix(invResult, true);
     }
 
-
-    private void checkIndices(int row, int col) {
-        checkRowIndex(row);
-        checkColIndex(col);
-    }
-
-    private void checkRowIndex(int row) {
-        if (row < 0 || row >= diagonal.length) {
-            throw new IndexOutOfBoundsException(String.format("Row index %d out of bounds for matrix size %d", row, diagonal.length));
-        }
-    }
-
-    private void checkColIndex(int col) {
-        if (col < 0 || col >= diagonal.length) {
-            throw new IndexOutOfBoundsException(String.format("Column index %d out of bounds for matrix size %d", col, diagonal.length));
-        }
-    }
-
-    private void checkSameDimensions(Matrix other) {
-        if (this.diagonal.length != other.rowCount() || this.diagonal.length != other.columnCount()) {
-            throw new IllegalArgumentException(
-                    String.format("Matrix dimension mismatch: expected %dx%d, got %dx%d",
-                            diagonal.length, diagonal.length, other.rowCount(), other.columnCount())
-            );
-        }
-    }
-
-    private void checkMultiplicationDimensions(Matrix other) {
-        if (this.diagonal.length != other.rowCount()) {
-            throw new IllegalArgumentException(
-                    String.format("Matrix multiplication dimension mismatch: %dx%d * %dx%d",
-                            diagonal.length, diagonal.length, other.rowCount(), other.columnCount())
-            );
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -220,20 +168,11 @@ public class DiagonalMatrix implements Matrix {
             return false;
         }
 
-        // Fast-path entre deux matrices diagonales : O(N)
         if (other instanceof DiagonalMatrix diagOther) {
             return Arrays.equals(this.diagonal, diagOther.diagonal);
         }
 
-        // Comparaison élément par élément pour d'autres types de matrices
-        for (int r = 0; r < diagonal.length; r++) {
-            for (int c = 0; c < diagonal.length; c++) {
-                if (Double.compare(this.get(r, c), other.get(r, c)) != 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return super.equals(other);
     }
 
     @Override
