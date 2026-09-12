@@ -1,6 +1,8 @@
 package estimator;
 
-import com.sun.jdi.Bootstrap;
+import org.estimator.ConfidenceInterval;
+import org.estimator.MeanEstimator;
+import org.estimator.PercentileBootstrapIntervalEstimator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

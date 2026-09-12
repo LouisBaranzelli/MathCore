@@ -1,5 +1,7 @@
 package estimator;
 
+import org.estimator.DKWConfidenceBandEstimator;
+import org.estimator.EmpiricalDistributionConfidenceBand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

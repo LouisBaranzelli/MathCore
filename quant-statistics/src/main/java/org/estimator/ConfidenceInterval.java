@@ -1,4 +1,4 @@
-package estimator;
+package org.estimator;
 
 public record ConfidenceInterval<T>(
         T lowerBound,

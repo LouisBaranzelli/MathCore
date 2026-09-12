@@ -1,5 +1,6 @@
 package estimator;
 
+import org.estimator.TrimmedMean;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

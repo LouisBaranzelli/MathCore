@@ -1,4 +1,4 @@
-package estimator;
+package org.estimator;
 
 /**
  * Représente un estimateur statistique ponctuel (Point Estimator).

@@ -1,4 +1,4 @@
-package estimator;
+package org.estimator;
 
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;

@@ -1,4 +1,4 @@
-package estimator;
+package org.estimator;
 
 public interface IntervalEstimator <T, S>{
 

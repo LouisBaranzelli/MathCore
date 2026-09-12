@@ -1,4 +1,4 @@
-package estimator;
+package org.estimator;
 
 
 import org.statistics.probability.distributions.monovariate.EmpiricalDistribution;
