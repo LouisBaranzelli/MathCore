@@ -72,4 +72,24 @@ public final class DescriptiveStatistics {
         return max;
     }
 
+    public static double skewness(Vector vector) {
+        int n = vector.size();
+        if (n < 3) return 0.0;
+
+        double mu = mean(vector);
+        double sumCube = 0.0;
+
+        for (int i = 0; i < n; i++) {
+            double diff = vector.getValue(i) - mu;
+            sumCube += diff * diff * diff;
+        }
+
+        double sampleStdDev = standardDeviation(vector);
+
+        if (sampleStdDev == 0){
+            return 0.;
+        }
+        return (n * sumCube) / ((n - 1.0) * (n - 2.0) * Math.pow(sampleStdDev, 3));
     }
+
+}

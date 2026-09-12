@@ -149,3 +149,96 @@ class CalculationTests {
     }
 
 }
+
+@Nested
+@DisplayName("Cas limites et validation des entrées")
+class EdgeCases {
+
+    private static final double EPSILON = 1e-6;
+
+    @Test
+    @DisplayName("Retourne 0.0 quand n < 3 (échantillon insuffisant)")
+    void shouldReturnZeroForInsufficientData() {
+        Vector oneElement = new ArrayVector(5.0);
+        Vector twoElements = new ArrayVector(1.0, 2.0);
+
+        assertEquals(0.0, DescriptiveStatistics.skewness(oneElement), EPSILON);
+        assertEquals(0.0, DescriptiveStatistics.skewness(twoElements), EPSILON);
+    }
+
+    @Test
+    @DisplayName("Retourne 0.0 pour un vecteur constant (écart-type nul)")
+    void shouldReturnZeroForConstantVector() {
+        Vector constant = new ArrayVector(4.2, 4.2, 4.2, 4.2, 4.2);
+
+        assertEquals(0.0, DescriptiveStatistics.skewness(constant), EPSILON);
+    }
+}
+
+@Nested
+@DisplayName("Propriétés statistiques et symétrie")
+class StatisticalProperties {
+    private static final double EPSILON = 1e-6;
+
+    @Test
+    @DisplayName("Retourne 0.0 pour une distribution parfaitement symétrique")
+    void shouldReturnZeroForSymmetricDistribution() {
+        Vector symmetric = new ArrayVector(1.0, 2.0, 3.0, 4.0, 5.0);
+
+        assertEquals(0.0, DescriptiveStatistics.skewness(symmetric), EPSILON);
+    }
+
+    @Test
+    @DisplayName("Calcule une skewness positive (queue étirée à droite)")
+    void shouldCalculatePositiveSkewness() {
+        Vector rightSkewed = new ArrayVector(1.0, 2.0, 2.5, 3.0, 100.0);
+
+        double result = DescriptiveStatistics.skewness(rightSkewed);
+        assertTrue(result > 0.0, "La skewness devrait être strictement positive mais était: " + result);
+    }
+
+    @Test
+    @DisplayName("Calcule une skewness négative (queue étirée à gauche)")
+    void shouldCalculateNegativeSkewness() {
+        Vector leftSkewed = new ArrayVector(-100.0, 1.0, 2.0, 2.5, 3.0);
+
+        double result = DescriptiveStatistics.skewness(leftSkewed);
+        assertTrue(result < 0.0, "La skewness devrait être strictly négative mais était: " + result);
+    }
+}
+
+@Nested
+@DisplayName("Conformité des calculs et invariants")
+class CalculationValidation {
+    private static final double EPSILON = 1e-6;
+
+    @Test
+    @DisplayName("Conforme aux valeurs de référence (Excel SKEW / R e1071)")
+    void shouldMatchKnownSampleSkewnessValue() {
+        Vector sample = new ArrayVector(2.0, 8.0, 0.0, 4.0, 1.0, 9.0);
+        double expectedSkewness = 0.515432;
+
+        assertEquals(expectedSkewness, DescriptiveStatistics.skewness(sample), 1e-4);
+    }
+
+    @Test
+    @DisplayName("Invariant par translation (shift) et changement d'échelle positif (scale)")
+    void shouldBeInvariantUnderShiftAndPositiveScale() {
+        Vector base = new ArrayVector(1.5, 2.0, 2.1, 4.5, 12.0);
+        double originalSkewness = DescriptiveStatistics.skewness(base);
+
+        // Y = 10 * X + 5 (a > 0 conserve la direction de la skewness)
+        Vector transformed =new ArrayVector(
+                10 * 1.5 + 5.0,
+                10 * 2.0 + 5.0,
+                10 * 2.1 + 5.0,
+                10 * 4.5 + 5.0,
+                10 * 12.0 + 5.0
+        );
+
+        assertEquals(originalSkewness, DescriptiveStatistics.skewness(transformed), EPSILON);
+    }
+}
+
+
+
