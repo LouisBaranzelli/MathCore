@@ -8,7 +8,8 @@ public class NormalDistribution implements ContinuousDistribution {
 
     private final double mu;
     private final double sigma;
-    private final double sqrtTwoPi;
+    private static final double SQRT_TWO_PI = Math.sqrt(2 * Math.PI);
+
 
     public NormalDistribution(double mu, double sigma) {
         if (sigma <= 0) {
@@ -16,7 +17,6 @@ public class NormalDistribution implements ContinuousDistribution {
         }
         this.mu = mu;
         this.sigma = sigma;
-        this.sqrtTwoPi = Math.sqrt(2 * Math.PI);
     }
 
     @Override
@@ -36,6 +36,6 @@ public class NormalDistribution implements ContinuousDistribution {
     @Override
     public double density(double x) {
         double z = (x - mu) / sigma;
-        return Math.exp(-0.5 * z * z) / (sigma * sqrtTwoPi);
+        return Math.exp(-0.5 * z * z) / (sigma * SQRT_TWO_PI);
     }
 }

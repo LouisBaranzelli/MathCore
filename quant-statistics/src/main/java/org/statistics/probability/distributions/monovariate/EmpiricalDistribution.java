@@ -42,7 +42,6 @@ public class EmpiricalDistribution implements Distribution{
         }
     }
 
-    @Override
     public double inverseCdf(double p) {
             if (p < 0.0 || p > 1.0) {
                 throw new IllegalArgumentException("Probability must be in [0, 1], got " + p);
