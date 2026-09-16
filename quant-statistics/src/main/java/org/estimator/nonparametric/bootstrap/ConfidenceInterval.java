@@ -1,4 +1,4 @@
-package org.estimator;
+package org.estimator.nonparametric.bootstrap;
 
 public record ConfidenceInterval<T>(
         T lowerBound,

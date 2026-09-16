@@ -1,4 +1,4 @@
-package org.estimator;
+package org.estimator.nonparametric.bootstrap;
 
 import org.math.vector.Vector;
 

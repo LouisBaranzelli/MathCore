@@ -1,10 +1,10 @@
 package estimator;
 
-import org.estimator.ConfidenceInterval;
-import org.estimator.MeanEstimator;
-import org.estimator.bootstrap.BootstrapIntervalMethod;
-import org.estimator.bootstrap.BootstrapResult;
-import org.estimator.bootstrap.NonParametricBootstrap;
+import org.estimator.nonparametric.bootstrap.ConfidenceInterval;
+import org.estimator.nonparametric.bootstrap.MeanEstimator;
+import org.estimator.nonparametric.bootstrap.BootstrapIntervalMethod;
+import org.estimator.nonparametric.bootstrap.BootstrapResult;
+import org.estimator.nonparametric.bootstrap.NonParametricBootstrap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

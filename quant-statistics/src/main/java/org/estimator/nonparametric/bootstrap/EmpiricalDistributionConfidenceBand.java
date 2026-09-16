@@ -1,7 +1,5 @@
-package org.estimator;
+package org.estimator.nonparametric.bootstrap;
 
-
-import org.statistics.probability.distributions.monovariate.EmpiricalDistribution;
 
 import java.util.function.DoubleUnaryOperator;
 

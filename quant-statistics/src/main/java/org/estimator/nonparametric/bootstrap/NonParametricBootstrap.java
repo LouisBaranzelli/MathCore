@@ -1,6 +1,5 @@
-package org.estimator.bootstrap;
+package org.estimator.nonparametric.bootstrap;
 
-import org.estimator.Estimator;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.probability.definitions.Sample;

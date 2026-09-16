@@ -1,7 +1,5 @@
-package org.estimator.bootstrap;
+package org.estimator.nonparametric.bootstrap;
 
-import org.estimator.ConfidenceInterval;
-import org.statistics.probability.DescriptiveStatistics;
 import org.statistics.probability.definitions.Sample;
 
 public enum BootstrapIntervalMethod {

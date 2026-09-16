@@ -1,4 +1,4 @@
-package org.estimator;
+package org.estimator.nonparametric.bootstrap;
 
 /**
  * Représente un estimateur statistique ponctuel (Point Estimator).
