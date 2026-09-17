@@ -1,9 +1,10 @@
 package org.statistics.probability.distributions.monovariate;
 
 
+import lombok.Getter;
 import org.statistics.probability.tools.Erf;
 import org.statistics.probability.tools.NormalInverseCdf;
-
+@Getter
 public class NormalDistribution implements ContinuousDistribution {
 
     private final double mu;
@@ -11,12 +12,12 @@ public class NormalDistribution implements ContinuousDistribution {
     private static final double SQRT_TWO_PI = Math.sqrt(2 * Math.PI);
 
 
-    public NormalDistribution(double mu, double sigma) {
-        if (sigma <= 0) {
+    public NormalDistribution(double mu, double std) {
+        if (std <= 0) {
             throw new IllegalArgumentException("L'écart-type doit être strictement positif.");
         }
         this.mu = mu;
-        this.sigma = sigma;
+        this.sigma = std;
     }
 
     @Override
