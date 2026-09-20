@@ -2,8 +2,10 @@ package org.math.vector;
 
 
 import java.sql.Array;
+import java.util.Iterator;
 
-public interface Vector {
+public interface Vector extends Iterable<Double> {
+
 
 
     int size();
@@ -41,4 +43,21 @@ public interface Vector {
         }
         return output;
     }
+
+        @Override
+        default Iterator<Double> iterator() {
+            return new Iterator<Double>() {
+                private int index = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return index < size();
+                }
+
+                @Override
+                public Double next() {
+                    return getValue(index++);
+                }
+            };
+        }
 }
