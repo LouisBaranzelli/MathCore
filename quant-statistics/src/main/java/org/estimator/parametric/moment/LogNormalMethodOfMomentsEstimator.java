@@ -1,7 +1,8 @@
 package org.estimator.parametric.moment;
 
+import org.estimator.parametric.ParametricEstimator;
 import org.math.vector.Vector;
-import org.statistics.probability.distributions.monovariate.LogNormalDistribution;
+import org.distributions.monovariate.continuous.LogNormalDistribution;
 
 // Located in module: statistics/inference
 public final class LogNormalMethodOfMomentsEstimator implements ParametricEstimator<LogNormalDistribution> {

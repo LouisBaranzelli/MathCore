@@ -1,11 +1,12 @@
 package org.estimator.parametric.moment;
 
+import org.estimator.parametric.moment.LogNormalMethodOfMomentsEstimator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.probability.distributions.monovariate.LogNormalDistribution;
+import org.distributions.monovariate.continuous.LogNormalDistribution;
 
 import java.util.Random;
 

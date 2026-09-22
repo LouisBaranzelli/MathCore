@@ -1,7 +1,8 @@
 package org.estimator.parametric.moment;
 
+import org.estimator.parametric.ParametricEstimator;
 import org.math.vector.Vector;
-import org.statistics.probability.distributions.monovariate.PoissonDistribution;
+import org.distributions.monovariate.discrete.PoissonDistribution;
 
 public final class PoissonMethodOfMomentsEstimator implements ParametricEstimator<PoissonDistribution> {
 

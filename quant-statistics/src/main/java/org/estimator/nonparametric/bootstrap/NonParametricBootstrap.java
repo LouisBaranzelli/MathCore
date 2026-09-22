@@ -1,8 +1,9 @@
 package org.estimator.nonparametric.bootstrap;
 
+import org.estimator.interval.bootstrap.BootstrapResult;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.probability.definitions.Sample;
+import org.data.Sample;
 
 import java.util.Objects;
 import java.util.random.RandomGenerator;

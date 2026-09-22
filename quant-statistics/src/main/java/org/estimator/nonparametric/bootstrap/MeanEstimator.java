@@ -1,7 +1,7 @@
 package org.estimator.nonparametric.bootstrap;
 
 import org.math.vector.Vector;
-import org.statistics.probability.DescriptiveStatistics;
+import org.descriptive.DescriptiveStatistics;
 
 public final class MeanEstimator implements VectorEstimator {
 

@@ -1,11 +1,12 @@
 package org.estimator.parametric.moment;
 
+import org.estimator.parametric.moment.PoissonMethodOfMomentsEstimator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.probability.distributions.monovariate.PoissonDistribution;
+import org.distributions.monovariate.discrete.PoissonDistribution;
 
 import java.util.Random;
 
