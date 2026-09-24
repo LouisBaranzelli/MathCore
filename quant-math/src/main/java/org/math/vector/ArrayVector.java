@@ -13,6 +13,10 @@ public final class ArrayVector implements Vector {
         this.values = values.clone();
     }
 
+    public static ArrayVector of(double... values){
+        return new ArrayVector(values);
+    }
+
     @Override
     public int size() {
         return values.length;

@@ -1,7 +1,7 @@
 package org.math.vector;
 
 
-import java.sql.Array;
+
 import java.util.Iterator;
 
 public interface Vector extends Iterable<Double> {
