@@ -7,11 +7,14 @@ import java.util.Objects;
 public record OptimizationResult(
         Vector point,
         double minCost,
-        boolean converged,
         int iterations,
-        String terminationReason
+        TerminationCriterion terminationReason
 ) {
     public OptimizationResult {
         Objects.requireNonNull(point, "point can not be null");
+    }
+
+    public boolean converged() {
+        return terminationReason.isSuccess();
     }
 }
