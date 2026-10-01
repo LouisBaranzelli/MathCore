@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DiagonalMatrixTest {
 
@@ -255,5 +252,39 @@ class DiagonalMatrixTest {
             assertTrue(denseEquiv.equals(diag));
             assertFalse(diag.equals(denseDiff));
         }
+    }
+
+    @Test
+    @DisplayName("Should compute exact inverse of a diagonal matrix")
+    void testInvertDiagonalMatrix() {
+        double[] data = {
+                2.0, -4.0, 0.5, 10.0
+        };
+
+        DiagonalMatrix matrix = new DiagonalMatrix(data);
+
+        Matrix inverse = matrix.invert();
+
+        double[] expectedData = {
+                1.0 / 2.0,
+                1.0 / -4.0,
+                1.0 / 0.5,
+                1.0 / 10.0
+        };
+
+        DiagonalMatrix expected = new DiagonalMatrix(expectedData);
+
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                assertEquals(
+                        expected.get(r, c),
+                        inverse.get(r, c),
+                        1e-12,
+                        "Incorrect inverse coefficient at (" + r + ", " + c + ")"
+                );
+            }
+        }
+
+        assertInstanceOf(DiagonalMatrix.class, inverse);
     }
 }

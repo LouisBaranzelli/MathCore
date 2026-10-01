@@ -26,7 +26,30 @@ public interface Matrix {
 
     Matrix transpose();
 
+    Matrix invert();
+
     Vector getRow(int row);
 
     Vector getColumn(int col);
+
+    default String print() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int row = 0; row < rowCount(); row++) {
+            sb.append("[");
+            for (int col = 0; col < columnCount(); col++) {
+                if (col > 0) {
+                    sb.append(", ");
+                }
+                sb.append(get(row, col));
+            }
+            sb.append("]");
+
+            if (row < rowCount() - 1) {
+                sb.append(System.lineSeparator());
+            }
+        }
+
+        return sb.toString();
+    }
 }

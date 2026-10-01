@@ -200,4 +200,128 @@ class DenseMatrixTest {
             assertFalse(a.equals("Not a matrix"));
         }
     }
+
+    @Test
+    @DisplayName("Should compute exact inverse for a 4x4 non-symmetric dense matrix")
+    void testInvertDenseMatrix4x4CustomData() {
+        double[] data = {
+                1.0, 0.0, 2.0, 0.0,
+                0.0, 2.0, 0.0, 1.0,
+                3.0, 0.0, 0.0, 4.0,
+                0.0, 1.0, 1.0, 0.0
+        };
+
+        DenseMatrix a = new DenseMatrix(4, 4, data);
+
+        // 1. Isolation : Vérification immédiate du sens Row-Major de la matrice source
+        assertTrue(Math.abs(1.0 - a.get(0, 0)) < 1e-9, "Row-major corrupt at (0,0)");
+        assertTrue(Math.abs(2.0 - a.get(0, 2)) < 1e-9, "Row-major corrupt at (0,2)");
+        assertTrue(Math.abs(4.0 - a.get(2, 3)) < 1e-9, "Row-major corrupt at (2,3)");
+
+        Matrix invA = a.invert();
+
+        // Matrice théorique exacte de A^-1
+        double[] inverse = {
+                4.0,  4.0, -1.0, -8.0,
+                1.5,  2.0, -0.5, -3.0,
+                -1.5, -2.0,  0.5,  4.0,
+                -3.0, -3.0,  1.0,  6.0
+        };
+        Matrix expectedInvMatrix = new DenseMatrix(4, 4, inverse);
+
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                double expected = expectedInvMatrix.get(r, c);
+                double actual = invA.get(r, c);
+                double diff = Math.abs(expected - actual);
+                int finalR = r;
+                int finalC = c;
+                assertTrue(
+                        diff < 1e-9,
+                        () -> String.format("Incorrect inverse coeff at (%d, %d): expected %f, got %f", finalR, finalC, expected, actual)
+                );
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Should compute exact inverse for a 4x4 lower triangular matrix")
+    void testInvertLowerTriangularMatrix() {
+        double[] data = {
+                1.0, 0.0, 0.0, 0.0,
+                2.0, 1.0, 0.0, 0.0,
+                3.0, 4.0, 1.0, 0.0,
+                1.0, 1.0, 2.0, 1.0
+        };
+
+        DenseMatrix a = new DenseMatrix(4, 4, data);
+
+        Matrix invA = a.invert();
+
+        double[] expectedData = {
+                1.0,  0.0, 0.0, 0.0,
+                -2.0,  1.0, 0.0, 0.0,
+                5.0, -4.0, 1.0, 0.0,
+                -9.0,  7.0, -2.0, 1.0
+        };
+
+        Matrix expectedInvMatrix = new DenseMatrix(4, 4, expectedData);
+
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                double expected = expectedInvMatrix.get(r, c);
+                double actual = invA.get(r, c);
+                double diff = Math.abs(expected - actual);
+                int finalR = r;
+                int finalC = c;
+                assertTrue(
+                        diff < 1e-9,
+                        () -> String.format("Incorrect inverse coeff at (%d, %d): expected %f, got %f", finalR, finalC, expected, actual)
+                );
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Should compute exact inverse for a 4x4 symmetric matrix")
+    void testInvertSymmetricMatrix() {
+        double[] data = {
+                1.0, 2.0, 3.0, 1.0,
+                2.0, 5.0, 4.0, 1.0,
+                3.0, 4.0, 6.0, 2.0,
+                1.0, 1.0, 2.0, 5.0
+        };
+
+        DenseMatrix a = new DenseMatrix(4, 4, data);
+
+        Matrix invA = a.invert();
+
+        double[] expectedData = {
+                -2.0, 0.0, 1.0, 0.0,
+                0.0, 13.0 / 30.0, -3.0 / 10.0, 1.0 / 30.0,
+                1.0, -3.0 / 10.0, -1.0 / 10.0, -1.0 / 10.0,
+                0.0, 1.0 / 30.0, -1.0 / 10.0, 7.0 / 30.0
+        };
+
+        Matrix expectedInvMatrix = new DenseMatrix(4, 4, expectedData);
+
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                double expected = expectedInvMatrix.get(r, c);
+                double actual = invA.get(r, c);
+                double diff = Math.abs(expected - actual);
+
+                int finalR = r;
+                int finalC = c;
+
+                assertTrue(
+                        diff < 1e-9,
+                        () -> String.format(
+                                "Incorrect inverse coeff at (%d, %d): expected %f, got %f",
+                                finalR, finalC, expected, actual
+                        )
+                );
+            }
+        }
+    }
 }

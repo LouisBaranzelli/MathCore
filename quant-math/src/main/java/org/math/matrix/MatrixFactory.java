@@ -101,4 +101,8 @@ public final class MatrixFactory {
             );
         }
     }
+
+    public static Matrix scalar(double value) {
+        return new DiagonalMatrix(new double[]{value});
+    }
 }

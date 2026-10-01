@@ -148,11 +148,12 @@ public class DiagonalMatrix extends AbstractMatrix implements SymmetricMatrix {
         return new ArrayVector(colData);
     }
 
-    public DiagonalMatrix inverse() {
+    @Override
+    public DiagonalMatrix invert() {
         double[] invResult = new double[diagonal.length];
         for (int i = 0; i < diagonal.length; i++) {
             if (Math.abs(diagonal[i]) < 1e-15) {
-                throw new ArithmeticException("Cannot invert diagonal matrix: zero element on diagonal at index " + i);
+                throw new ArithmeticException("Cannot invert diagonal matrix: zero or near-zero element at index " + i);
             }
             invResult[i] = 1.0 / diagonal[i];
         }

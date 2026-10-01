@@ -8,6 +8,8 @@ import java.util.Objects;
 
 public abstract class AbstractMatrix implements Matrix {
 
+    private static final double SINGULARITY_THRESHOLD = 1e-12;
+
     @Override
     public Matrix add(Matrix other) {
         checkSameDimensions(other);
@@ -187,4 +189,82 @@ public abstract class AbstractMatrix implements Matrix {
         }
         return result;
     }
+
+    @Override
+    public Matrix invert() {
+
+        int rows = rowCount();
+        int cols = columnCount();
+        if (rows != cols) {
+            throw new UnsupportedOperationException(
+                    String.format("Cannot invert non-square matrix: %dx%d", rows, cols)
+            );
+        }
+
+        int n = rows;
+
+        // Matrice augmentée [A | I] de dimension n x (2n)
+        double[][] augmented = new double[n][2 * n];
+        for (int r = 0; r < n; r++) {
+            for (int c = 0; c < n; c++) {
+                augmented[r][c] = this.get(r, c);
+            }
+            augmented[r][n + r] = 1.0;
+        }
+
+        // Élimination de Gauss-Jordan
+        for (int i = 0; i < n; i++) {
+            // 1. Pivotage partiel
+            int maxRow = i;
+            double maxVal = Math.abs(augmented[i][i]);
+            for (int k = i + 1; k < n; k++) {
+                double absVal = Math.abs(augmented[k][i]);
+                if (absVal > maxVal) {
+                    maxVal = absVal;
+                    maxRow = k;
+                }
+            }
+
+            if (maxVal < SINGULARITY_THRESHOLD) {
+                throw new ArithmeticException("Cannot invert singular or near-singular matrix.");
+            }
+
+            // Échange des lignes si nécessaire
+            if (maxRow != i) {
+                double[] temp = augmented[i];
+                augmented[i] = augmented[maxRow];
+                augmented[maxRow] = temp;
+            }
+
+            // 2. Normalisation de la ligne pivot
+            double pivot = augmented[i][i];
+            for (int j = i; j < 2 * n; j++) {
+                augmented[i][j] /= pivot;
+            }
+
+            // 3. Élimination sur les autres lignes
+            for (int r = 0; r < n; r++) {
+                if (r != i) {
+                    double factor = augmented[r][i];
+                    if (Math.abs(factor) > 1e-15) {
+                        for (int c = i; c < 2 * n; c++) {
+                            augmented[r][c] -= factor * augmented[i][c];
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. Extraction du bloc droit [A^-1]
+        double[] invData = new double[n * n];
+        for (int r = 0; r < n; r++) {
+            int offset = r * n;
+            for (int c = 0; c < n; c++) {
+                invData[offset + c] = augmented[r][n + c];
+            }
+        }
+
+        return new DenseMatrix(n, n, invData);
+    }
+
 }

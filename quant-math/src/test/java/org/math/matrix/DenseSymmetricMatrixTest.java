@@ -1,5 +1,6 @@
 package org.math.matrix;
 
+import org.junit.jupiter.api.DisplayName;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.junit.jupiter.api.Test;
@@ -129,5 +130,89 @@ class DenseSymmetricMatrixTest {
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.get(-1, 0));
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.get(0, 2));
         assertThrows(IndexOutOfBoundsException.class, () -> matrix.getRow(2));
+    }
+
+    @Test
+    @DisplayName("Should compute exact inverse for a 4x4 symmetric matrix whit cholsky failing")
+    void testInvertSymmetricMatrix() {
+        double[] data = {
+                1.0, 2.0, 3.0, 1.0,
+                5.0, 4.0, 1.0,
+                6.0, 2.0,
+                5.0
+        };
+
+
+        SymmetricMatrix a = new DenseSymmetricMatrix( 4, data);
+
+        Matrix invA = a.invert();
+        double[] expectedData = {
+                -2.0, 0.0, 1.0, 0.0,
+                0.0, 13.0 / 30.0, -3.0 / 10.0, 1.0 / 30.0,
+                1.0, -3.0 / 10.0, -1.0 / 10.0, -1.0 / 10.0,
+                0.0, 1.0 / 30.0, -1.0 / 10.0, 7.0 / 30.0
+        };
+
+        Matrix expectedInvMatrix = new DenseMatrix(4, 4, expectedData);
+
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                double expected = expectedInvMatrix.get(r, c);
+                double actual = invA.get(r, c);
+                double diff = Math.abs(expected - actual);
+
+                int finalR = r;
+                int finalC = c;
+
+                assertTrue(
+                        diff < 1e-9,
+                        () -> String.format(
+                                "Incorrect inverse coeff at (%d, %d): expected %f, got %f",
+                                finalR, finalC, expected, actual
+                        )
+                );
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Should compute exact inverse for a 4x4 symmetric positive definite matrix")
+    void testInvertSymmetricPositiveDefiniteMatrix() {
+        double[] data = {
+                4.0, 2.0, 0.0, 0.0,
+                5.0, 1.0, 0.0,
+                3.0, 1.0,
+                2.0
+        };
+
+        DenseSymmetricMatrix a = new DenseSymmetricMatrix(4, data);
+
+        Matrix invA = a.invert();
+
+        double[] expectedData = {
+                23.0 / 72.0, -5.0 / 36.0, 1.0 / 18.0, -1.0 / 36.0,
+                5.0 / 18.0, -1.0 / 9.0, 1.0 / 18.0,
+                4.0 / 9.0, -2.0 / 9.0,
+                11.0 / 18.0
+        };
+
+        DenseSymmetricMatrix expectedInvMatrix =
+                new DenseSymmetricMatrix(4, expectedData);
+
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                double expected = expectedInvMatrix.get(r, c);
+                double actual = invA.get(r, c);
+
+                assertEquals(
+                        expected,
+                        actual,
+                        1e-9,
+                        "Incorrect inverse coefficient at (" + r + ", " + c + ")"
+                );
+            }
+        }
+
+        assertInstanceOf(SymmetricMatrix.class, invA);
     }
 }
