@@ -24,12 +24,11 @@ public class NonParametricBootstrap {
     public BootstrapResult run(
             Estimator<Double, Vector> estimator,
             Vector data) {
-
         int n = data.size();
         if (n < 5) {
             throw new IllegalArgumentException("Sample size < 5 for the bootstrap.");
         }
-        Double originalEstimate = estimator.estimate(data);
+        PointEstimate<Double> originalEstimate = estimator.estimate(data);
         double[] estimates = new double[resampleCount];
 
         for (int b = 0; b < resampleCount; b++) {
@@ -37,7 +36,7 @@ public class NonParametricBootstrap {
             for (int i = 0; i < n; i++) {
                 buffer[i] = data.getValue(rng.nextInt(n));
             }
-            estimates[b] = estimator.estimate(new ArrayVector(buffer));
+            estimates[b] = estimator.estimate(new ArrayVector(buffer)).value();
         }
 
         return new BootstrapResult(originalEstimate, new Sample(estimates));

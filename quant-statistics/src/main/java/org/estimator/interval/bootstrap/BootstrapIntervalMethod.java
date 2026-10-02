@@ -2,6 +2,7 @@ package org.estimator.interval.bootstrap;
 
 import org.data.Sample;
 import org.estimator.interval.ConfidenceInterval;
+import org.estimator.nonparametric.bootstrap.PointEstimate;
 
 public enum BootstrapIntervalMethod {
     PERCENTILE {
@@ -27,14 +28,14 @@ public enum BootstrapIntervalMethod {
             }
 
             double alpha = 1.0 - confidenceLevel;
-            double theta = result.pointEstimate();
+            PointEstimate<Double> theta = result.pointEstimate();
 
             // Inversion pivotale : 2*theta - q_(1-alpha/2) et 2*theta - q_(alpha/2)
             double qLower = quantile(result.bootstrapEstimates(), alpha / 2.0);
             double qUpper = quantile(result.bootstrapEstimates(), 1.0 - alpha / 2.0);
 
-            double lowerBound = 2 * theta - qUpper;
-            double upperBound = 2 * theta - qLower;
+            double lowerBound = 2 * theta.value() - qUpper;
+            double upperBound = 2 * theta.value() - qLower;
 
             return new ConfidenceInterval<>(lowerBound, upperBound, confidenceLevel);
         }

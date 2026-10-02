@@ -17,11 +17,11 @@ import java.util.Objects;
  * ou des bruits de microstructure sur des séries temporelles.
  * </p>
  */
-public final class TrimmedMean implements VectorEstimator {
+public final class TrimmedMeanEstimator implements VectorEstimator {
 
     private final double alpha;
 
-    public TrimmedMean(double alpha) {
+    public TrimmedMeanEstimator(double alpha) {
         if (alpha < 0.0 || alpha >= 0.5) {
             throw new IllegalArgumentException(
                     "La proportion de tronquage alpha doit être dans [0.0, 0.5[. Reçu : " + alpha
@@ -31,14 +31,16 @@ public final class TrimmedMean implements VectorEstimator {
     }
 
     @Override
-    public Double estimate(Vector sample) {
+    public ScalarPointEstimate estimate(Vector sample) {
         Objects.requireNonNull(sample, "L'échantillon ne peut pas être nul.");
         if (sample.size() == 0) {
             throw new IllegalArgumentException("L'échantillon ne peut pas être vide.");
         }
 
         if (alpha == 0.0) {
-            return DescriptiveStatistics.mean(sample);
+            double sampleVariance = DescriptiveStatistics.variance(sample);
+            double mean = DescriptiveStatistics.mean(sample);
+            return new ScalarPointEstimate(mean, sampleVariance, sample.size());
         }
 
         double[] sorted = sample.toArray();
@@ -54,7 +56,12 @@ public final class TrimmedMean implements VectorEstimator {
             );
         }
 
-        return computeMean(sorted, k, n - k);
+        double mean = computeMean(sorted, k, n - k);
+
+        double winsorizedVariance = computeWinsorizedVariance(sorted, k, mean);
+        double effectiveTrimRatio = 1.0 - 2.0 * ((double) k / n);
+        double adjustedVariance = winsorizedVariance / (effectiveTrimRatio * effectiveTrimRatio);
+        return new ScalarPointEstimate(mean, adjustedVariance,  sample.size());
 
     }
 
@@ -65,5 +72,25 @@ public final class TrimmedMean implements VectorEstimator {
         }
         return sum / (endExclusive - startInclusive);
     }
+
+    private static double computeWinsorizedVariance(double[] sorted, int k, double trimmedMean) {
+        int n = sorted.length;
+        double sumSquaredDiff = 0.0;
+
+        double lowerBoundValue = sorted[k];
+        double upperBoundValue = sorted[n - k - 1];
+
+        sumSquaredDiff += k * Math.pow(lowerBoundValue - trimmedMean, 2);
+
+        for (int i = k; i < n - k; i++) {
+            sumSquaredDiff += Math.pow(sorted[i] - trimmedMean, 2);
+        }
+
+        sumSquaredDiff += k * Math.pow(upperBoundValue - trimmedMean, 2);
+
+        return sumSquaredDiff / (n - 1);
+    }
+
+
 
 }

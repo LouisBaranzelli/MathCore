@@ -1,17 +1,32 @@
 package org.estimator.nonparametric.bootstrap;
 
+
 import org.math.vector.Vector;
 import org.descriptive.DescriptiveStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class MeanEstimator implements VectorEstimator {
 
+        private static final Logger log = LoggerFactory.getLogger(MeanEstimator.class);
 
-    /**
-     * Calcule l'intervalle de confiance basé sur l'approximation gaussienne du TCL.
-     */
+        @Override
+        public ScalarPointEstimate estimate(Vector sample) {
+            if (sample == null || sample.size() < 2) {
+                log.error("Sample size must be at least 2 to estimate variance, given dimension: {}",
+                        sample == null ? 0 : sample.size());
+                throw new IllegalArgumentException("Sample size must be at least 2.");
+            }
 
-    @Override
-    public Double estimate(Vector sample) {
-        return DescriptiveStatistics.mean(sample);
-    }
+            int n = sample.size();
+            double mean = DescriptiveStatistics.mean(sample);
+            double sampleVariance = DescriptiveStatistics.variance(sample);
+
+            // Variance de l'estimateur (se^2) : Var(Mean) = s^2 / n
+            double estimatorVariance = sampleVariance / n;
+
+            log.trace("Estimated mean: {} with estimator variance: {} (n={})", mean, estimatorVariance, n);
+
+            return new ScalarPointEstimate(mean, estimatorVariance, n);
+        }
 }

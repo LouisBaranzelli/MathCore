@@ -167,7 +167,7 @@ class DiagonalMatrixTest {
         @DisplayName("Inversion directe O(N)")
         void testInverse() {
             DiagonalMatrix diag = new DiagonalMatrix(new double[]{2.0, 0.5, -4.0});
-            DiagonalMatrix inv = diag.inverse();
+            DiagonalMatrix inv = diag.invert();
 
             assertTrue(isClose(inv.get(0, 0), 0.5));
             assertTrue(isClose(inv.get(1, 1), 2.0));
@@ -178,7 +178,7 @@ class DiagonalMatrixTest {
         @DisplayName("Levée d'exception lors de l'inversion avec un élément nul sur la diagonale")
         void shouldThrowOnInverseWithZeroElement() {
             DiagonalMatrix diag = new DiagonalMatrix(new double[]{2.0, 0.0, 4.0});
-            assertThrows(ArithmeticException.class, diag::inverse);
+            assertThrows(ArithmeticException.class, diag::invert);
         }
     }
 

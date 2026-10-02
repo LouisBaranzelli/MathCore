@@ -154,7 +154,7 @@ class PivotalBootstrapIntervalTest {
     void testCalculatePivotalSymmetric() {
         // Given: thetaHat = 10.0 et ré-échantillons distribués uniformément entre 8.0 et 12.0
         // Quantile 2.5% = 8.1, Quantile 97.5% = 11.9
-        double pointEstimate = 10.0;
+        PointEstimate<Double> pointEstimate = new ScalarPointEstimate(10., 1, 100);
         double[] bootstrapEstimates = new double[101];
         for (int i = 0; i <= 100; i++) {
             bootstrapEstimates[i] = 8.0 + (i * 0.04); // De 8.0 à 12.0
@@ -180,7 +180,7 @@ class PivotalBootstrapIntervalTest {
     void testCalculatePivotalAsymmetricBiasCorrection() {
         // Given: thetaHat = 5.0, mais la distribution bootstrap est décalée vers la droite (biais positif)
         // Ré-échantillons étalés entre 6.0 et 10.0
-        double pointEstimate = 5.0;
+        PointEstimate<Double> pointEstimate = new ScalarPointEstimate(5., 1, 100);
         double[] bootstrapEstimates = new double[101];
         for (int i = 0; i <= 100; i++) {
             bootstrapEstimates[i] = 6.0 + (i * 0.04); // De 6.0 à 10.0
@@ -206,7 +206,11 @@ class PivotalBootstrapIntervalTest {
     @ValueSource(doubles = {0.0, 1.0, -0.05, 1.05})
     @DisplayName("Devrait lever IllegalArgumentException si le niveau de confiance est invalide")
     void testInvalidConfidenceLevel(double invalidLevel) {
-        BootstrapResult result = new BootstrapResult(10.0, new Sample(new double[]{8.0, 9.0, 10.0, 11.0, 12.0}));
+
+        PointEstimate<Double> pointEstimate = new ScalarPointEstimate(10., 1, 100);
+
+
+        BootstrapResult result = new BootstrapResult(pointEstimate, new Sample(new double[]{8.0, 9.0, 10.0, 11.0, 12.0}));
 
         assertThrows(IllegalArgumentException.class, () -> pivotalMethod.calculate(result, invalidLevel));
     }
@@ -221,7 +225,7 @@ class PivotalBootstrapIntervalTest {
     @DisplayName("Devrait gérer correctement un échantillon bootstrap constant (variance nulle)")
     void testConstantBootstrapEstimates() {
         // Given: Tous les ré-échantillons sont égaux à la valeur estimée
-        double pointEstimate = 42.0;
+        PointEstimate<Double> pointEstimate = new ScalarPointEstimate(42., 1, 100);
         double[] bootstrapEstimates = new double[]{42.0, 42.0, 42.0, 42.0, 42.0};
 
         BootstrapResult result = new BootstrapResult(pointEstimate, new Sample(bootstrapEstimates));

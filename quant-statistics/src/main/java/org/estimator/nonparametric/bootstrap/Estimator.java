@@ -22,5 +22,5 @@ public interface Estimator<T, S> {
      * @throws IllegalArgumentException si l'échantillon ne respecte pas les préconditions
      *                                  exigées par l'estimateur (ex: taille minimale).
      */
-    T estimate(S sample);
+    PointEstimate<T> estimate(S sample);
 }
