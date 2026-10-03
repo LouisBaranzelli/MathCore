@@ -14,7 +14,7 @@ public class FiniteDifferenceHessianCalculator {
     private static final double EPSILON_CUBE_ROOT = Math.cbrt(1.11e-16); // ~ 4.8e-6
 
     public SymmetricMatrix computeHessian(MultivariateFunction function, Vector point) {
-        log.debug("Computing numerical Hessian at point: {}", point);
+        log.trace("Computing numerical Hessian at point: {}", point);
 
         int dim = point.size();
         double[] x = point.toArray();
