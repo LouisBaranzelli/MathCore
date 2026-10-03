@@ -6,6 +6,8 @@ public enum Country {
     FR("France"),
     DE("Allemagne"),
     IT("Italie"),
+    ES("Espagne"),
+    BE("Belgique"),
     CH("Suisse");
 
     @Getter

@@ -23,7 +23,7 @@ public class MainLoader {
 
     public static void main(String[] args) {
 
-        Country country = Country.IT;
+        Country country = Country.BE;
         String dirCsv = "C:\\Users\\baran\\Documents\\csv_files";
         List<TimeFrame> timeFrames = List.of(TimeFrame.D);
         List<Instrument> instruments = InstrumentService.findByCountry(country);
