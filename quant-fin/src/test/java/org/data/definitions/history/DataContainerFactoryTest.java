@@ -1,8 +1,11 @@
 package org.data.definitions.history;
 
-import org.data.definitions.LoadingException;
-import org.data.definitions.assets.DataContainer;
-import org.data.definitions.assets.Stock;
+import org.fin.definitions.LoadingException;
+import org.fin.definitions.assets.DataContainer;
+import org.fin.definitions.assets.Stock;
+import org.fin.definitions.history.DataContainerFactory;
+import org.fin.definitions.history.DataLoader;
+import org.fin.definitions.history.DummyDataLoader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.series.TimeTools;
@@ -12,7 +15,6 @@ import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

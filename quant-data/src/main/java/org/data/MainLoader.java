@@ -1,14 +1,11 @@
 package org.data;
 
 import org.data.csv.CsvInstrumentDataBase;
-import org.data.csv.DataSaver;
-import org.data.definitions.assets.Country;
-import org.data.definitions.assets.Instrument;
-import org.data.definitions.assets.InstrumentFactory;
-import org.data.definitions.assets.InstrumentService;
-import org.data.definitions.history.DataLoader;
-import org.data.definitions.history.FullDataContext;
-import org.data.yahoofinance.YahooFinanceLoader;
+import org.fin.definitions.assets.Country;
+import org.fin.definitions.assets.Instrument;
+import org.fin.definitions.assets.InstrumentService;
+import org.fin.definitions.history.DataLoader;
+import org.fin.definitions.history.FullDataContext;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
 import org.series.imputation.ImputationStrategy;
@@ -16,7 +13,6 @@ import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
 
 public class MainLoader {

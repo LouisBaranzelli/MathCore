@@ -4,11 +4,11 @@ package org.data.yahoofinance;
 import org.common.FetcherUrl;
 import org.data.SavingException;
 import org.data.csv.DataSaver;
-import org.data.definitions.LoadingException;
+import org.fin.definitions.LoadingException;
 
-import org.data.definitions.assets.Instrument;
-import org.data.definitions.candles.Candle;
-import org.data.definitions.history.DataLoader;
+import org.fin.definitions.assets.Instrument;
+import org.fin.definitions.candles.Candle;
+import org.fin.definitions.history.DataLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.series.TimeTools;

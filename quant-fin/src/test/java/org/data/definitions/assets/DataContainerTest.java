@@ -1,7 +1,8 @@
 package org.data.definitions.assets;
 
-import org.data.definitions.candles.CompositeCandleTimeSerie;
-import org.data.definitions.candles.RandomCandleTimeSerie;
+import org.fin.definitions.assets.DataContainer;
+import org.fin.definitions.assets.Stock;
+import org.fin.definitions.candles.CompositeCandleTimeSerie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

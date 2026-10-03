@@ -1,10 +1,13 @@
 package org.data.definitions.candles;
 
+import org.fin.definitions.candles.Candle;
+import org.fin.definitions.candles.CompositeCandleTimeSerie;
+import org.fin.definitions.candles.SliceCompositeCandleTimeSerie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.math.vector.Vector;
-import org.data.definitions.assets.Stock;
+import org.fin.definitions.assets.Stock;
 import org.series.InvalidTimeSerieException;
 import org.series.timegrid.TimeGrid;
 import org.series.timeserie.DoubleTimeSerie;

@@ -1,9 +1,9 @@
 package org.data.csv;
 
-import org.data.definitions.LoadingException;
-import org.data.definitions.assets.Stock;
-import org.data.definitions.candles.Candle;
-import org.data.definitions.history.AlignerService;
+import org.fin.definitions.LoadingException;
+import org.fin.definitions.assets.Stock;
+import org.fin.definitions.candles.Candle;
+import org.fin.definitions.history.AlignerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,11 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
-import org.series.imputation.ImputationStrategy;
-import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 

@@ -1,10 +1,13 @@
 package org.data.definitions.history;
 
+import org.fin.definitions.history.DataLoader;
+import org.fin.definitions.history.DummyDataLoader;
+import org.fin.definitions.history.FullDataContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.data.definitions.LoadingException;
-import org.data.definitions.assets.Stock;
-import org.data.definitions.candles.CandleTimeSerie;
+import org.fin.definitions.LoadingException;
+import org.fin.definitions.assets.Stock;
+import org.fin.definitions.candles.CandleTimeSerie;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
 import org.series.imputation.StubImputationStrategy;

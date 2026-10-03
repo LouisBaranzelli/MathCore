@@ -1,8 +1,8 @@
 package org.data.csv;
 
 import org.data.SavingException;
-import org.data.definitions.assets.Instrument;
-import org.data.definitions.candles.Candle;
+import org.fin.definitions.assets.Instrument;
+import org.fin.definitions.candles.Candle;
 import org.series.timeserie.TimeFrame;
 
 import java.util.List;

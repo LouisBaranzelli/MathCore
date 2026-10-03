@@ -1,5 +1,7 @@
 package org.data.definitions.assets;
 
+import org.fin.definitions.assets.InstrumentFactory;
+import org.fin.definitions.assets.Stock;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

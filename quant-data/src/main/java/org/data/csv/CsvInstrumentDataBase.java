@@ -3,15 +3,14 @@ package org.data.csv;
 import lombok.Getter;
 import lombok.Setter;
 import org.common.CsvService;
-import org.common.TriConsumer;
 import org.data.SavingException;
-import org.data.definitions.LoadingException;
-import org.data.definitions.TickEnum;
-import org.data.definitions.TickService;
-import org.data.definitions.assets.Instrument;
-import org.data.definitions.candles.Candle;
-import org.data.definitions.history.AlignerService;
-import org.data.definitions.history.DataLoader;
+import org.fin.definitions.LoadingException;
+import org.fin.definitions.TickEnum;
+import org.fin.definitions.TickService;
+import org.fin.definitions.assets.Instrument;
+import org.fin.definitions.candles.Candle;
+import org.fin.definitions.history.AlignerService;
+import org.fin.definitions.history.DataLoader;
 
 import org.math.common.MathUtil;
 import org.series.TimeTools;
@@ -28,7 +27,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CsvInstrumentDataBase implements DataLoader, DataSaver {

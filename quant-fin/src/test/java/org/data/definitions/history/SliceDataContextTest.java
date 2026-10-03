@@ -1,16 +1,19 @@
 package org.data.definitions.history;
 
+import org.fin.definitions.history.DataLoader;
+import org.fin.definitions.history.DummyDataLoader;
+import org.fin.definitions.history.FullDataContext;
+import org.fin.definitions.history.SliceDataContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.data.definitions.assets.Stock;
+import org.fin.definitions.assets.Stock;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
 import org.series.imputation.StubImputationStrategy;
 import org.series.timeserie.TimeFrame;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
