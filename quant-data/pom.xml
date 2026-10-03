@@ -49,8 +49,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.sstrickx</groupId>
-            <artifactId>yahoofinance-api</artifactId>
+            <groupId>com.yahoofinance-api</groupId>
+            <artifactId>YahooFinanceAPI</artifactId>
             <version>3.17.0</version>
         </dependency>
     </dependencies>
