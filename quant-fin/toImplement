@@ -1,0 +1,34 @@
+# TODO — Quant
+
+## Statistiques / estimation
+
+- [ ] Estimateur de la moyenne
+  - Utilisation : estimation des rendements moyens.
+  - Utilisation future : estimation du spread d'équilibre pour le Mean Reversion / Pairs Trading.
+
+- [ ] Détection de Mean Reversion
+  - Déterminer si une série ou un spread présente un comportement de retour à la moyenne.
+  - Prévoir les statistiques/tests nécessaires avant implémentation.
+
+- [ ] GARCH(1,1)
+  - Implémenter l'estimation d'un modèle GARCH(1,1).
+  - Objectif : modéliser la volatilité conditionnelle et son évolution dans le temps.
+
+
+## Copules
+
+- [ ] Implémenter `CopulaDistribution`
+
+```java
+package org.statistics.probability.distributions.copula;
+
+import org.math.vector.Vector;
+
+public interface CopulaDistribution {
+
+    int getDimension();
+
+    double density(Vector u);
+
+    Vector sample();
+}
