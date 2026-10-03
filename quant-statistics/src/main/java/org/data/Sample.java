@@ -1,5 +1,7 @@
 package org.data;
 
+import org.math.vector.Vector;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -15,6 +17,9 @@ public final class Sample implements Iterable<Double> {
         return new Sample(values);
     }
 
+    public Sample(Vector values) {
+        this(values.toArray());
+    }
     public Sample(double[] values) {
         if (values == null || values.length == 0) {
             throw new IllegalArgumentException("L'échantillon ne peut pas être vide.");

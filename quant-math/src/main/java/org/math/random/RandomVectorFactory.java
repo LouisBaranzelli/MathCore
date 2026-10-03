@@ -18,4 +18,14 @@ public class RandomVectorFactory {
         }
         return new ArrayVector(data);
     }
+
+    public static Vector generateGaussianData(int n, double mu, double sigma) {
+        java.util.Random random = new java.util.Random(42);
+        double[] data = new double[n];
+        for (int i = 0; i < n; i++) {
+            data[i] = mu + sigma * random.nextGaussian();
+        }
+        return new ArrayVector(data);
+
+    }
 }

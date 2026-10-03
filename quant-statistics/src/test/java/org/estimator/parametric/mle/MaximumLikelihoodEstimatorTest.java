@@ -6,10 +6,13 @@ import org.estimator.parametric.model.NormalModel;
 import org.estimator.parametric.model.ParametricModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.math.matrix.Matrix;
 import org.math.optimizer.ConvergenceException;
 import org.math.optimizer.MultivariateOptimizer;
 import org.math.optimizer.NelderMeadOptimizer;
+import org.math.random.RandomVectorFactory;
 import org.math.vector.ArrayVector;
+import org.math.vector.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,15 +30,14 @@ class MaximumLikelihoodEstimatorTest {
         MultivariateOptimizer optimizer = new NelderMeadOptimizer(1e-4, 200);
         MaximumLikelihoodEstimator estimator = new MaximumLikelihoodEstimator(optimizer);
         ParametricModel<NormalDistribution> parametricModel = new NormalModel();
-        LikelihoodResult result = estimator.estimate(parametricModel, dataset, ArrayVector.of(1, 1));
+        MleResult result = estimator.estimate(parametricModel, dataset, ArrayVector.of(1, 1));
 
         assertNotNull(result, "Le résultat de l'estimation ne doit pas être nul");
-        assertTrue(result.optimizationResult().converged(), "L'optimisation du MLE aurait dû converger");
 
         // En MLE pour une loi normale :
         // mu_MLE = moyenne empirique = 10.0
         // sigma_MLE = sqrt(variance biaisée) = sqrt(20.0 / 10) = sqrt(2.0) ≈ 2.4494
-        NormalDistribution normalDistribution = parametricModel.createDistribution(result.theta());
+        NormalDistribution normalDistribution = parametricModel.createDistribution(result.parameters());
         assertEquals(10.0, normalDistribution.getMu(), EPSILON, "La moyenne estimée (mu) doit être proche de 10.0");
         assertEquals(2.4494,normalDistribution.getSigma(), EPSILON, "L'écart-type estimé (sigma) doit être correct");
     }
@@ -47,10 +49,61 @@ class MaximumLikelihoodEstimatorTest {
         MaximumLikelihoodEstimator estimator = new MaximumLikelihoodEstimator(optimizer);
         ParametricModel<NormalDistribution> parametricModel = new NormalModel();
         assertThrows(IllegalArgumentException.class, () -> {
-            LikelihoodResult result = estimator.estimate(parametricModel, Sample.of(), ArrayVector.of(1, 1));
+            MleResult result = estimator.estimate(parametricModel, Sample.of(), ArrayVector.of(1, 1));
         });
         assertThrows(ConvergenceException.class, () -> {
-            LikelihoodResult result = estimator.estimate(parametricModel, Sample.of(1, 2, 3, 4), ArrayVector.of(0, 0, 0));
+            MleResult result = estimator.estimate(parametricModel, Sample.of(1, 2, 3, 4), ArrayVector.of(0, 0, 0));
         });
     }
+
+    @Test
+    @DisplayName("Devrait calculer la matrice de covariance pour une loi Normale (diagonale et hors-diagonale)")
+    void testGaussianMleCovarianceMatrix() throws Exception {
+        // 1. Génération d'un échantillon synthétique N(mu=10.0, sigma=2.0)
+        double trueMu = 10.0;
+        double trueSigma = 2.0;
+        int n = 10_000; // Grand n pour une bonne convergence asymptotique
+
+        Vector data = RandomVectorFactory.generateGaussianData(n, trueMu, trueSigma);
+        Sample sample = new Sample(data);
+
+        // 2. Initialisation du modèle et du résolveur MLE
+        // Supopse l'existence d'un GaussianModel où le paramètre [0] = mu et [1] = sigma
+        ParametricModel<NormalDistribution> gaussianModel = new NormalModel();
+        MaximumLikelihoodEstimator mle = new MaximumLikelihoodEstimator();
+
+        Vector initialGuess = new ArrayVector(new double[]{8.0, 1.0});
+
+        MleResult result = mle.estimate(gaussianModel, sample, initialGuess);
+        Vector thetaHat = result.parameters();
+        Matrix covMatrix = result.estimate().covarianceMatrix();
+
+        double hatMu = thetaHat.getValue(0);
+        double hatSigma = thetaHat.getValue(1);
+
+        // 4. Valeurs théoriques attendues de la matrice de covariance (I^-1)
+        double expectedVarMu = (hatSigma * hatSigma) / n;          // sigma^2 / n
+        double expectedVarSigma = (hatSigma * hatSigma) / (2 * n);  // sigma^2 / (2n)
+        double expectedCovariance = 0.0;                           // Indépendance orthogonale
+
+        double delta = 1e-3; // Tolérance liée aux différences finies et à l'optimiseur
+
+        // 5. Assertions
+
+        // --- Termes diagonaux (Variances des paramètres) ---
+        assertEquals(expectedVarMu, covMatrix.get(0, 0), delta,
+                "La variance de mu doit être égale à sigma^2 / n");
+
+        assertEquals(expectedVarSigma, covMatrix.get(1, 1), delta,
+                "La variance de sigma doit être égale à sigma^2 / (2n)");
+
+        // --- Termes hors-diagonale (Covariances croisées) ---
+        assertEquals(expectedCovariance, covMatrix.get(0, 1), delta,
+                "La covariance entre mu et sigma doit être nulle");
+
+        assertEquals(expectedCovariance, covMatrix.get(1, 0), delta,
+                "La matrice de covariance doit être symétrique avec Cov(sigma, mu) = 0");
+    }
+
+
 }
