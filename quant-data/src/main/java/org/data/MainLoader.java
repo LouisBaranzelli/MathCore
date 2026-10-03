@@ -20,16 +20,10 @@ import java.io.File;
 import java.util.List;
 
 public class MainLoader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainLoader.class);
 
     public static void main(String[] args) {
 
-
-        LOGGER.trace("========== TRACE TEST ==========");
-        LOGGER.debug("========== DEBUG TEST ==========");
-        LOGGER.info("========== INFO TEST ==========");
-
-        Country country = Country.DE;
+        Country country = Country.IT;
         String dirCsv = "C:\\Users\\baran\\Documents\\csv_files";
         List<TimeFrame> timeFrames = List.of(TimeFrame.D);
         List<Instrument> instruments = InstrumentService.findByCountry(country);

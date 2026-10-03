@@ -4,7 +4,9 @@ import lombok.Getter;
 
 public enum Country {
     FR("France"),
-    DE("Allemagne");
+    DE("Allemagne"),
+    IT("Italie"),
+    CH("Suisse");
 
     @Getter
     private final String name;

@@ -65,7 +65,7 @@ public class YahooFinanceLoader implements DataLoader {
 
         FetcherUrl fetcherUrl = new FetcherUrl(urlStr);
         JSONObject root;
-        String baseErrorMessage = String.format("Fetching data failed for %s (%s): ", instrument.getLabel(), timeFrame.getLabel());
+        String baseErrorMessage = String.format("(%s) Fetching data failed for %s (%s): ", getLabel(), instrument.getLabel(), timeFrame.getLabel());
         try {
             root = fetcherUrl.fetch();
             Thread.sleep(YahooFinanceLoader.REST_TIME);

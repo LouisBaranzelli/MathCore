@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum Currency {
     EUR("Euro", "€"),
+    CHF("Franc Suisse", "CHF"),
     USD("US Dollar", "$"),
     GBP("British Pound", "£"),
     JPY("Japanese Yen", "¥");
