@@ -32,6 +32,17 @@ public class NormalModel implements ParametricModel<NormalDistribution> {
     }
 
     @Override
+    public double mean(Vector theta) {
+        return theta.getValue(0);
+    }
+
+    @Override
+    public double variance(Vector theta) {
+        double sigma = theta.getValue(1);
+        return sigma * sigma;
+    }
+
+    @Override
     public NormalDistribution createDistribution(Vector params) {
         if (!isValidParameterSet(params)) {
             throw new IllegalArgumentException("Invalid parameter vector for NormalDistribution: " + params);

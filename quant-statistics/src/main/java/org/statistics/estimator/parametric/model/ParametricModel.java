@@ -14,4 +14,8 @@ public interface ParametricModel<T> {
     boolean isValidParameterSet(Vector params);
 
     double logLikelihood(double x, Vector params);
+
+    double mean(Vector theta);
+
+    double variance(Vector theta);
 }
