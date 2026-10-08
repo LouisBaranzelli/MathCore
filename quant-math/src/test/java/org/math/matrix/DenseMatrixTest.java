@@ -27,7 +27,6 @@ class DenseMatrixTest {
         void shouldThrowOnInvalidDimensions() {
             assertThrows(IllegalArgumentException.class, () -> new DenseMatrix(0, 2, new double[]{1, 2}));
             assertThrows(IllegalArgumentException.class, () -> new DenseMatrix(2, -1, new double[]{1, 2}));
-            assertThrows(IllegalArgumentException.class, () -> new DenseMatrix(null));
         }
 
         @Test

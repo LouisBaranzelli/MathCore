@@ -108,6 +108,33 @@ public abstract class AbstractMatrix implements Matrix {
     }
 
     @Override
+    public double quadraticForm(Vector vector) {
+        if (rowCount() != columnCount()) {
+            throw new UnsupportedOperationException("Quadratic form requires a square matrix.");
+        }
+        Vector Mv = this.multiply(vector);
+        double result = 0.0;
+        for (int i = 0; i < vector.size(); i++) {
+            result += vector.getValue(i) * Mv.getValue(i);
+        }
+        return result;
+    }
+
+    @Override
+    public Matrix transpose() {
+        int rows = rowCount();
+        int cols = columnCount();
+        double[] result = new double[rows * cols];
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                result[c * rows + r] = this.get(r, c);
+            }
+        }
+        return new DenseMatrix(cols, rows, result);
+    }
+
+    @Override
     public Vector getRow(int row) {
         checkRowIndex(row);
         int cols = columnCount();

@@ -24,6 +24,8 @@ public interface Matrix {
 
     Vector multiply(Vector vector);
 
+    double quadraticForm(Vector vector);
+
     Matrix transpose();
 
     Matrix invert();

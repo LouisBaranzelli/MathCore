@@ -12,6 +12,10 @@ public class DenseMatrix extends AbstractMatrix {
     private final int cols;
     private final double[] values; // Row-major order
 
+    public DenseMatrix(Vector values) {
+        this(1, values.size(), values.toArray());
+    }
+
     public DenseMatrix(int rows, int cols, double[] values) {
         if (rows <= 0 || cols <= 0) {
             throw new IllegalArgumentException("Matrix dimensions must be strictly positive");
@@ -153,16 +157,6 @@ public class DenseMatrix extends AbstractMatrix {
         return new ArrayVector(rowData);
     }
 
-    @Override
-    public Matrix transpose() {
-        double[] result = new double[values.length];
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                result[c * rows + r] = values[r * cols + c];
-            }
-        }
-        return new DenseMatrix(cols, rows, result, true);
-    }
 
     private void checkIndices(int row, int col) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
