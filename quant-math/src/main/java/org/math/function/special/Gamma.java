@@ -88,4 +88,75 @@ public final class Gamma {
 
         return Math.exp(logGamma(x));
     }
+
+    public static double regularizedGammaP(double s, double x) {
+        if (Double.isNaN(s) || Double.isNaN(x) || s <= 0.0 || x < 0.0) {
+            return Double.NaN;
+        }
+
+        if (x == 0.0) {
+            return 0.0;
+        }
+
+        // Utilisation de la série si x < s + 1, sinon fraction continue pour Q(s, x)
+        if (x < s + 1.0) {
+            return seriesP(s, x);
+        } else {
+            return 1.0 - continuedFractionQ(s, x);
+        }
+    }
+
+    /**
+     * Représentation en série de la fonction gamma incomplète inférieure.
+     */
+    private static double seriesP(double s, double x) {
+        int maxIterations = 200;
+        double tolerance = 1e-15;
+
+        double sum = 1.0 / s;
+        double term = sum;
+        double numer = s;
+
+        for (int i = 1; i <= maxIterations; i++) {
+            numer += 1.0;
+            term *= x / numer;
+            sum += term;
+            if (Math.abs(term) < Math.abs(sum) * tolerance) {
+                break;
+            }
+        }
+
+        return sum * Math.exp(-x + s * Math.log(x) - logGamma(s));
+    }
+
+    /**
+     * Représentation en fraction continue de la fonction gamma incomplète supérieure Q(s, x).
+     */
+    private static double continuedFractionQ(double s, double x) {
+        int maxIterations = 200;
+        double tolerance = 1e-15;
+        double tiny = 1e-30;
+
+        double b = x + 1.0 - s;
+        double c = 1.0 / tiny;
+        double d = 1.0 / b;
+        double h = d;
+
+        for (int i = 1; i <= maxIterations; i++) {
+            double an = -i * (i - s);
+            b += 2.0;
+            d = an * d + b;
+            if (Math.abs(d) < tiny) d = tiny;
+            c = b + an / c;
+            if (Math.abs(c) < tiny) c = tiny;
+            d = 1.0 / d;
+            double delta = c * d;
+            h *= delta;
+            if (Math.abs(delta - 1.0) < tolerance) {
+                break;
+            }
+        }
+
+        return h * Math.exp(-x + s * Math.log(x) - logGamma(s));
+    }
 }
