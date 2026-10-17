@@ -6,6 +6,33 @@ public final class ArrayVector implements Vector {
 
     private final double[] values;
 
+    public ArrayVector(double[]... values) {
+        if (values == null || values.length == 0) {
+            throw new IllegalArgumentException("Vector must have at least one dimension");
+        }
+
+        int totalLength = 0;
+        for (double[] arr : values) {
+            if (arr != null) {
+                totalLength += arr.length;
+            }
+        }
+        if (totalLength == 0) {
+            throw new IllegalArgumentException("Vector must have at least one dimension");
+        }
+
+        double[] result = new double[totalLength];
+        int currentPosition = 0;
+
+        for (double[] arr : values) {
+            if (arr != null && arr.length > 0) {
+                System.arraycopy(arr, 0, result, currentPosition, arr.length);
+                currentPosition += arr.length;
+            }
+        }
+        this(result);
+    }
+
     public ArrayVector(double... values) {
         if (values == null || values.length == 0) {
             throw new IllegalArgumentException("Vector must have at least one dimension");

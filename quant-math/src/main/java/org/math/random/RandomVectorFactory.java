@@ -3,6 +3,7 @@ package org.math.random;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 
+import java.util.Random;
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
 
@@ -27,5 +28,16 @@ public class RandomVectorFactory {
         }
         return new ArrayVector(data);
 
+    }
+
+    public static Vector shuffle(Vector vector, Random rand) {
+        double[] array = vector.toArray();
+        for (int i = array.length - 1; i > 0; i--) {
+            int index = rand.nextInt(i + 1);
+            double temp = array[index];
+            array[index] = array[i];
+            array[i] = temp;
+        }
+        return new ArrayVector(array);
     }
 }
