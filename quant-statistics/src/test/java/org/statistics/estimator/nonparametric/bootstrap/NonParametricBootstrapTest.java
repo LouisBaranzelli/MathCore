@@ -13,10 +13,7 @@ import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.data.Sample;
 import org.math.random.RandomVectorFactory;
-import org.statistics.estimator.nonparametric.bootstrap.MeanEstimator;
-import org.statistics.estimator.nonparametric.bootstrap.NonParametricBootstrap;
-import org.statistics.estimator.nonparametric.bootstrap.PointEstimate;
-import org.statistics.estimator.nonparametric.bootstrap.ScalarPointEstimate;
+
 
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
