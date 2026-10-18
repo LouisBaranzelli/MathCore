@@ -3,8 +3,6 @@ package org.statistics.estimator.parametric.uncertainty;
 import org.math.function.MultivariateFunction;
 import org.statistics.estimator.nonparametric.bootstrap.VectorPointEstimate;
 
-import java.util.function.Function;
-
 @FunctionalInterface
 public interface UncertaintyEstimator {
     /**

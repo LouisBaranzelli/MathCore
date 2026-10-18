@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.statistics.distributions.monovariate.continuous.ContinuousDistribution;
 import org.statistics.distributions.monovariate.continuous.NormalDistribution;
+import org.statistics.hypothesis.HypothesisTestResult;
+import org.statistics.hypothesis.WaldTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

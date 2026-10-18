@@ -1,6 +1,6 @@
 package org.statistics.estimator.nonparametric.test;
 
-import org.math.probability.distribution.ChiSquaredDistribution;
+import org.statistics.distributions.monovariate.continuous.ChiSquaredDistribution;
 import org.statistics.data.CategoricalMultinomialData;
 import org.statistics.data.CategoricalProbabilityDistribution;
 import org.slf4j.Logger;

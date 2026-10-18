@@ -2,11 +2,9 @@ package org.statistics.distributions.monovariate.continuous;
 
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.data.Sample;
 import org.statistics.descriptive.QQPlotData;
 import org.statistics.distributions.monovariate.Distribution;
 
-import java.util.Arrays;
 import java.util.random.RandomGenerator;
 
 public interface ContinuousDistribution extends Distribution {

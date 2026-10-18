@@ -1,6 +1,6 @@
 package org.statistics.estimator.parametric.model;
 
-import org.math.probability.distribution.ChiSquaredDistribution;
+import org.statistics.distributions.monovariate.continuous.ChiSquaredDistribution;
 import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

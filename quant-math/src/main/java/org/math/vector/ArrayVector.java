@@ -6,7 +6,7 @@ public final class ArrayVector implements Vector {
 
     private final double[] values;
 
-    public ArrayVector(double[]... values) {
+    public static ArrayVector of(double[]... values) {
         if (values == null || values.length == 0) {
             throw new IllegalArgumentException("Vector must have at least one dimension");
         }
@@ -30,7 +30,7 @@ public final class ArrayVector implements Vector {
                 currentPosition += arr.length;
             }
         }
-        this(result);
+        return new ArrayVector(result);
     }
 
     public ArrayVector(double... values) {

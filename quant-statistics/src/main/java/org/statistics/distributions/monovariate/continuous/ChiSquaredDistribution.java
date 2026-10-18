@@ -1,4 +1,4 @@
-package org.math.probability.distribution;
+package org.statistics.distributions.monovariate.continuous;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
