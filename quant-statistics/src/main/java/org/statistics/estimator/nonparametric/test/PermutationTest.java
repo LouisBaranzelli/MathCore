@@ -7,8 +7,8 @@ import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.data.TwoVectorsStatistic;
+import org.statistics.tools.PerformanceMonitor;
 
-import java.util.Arrays;
 import java.util.Random;
 
 
@@ -45,26 +45,27 @@ public class PermutationTest {
      */
     public double evaluate(Vector vectorA, Vector vectorB, TwoVectorsStatistic statistic) {
 
+        return PerformanceMonitor.measure(log, "Exécute un test de permutation bilatéral (two-sided).", () -> {
 
-        double observedStat = statistic.compute(vectorA, vectorB);
+            double observedStat = statistic.compute(vectorA, vectorB);
 
-        Vector combined = new ArrayVector(vectorA.toArray(), vectorB.toArray());
+            Vector combined = ArrayVector.of(vectorA.toArray(), vectorB.toArray());
 
-        int extremeCount = 0;
-        Vector shuffled;
-        for (int i = 0; i < numberOfPermutations; i++) {
-            shuffled = RandomVectorFactory.shuffle(combined, random);
-            Vector permA = new SliceVector(shuffled, 0, vectorA.size());
-            Vector permB = new SliceVector(shuffled, vectorA.size(), vectorA.size() + vectorB.size());
-            double permStat = statistic.compute(permA,permB);
-            if (Math.abs(permStat) >= Math.abs(observedStat)) {
-                extremeCount++;
+            int extremeCount = 0;
+            Vector shuffled;
+            for (int i = 0; i < numberOfPermutations; i++) {
+                shuffled = RandomVectorFactory.shuffle(combined, random);
+                Vector permA = new SliceVector(shuffled, 0, vectorA.size());
+                Vector permB = new SliceVector(shuffled, vectorA.size(), vectorA.size() + vectorB.size());
+                double permStat = statistic.compute(permA, permB);
+                if (Math.abs(permStat) >= Math.abs(observedStat)) {
+                    extremeCount++;
+                }
             }
-        }
-        double pValue = (double) (extremeCount + 1) / (numberOfPermutations + 1);
+            double pValue = (double) (extremeCount + 1) / (numberOfPermutations + 1);
 
-        log.info("Permutation test completed: B = {}, extremeCount = {}, p-value = {}", numberOfPermutations, extremeCount, pValue);
-        return pValue;
+            log.info("Permutation test completed: B = {}, extremeCount = {}, p-value = {}", numberOfPermutations, extremeCount, pValue);
+            return pValue;
+        });
     }
-
 }
