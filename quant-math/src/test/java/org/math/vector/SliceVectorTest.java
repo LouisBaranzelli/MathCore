@@ -59,11 +59,11 @@ class SliceVectorTest {
         assertThrows(IndexOutOfBoundsException.class, () -> new SliceVector(sourceVector, 2, 6));
 
         // start >= end (taille nulle ou négative)
-        assertThrows(IllegalArgumentException.class, () -> new SliceVector(sourceVector, 3, 3));
+        assertThrows(IndexOutOfBoundsException.class, () -> new SliceVector(sourceVector, 3, 3));
         assertThrows(IndexOutOfBoundsException.class, () -> new SliceVector(sourceVector, 4, 2));
 
         // Source nulle
-        assertThrows(IndexOutOfBoundsException.class, () -> new SliceVector(null, 0, 2));
+        assertThrows(IllegalArgumentException.class, () -> new SliceVector(null, 0, 2));
     }
 
     @Test

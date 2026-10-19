@@ -57,7 +57,7 @@ class DescriptiveStatisticsTest {
     @DisplayName("La variance d'un vecteur de taille <= 1 devrait renvoyer NaN")
     void testVarianceEdgeCases() {
         Vector single = new ArrayVector(42.0);
-        assertTrue(Double.isNaN(DescriptiveStatistics.variance(single)));
+        assertThrows(IllegalArgumentException.class, () -> DescriptiveStatistics.variance(single));
     }
 
     @Test
@@ -86,15 +86,20 @@ class DescriptiveStatisticsTest {
     @Test
     @DisplayName("min() doit lever une IllegalArgumentException si le vecteur est vide")
     void minShouldThrowExceptionOnEmptyVector() {
-        Vector emptyVector = new ArrayVector(new double[]{});
-        assertThrows(IllegalArgumentException.class, () -> DescriptiveStatistics.min(emptyVector));
+        assertThrows(IllegalArgumentException.class, () -> {
+            Vector emptyVector = new ArrayVector(new double[]{});
+            DescriptiveStatistics.min(emptyVector);
+
+        });
     }
 
     @Test
     @DisplayName("max() doit lever une IllegalArgumentException si le vecteur est vide")
     void maxShouldThrowExceptionOnEmptyVector() {
-        Vector emptyVector = new ArrayVector(new double[]{});
-        assertThrows(IllegalArgumentException.class, () -> DescriptiveStatistics.max(emptyVector));
+        assertThrows(IllegalArgumentException.class, () -> {
+            Vector emptyVector = new ArrayVector(new double[]{});
+            DescriptiveStatistics.max(emptyVector);
+        });
     }
 
     @Test

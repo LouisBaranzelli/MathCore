@@ -47,8 +47,8 @@ public final class TimeTools {
             }
         }
         if (size != 0 && size - unValidDates == 0){
-            throw new RuntimeException(
-                    "The predicate for valid dates and available dates is completely out of sync"
+            throw new IllegalArgumentException(
+                    "The predicate for valid dates and available dates is completely out of sync -> 0 values inside"
             );        }
         return size - unValidDates;
     }

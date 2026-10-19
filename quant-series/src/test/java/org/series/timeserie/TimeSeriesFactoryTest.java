@@ -52,9 +52,9 @@ class TimeSeriesFactoryTest {
     @DisplayName("Devrait identifier correctement la date maximale parmi des observations désordonnées")
     void shouldCorrectlyFindMaxZoneDateTime() throws InvalidTimeSerieException {
         // Préparation de 3 observations désordonnées dans le temps
-        long past = TimeTools.fromDateTimeStringToLong("2026-07-15T12:00:00Z", ZoneIdEnum.AMERICA_NEW_YORK);
-        long future = TimeTools.fromDateTimeStringToLong("2026-07-18T12:00:00Z", ZoneIdEnum.AMERICA_NEW_YORK); // La plus récente
-        long present = TimeTools.fromDateTimeStringToLong("2026-07-16T12:00:00Z", ZoneIdEnum.AMERICA_NEW_YORK);
+        long past = TimeTools.fromDateTimeStringToLong("2026-07-15T12:00:00", ZoneIdEnum.AMERICA_NEW_YORK);
+        long future = TimeTools.fromDateTimeStringToLong("2026-07-18T12:00:00", ZoneIdEnum.AMERICA_NEW_YORK); // La plus récente
+        long present = TimeTools.fromDateTimeStringToLong("2026-07-16T12:00:00", ZoneIdEnum.AMERICA_NEW_YORK);
 
         Observation obs1 = new StubObservation(past, 10.0);
         Observation obs2 = new StubObservation(future, 20.0); // Placé au milieu exprès

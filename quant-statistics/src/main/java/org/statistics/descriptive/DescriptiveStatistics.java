@@ -22,7 +22,9 @@ public final class DescriptiveStatistics {
 
     public static double variance(Vector vector) {
         int n = vector.size();
-        if (n <= 1) return 0.0;
+        if (n <= 1) {
+            throw new IllegalArgumentException("Can not calculate variance of size 1 sample.");
+        }
 
         double mu = mean(vector);
         double temp = 0;

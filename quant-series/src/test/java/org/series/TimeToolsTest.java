@@ -291,9 +291,8 @@ class AllTimeFramesTests {
         TimeFrame timeFrame = TimeFrame.MI15;
         Predicate<Long> neverValid = date -> false;
 
-        int result = TimeTools.getNumberValuesStartingFromEndBetween(startSeconds, endSeconds, timeFrame, neverValid,  ZoneIdEnum.UTC.getZoneId());
+        assertThrows(IllegalArgumentException.class, () -> TimeTools.getNumberValuesStartingFromEndBetween(startSeconds, endSeconds, timeFrame, neverValid,  ZoneIdEnum.UTC.getZoneId()));
 
-        assertEquals(0, result, "Si le prédicat renvoie false systématiquement, le résultat doit être 0");
     }
 
     @Test

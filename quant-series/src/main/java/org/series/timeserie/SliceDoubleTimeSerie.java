@@ -13,25 +13,26 @@ public final class SliceDoubleTimeSerie implements DoubleTimeSerie {
          * Crée une tranche de la série temporelle source entre start (inclus) et end (exclu).
          *
          * @param source     La série temporelle d'origine
-         * @param start      L'index de départ (inclus)
-         * @param end        L'index de fin (exclu)
+         * @param startIndex      L'index de départ (inclus)
+         * @param endIndexExcluded        L'index de fin (exclu)
          */
-        public SliceDoubleTimeSerie(DoubleTimeSerie source, int start, int end) {
+        public SliceDoubleTimeSerie(DoubleTimeSerie source, int startIndex, int endIndexExcluded) {
             if (source == null) {
                 throw new IllegalArgumentException("Source time serie cannot be null");
             }
 
-            this.length = end - start;
 
-            if (start < 0 || this.length <= 0 || end > source.size()) {
+            this.length = endIndexExcluded - startIndex;
+
+            if (startIndex < 0 || this.length <= 0 || endIndexExcluded > source.size()) {
                 throw new IndexOutOfBoundsException(
                         String.format("Invalid slice boundaries: start=%d, end=%d, sourceSize=%d",
-                                start, end, source.size())
+                                startIndex, endIndexExcluded, source.size())
                 );
             }
 
             this.source = source;
-            this.startIndex = start;
+            this.startIndex = startIndex;
         }
 
 

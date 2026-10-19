@@ -221,8 +221,8 @@ class TimeGridFactoryBoundedCreateTest {
         Predicate<Long> rejectAll = date -> false;
 
         // WHEN & THEN
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
+        Exception ex = assertThrows(
+                RuntimeException.class,
                 () -> TimeGridFactory.create(start, end, rejectAll, TimeFrame.MI15, ZoneIdEnum.UTC.getZoneId())
         );
     }

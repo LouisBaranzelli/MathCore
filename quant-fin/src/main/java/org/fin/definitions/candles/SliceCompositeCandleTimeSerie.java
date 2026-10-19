@@ -23,41 +23,46 @@ public class SliceCompositeCandleTimeSerie implements CandleTimeSerie {
     @Getter(AccessLevel.NONE)
     private final int indexEnd;
 
-    public SliceCompositeCandleTimeSerie(CandleTimeSerie source, long start, long end) {
+    public SliceCompositeCandleTimeSerie(CandleTimeSerie source, long timestampStart, long timestampEnd) {
         this.source = source;
-        this.start = start;
-        this.end = end;
+        this.start = timestampStart;
+        this.end = timestampEnd;
 
         int foundStart = -1;
         int foundEnd = -1;
 
         for (int i = 0; i < source.size(); i++) {
             long ts = source.getTimestamp(i);
-            if (ts == start && foundStart == -1) {
+            if (ts == timestampStart && foundStart == -1) {
                 foundStart = i;
             }
-            if (ts == end) {
+            if (ts == timestampEnd) {
                 foundEnd = i;
             }
         }
 
         if (foundStart == -1) {
-            throw new IllegalArgumentException("Timestamp de début (" + start + ": " + TimeTools.fromLongToZonedDateTime(start, source.getInstrument().getZoneIdEnum().getZoneId()) + ") introuvable.");
+            throw new IllegalArgumentException("Timestamp de début (" + timestampStart + ": " + TimeTools.fromLongToZonedDateTime(timestampStart, source.getInstrument().getZoneIdEnum().getZoneId()) + ") introuvable.");
         }
         if (foundEnd == -1) {
-            throw new IllegalArgumentException("Timestamp de fin (" + end + ": " + TimeTools.fromLongToZonedDateTime(start, source.getInstrument().getZoneIdEnum().getZoneId()) + ") introuvable.");
+            throw new IllegalArgumentException("Timestamp de fin (" + timestampEnd + ": " + TimeTools.fromLongToZonedDateTime(timestampStart, source.getInstrument().getZoneIdEnum().getZoneId()) + ") introuvable.");
         }
         if (foundStart > foundEnd) {
             throw new IllegalArgumentException("Le timestamp de début doit être inférieur ou égal au timestamp de fin.");
         }
 
         this.indexStart = foundStart;
-        this.indexEnd = foundEnd;
+
+        /*
+            Dans this, la valeur du timestamp inclut la derniere valeur
+            Mais l'index de fin est exclusif (d'ou le +1)
+        */
+        this.indexEnd = foundEnd + 1;
     }
 
     @Override
     public int size() {
-        return indexEnd - indexStart + 1;
+        return indexEnd - indexStart;
     }
 
     @Override

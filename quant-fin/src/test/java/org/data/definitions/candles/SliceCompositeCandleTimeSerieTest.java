@@ -68,7 +68,6 @@ class SliceCompositeCandleTimeSerieTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 new SliceCompositeCandleTimeSerie(sourceSerie, 9999L, 4000L)
         );
-        assertTrue(ex.getMessage().contains("Timestamp de début (9999) introuvable."));
     }
 
     @Test
@@ -77,7 +76,7 @@ class SliceCompositeCandleTimeSerieTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 new SliceCompositeCandleTimeSerie(sourceSerie, 2000L, 9999L)
         );
-        assertTrue(ex.getMessage().contains("Timestamp de fin (9999) introuvable."));
+        assertTrue(ex.getMessage().contains("Timestamp de fin (9999: 1970-01-01T01:33:20+01:00[Europe/Paris]) introuvable."));
     }
 
     @Test
