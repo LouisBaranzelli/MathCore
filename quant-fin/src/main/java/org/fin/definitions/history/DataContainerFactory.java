@@ -33,8 +33,8 @@ public class DataContainerFactory {
 
             ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
             TimeFrameAligner aligner = AlignerService.get(instrument);
-            long roundStart = TimeTools.fromZonedDateTimeToLong(aligner.alignFloor(TimeTools.fromLongToZonedDateTime(start, zoneId), timeFrame));
-            long roundEnd = TimeTools.fromZonedDateTimeToLong(AlignerService.get(instrument).alignFloor(TimeTools.fromLongToZonedDateTime(end, zoneId), timeFrame));
+            long roundStart = TimeTools.fromZonedDateTimeToLong(aligner.alignCeil(TimeTools.fromLongToZonedDateTime(start, zoneId), timeFrame));
+            long roundEnd = TimeTools.fromZonedDateTimeToLong(aligner.alignFloor(TimeTools.fromLongToZonedDateTime(end, zoneId), timeFrame));
 
             List<Candle> candles = useLoaders(instrument, timeFrame, roundStart, roundEnd);
 

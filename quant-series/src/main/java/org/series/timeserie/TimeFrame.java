@@ -29,6 +29,7 @@ public enum TimeFrame {
     @Getter
     private final String stringFormat;
 
+    @Getter
     private final long stepAmount;
     private final BiFunction<ZonedDateTime, Long, ZonedDateTime> minusOperation;
 

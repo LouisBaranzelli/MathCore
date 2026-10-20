@@ -2,13 +2,19 @@ package org.series.timeserie;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.series.InvalidTimeSerieException;
 import org.series.TimeTools;
 import org.series.ZoneIdEnum;
 import org.series.imputation.ImputationStrategy;
+import org.series.timegrid.AbsoluteTimeFrameAligner;
+import org.series.timegrid.BuisnessDayTimeFrameAligner;
+import org.series.timegrid.TimeFrameAligner;
 import org.series.timegrid.TimeGrid;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -183,6 +189,129 @@ class TimeFrameAlignerTest {
             this.capturedDates = sortedDates.clone();
             this.capturedValues = rawValues.clone();
             return responseStub;
+        }
+    }
+
+    @Nested
+    class TimeFrameAlignerCeilTest {
+
+        private TimeFrameAligner aligner;
+
+        @BeforeEach
+        void setUp() {
+            // Implémentation concrète pour les tests :
+            // Les week-ends (Samedi/Dimanche) sont considérés comme des jours invalides (fermés).
+            // Les heures valides sont entre 09:00 et 17:00 inclus.
+            aligner = new TimeFrameAligner() {
+                @Override
+                public boolean isValidDay(ZonedDateTime dt) {
+                    DayOfWeek day = dt.getDayOfWeek();
+                    return day != DayOfWeek.SATURDAY && day != DayOfWeek.SUNDAY;
+                }
+
+                @Override
+                public boolean isValidHour(ZonedDateTime dt) {
+                    return dt.getHour() >= 9 && dt.getHour() <= 17;
+                }
+            };
+        }
+
+        @Test
+        void should_return_same_datetime_when_already_aligned() {
+            ZonedDateTime exactMinute = ZonedDateTime.of(2026, 3, 10, 10, 15, 0, 0, ZoneId.of("UTC")); // Mardi 10:15:00
+            ZonedDateTime result = aligner.alignCeil(exactMinute, TimeFrame.MI15);
+
+            assertEquals(exactMinute, result, "Si la date est déjà alignée, le ceil doit la retourner telle quelle");
+        }
+
+        @Test
+        void should_ceil_minutes_correctly() {
+            // Mardi 10:12:34 -> Doit s'arrondir au 15 minutes supérieur -> 10:15:00
+            ZonedDateTime input = ZonedDateTime.of(2026, 3, 10, 10, 12, 34, 0, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 10, 10, 15, 0, 0, ZoneId.of("UTC"));
+
+            ZonedDateTime result = aligner.alignCeil(input, TimeFrame.MI15);
+
+            assertEquals(expected, result);
+        }
+
+        @Test
+        void should_ceil_hour_correctly() {
+            // Mardi 10:45:00 -> Doit s'arrondir à l'heure supérieure -> 11:00:00
+            ZonedDateTime input = ZonedDateTime.of(2026, 3, 10, 10, 45, 0, 0, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 10, 11, 0, 0, 0, ZoneId.of("UTC"));
+            ZonedDateTime result = aligner.alignCeil(input, TimeFrame.HR);
+            assertEquals(expected, result);
+        }
+
+        @Test
+        void should_ceil_day_correctly() {
+            // Dimanche 14:30:00 -> Doit s'arrondir au début du jour suivant valide -> Lundi 09:00:00
+            ZonedDateTime input = ZonedDateTime.of(2026, 3, 15, 14, 30, 0, 0, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 16, 9, 0, 0, 0, ZoneId.of("UTC"));
+
+            ZonedDateTime result = aligner.alignCeil(input, TimeFrame.D);
+
+            assertEquals(expected, result);
+        }
+
+        @Test
+        void should_handle_weekend_jump_when_ceiling_on_friday_evening() {
+            // Vendredi à 19:00:00 avec un TimeFrame journalier (D)
+            // Le jour suivant (samedi) est invalide, il doit sauter au lundi 09:00:00
+            ZonedDateTime fridayEvening = ZonedDateTime.of(2026, 3, 13, 19, 0, 0, 0, ZoneId.of("UTC")); // 13 mars 2026 est un vendredi
+            ZonedDateTime expectedMonday = ZonedDateTime.of(2026, 3, 16, 9, 0, 0, 0, ZoneId.of("UTC")); // 16 mars 2026 est un lundi
+
+            ZonedDateTime result = aligner.alignCeil(fridayEvening, TimeFrame.D);
+
+            assertEquals(expectedMonday, result, "Le ceil d'un vendredi après-midi doit sauter le week-end et atterrir au lundi 09:00");
+        }
+
+        @Test
+        void should_handle_sub_second_truncation_edge_case() {
+            // Mardi 10:12:34.999 -> Les secondes doivent être tronquées, puis arrachées au ceil 15 min -> 10:15:00
+            ZonedDateTime input = ZonedDateTime.of(2026, 3, 10, 10, 12, 34, 999999999, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 10, 10, 15, 0, 0, ZoneId.of("UTC"));
+
+            ZonedDateTime result = aligner.alignCeil(input, TimeFrame.MI15);
+
+            assertEquals(expected, result);
+        }
+
+        @Test
+        void should_handle_minute_boundary_edge_case() {
+            // Mardi 10:14:59 -> Juste avant la limite des 15 minutes, doit arrondir à 10:15:00
+            ZonedDateTime input = ZonedDateTime.of(2026, 3, 10, 10, 14, 59, 0, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 10, 10, 15, 0, 0, ZoneId.of("UTC"));
+
+            ZonedDateTime result = aligner.alignCeil(input, TimeFrame.MI15);
+
+            assertEquals(expected, result);
+        }
+
+        @Test
+        void should_handle_hour_before_market_open() {
+            // Mardi à 07:30:00 (avant l'ouverture à 09:00)
+            // Le ceil à l'échelle de l'heure ou de la minute doit s'ajuster ou rattraper l'heure valide
+            ZonedDateTime input = ZonedDateTime.of(2026, 3, 10, 7, 30, 0, 0, ZoneId.of("UTC"));
+
+            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 10, 9, 0, 0, 0, ZoneId.of("UTC"));
+
+            // L'heure doit être ramenée dans une plage horaire valide (>= 9)
+            ZonedDateTime result = aligner.alignCeil(input, TimeFrame.MI15);
+
+            assertEquals(expected, result);
+        }
+
+        @Test
+        void should_handle_end_of_month_transition() {
+            // Mardi 31 mars 2026 à 16:30:00 -> Doit passer au 1er avril 2026 à 00:00:00 (ou ouverture)
+            ZonedDateTime input = ZonedDateTime.of(2026, 3, 31, 16, 30, 0, 0, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 4, 1, 9, 0, 0, 0, ZoneId.of("UTC"));
+
+            ZonedDateTime result = aligner.alignCeil(input, TimeFrame.D);
+
+            assertEquals(expected, result);
         }
     }
 }

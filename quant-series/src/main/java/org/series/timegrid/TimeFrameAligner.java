@@ -25,29 +25,60 @@ public interface TimeFrameAligner {
         };
     }
 
+    default ZonedDateTime alignCeil(ZonedDateTime dateTime, TimeFrame timeFrame) {
+
+                ZonedDateTime floor = alignFloor(dateTime, timeFrame);
+                ZonedDateTime truncated = dateTime.truncatedTo(ChronoUnit.SECONDS);
+                if (floor.equals(truncated)) {
+                    return floor;
+                }
+
+                ZonedDateTime ceil;
+
+                if (timeFrame.equals(TimeFrame.D) || timeFrame.equals(TimeFrame.WK)){
+                   ceil = ensureValidDayGoingForward(floor.plusDays(1));
+                   /*
+                   pour des raison de perfs je ne diminue pas le step à moins de 15 min
+                   a condition que les premières heures valides ne soient pas batardes (ex 9h05)
+                   */
+                   ceil = ensureValidHourGoingForward(ceil, 15 * 60);
+                } else {
+                    int minutesAmout = (int) (timeFrame == TimeFrame.HR ? 60 : timeFrame.getStepAmount());
+                    ceil = floor.plusMinutes(minutesAmout);
+                    if (!isValidHour(ceil)){
+                        //trop tard dans une journée valide
+                        ceil = ceil.toLocalDate().plusDays(1).atStartOfDay(ceil.getZone());
+                        ceil = ensureValidDayGoingForward(ceil);
+                        ceil = ensureValidHourGoingForward(ceil, (int) timeFrame.getStepAmount() * 60);
+                    }
+
+                }
+                return ceil;
+    }
+
 
     private ZonedDateTime alignMinute(ZonedDateTime dt, int interval) {
         if (!isValidDay(dt)) {
-            return ensureValidHour(ensureValidDay(dt).plusDays(1).minusSeconds(interval), interval);
+            return ensureValidHourGoingBack(ensureValidDayGoingBack(dt).plusDays(1).minusSeconds(interval), interval);
         }
         int minute = dt.getMinute();
         int intervalMinute = interval /60;
         int targetMinute = (minute / intervalMinute) * intervalMinute;
-        return ensureValidHour(dt.withMinute(targetMinute).withSecond(0).withNano(0), interval);
+        return ensureValidHourGoingBack(dt.withMinute(targetMinute).withSecond(0).withNano(0), interval);
     }
 
     private  ZonedDateTime alignHour(ZonedDateTime dt) {
         if (!isValidDay(dt)) {
-            return ensureValidHour(ensureValidDay(dt).plusDays(1).minusHours(1), 3600);
+            return ensureValidHourGoingBack(ensureValidDayGoingBack(dt).plusDays(1).minusHours(1), 3600);
         }
-        return ensureValidHour(dt.withMinute(0).withSecond(0).withNano(0), 3600);
+        return ensureValidHourGoingBack(dt.withMinute(0).withSecond(0).withNano(0), 3600);
     }
 
     private ZonedDateTime alignDay(ZonedDateTime dt) {
 
         ZonedDateTime midnight = dt.with(LocalTime.MIDNIGHT);
         if (!isValidDay(dt)) {
-            return ensureValidDay(dt);
+            return ensureValidDayGoingBack(dt);
         }
         return midnight;
     }
@@ -55,25 +86,15 @@ public interface TimeFrameAligner {
     private ZonedDateTime alignWeek(ZonedDateTime dt) {
         ZonedDateTime midnight = dt.with(LocalTime.MIDNIGHT);
         ZonedDateTime nextOrSameEndOfWeekMidnight = midnight.with(TemporalAdjusters.nextOrSame(getLastDayOfWeek()));
-        ZonedDateTime endOfCurrentWeek = ensureValidDay(nextOrSameEndOfWeekMidnight);
+        ZonedDateTime endOfCurrentWeek = ensureValidDayGoingBack(nextOrSameEndOfWeekMidnight);
 
         if (!midnight.isBefore(endOfCurrentWeek)) {
             return endOfCurrentWeek;
         }
         ZonedDateTime endOfPreviousWeek = nextOrSameEndOfWeekMidnight.minusWeeks(1);
-        return ensureValidDay(endOfPreviousWeek);
+        return ensureValidDayGoingBack(endOfPreviousWeek);
     }
 
-    private ZonedDateTime alignMonth(ZonedDateTime dt) {
-        ZonedDateTime midnight = dt.with(LocalTime.MIDNIGHT);
-        ZonedDateTime lastDayOfMonth = midnight.with(TemporalAdjusters.lastDayOfMonth());
-        ZonedDateTime endOfLastBizDayCurrentMonth = ensureValidDay(lastDayOfMonth);
-        if (!midnight.isBefore(endOfLastBizDayCurrentMonth)) {
-            return endOfLastBizDayCurrentMonth;
-        }
-        ZonedDateTime lastDayOfPreviousMonth = midnight.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
-        return ensureValidDay(lastDayOfPreviousMonth);
-    }
 
     default DayOfWeek getLastDayOfWeek(){
         return DayOfWeek.SUNDAY;
@@ -85,7 +106,7 @@ public interface TimeFrameAligner {
      * @param dt
      * @return
      */
-    default ZonedDateTime ensureValidDay(ZonedDateTime dt){
+    default ZonedDateTime ensureValidDayGoingBack(ZonedDateTime dt){
         ZonedDateTime current = dt;
         while (!isValidDay(current)) {
             current = current.minusDays(1).with(LocalTime.MIDNIGHT);
@@ -93,12 +114,33 @@ public interface TimeFrameAligner {
         return current;
     }
 
-    default ZonedDateTime ensureValidHour(ZonedDateTime dt, int seconds){
+    default ZonedDateTime ensureValidDayGoingForward(ZonedDateTime dt){
+        ZonedDateTime current = dt;
+        while (!isValidDay(current)) {
+            current = current.toLocalDate()
+                    .plusDays(1)
+                    .atStartOfDay(current.getZone());
+        }
+        return current;
+    }
+
+    default ZonedDateTime ensureValidHourGoingBack(ZonedDateTime dt, int seconds){
         ZonedDateTime current = dt;
         while (!isValidHour(current)) {
             current = current.minusSeconds(seconds);
             if (!isValidDay(current)){
-                current = ensureValidDay(current).plusDays(1).minusSeconds(seconds);
+                current = ensureValidDayGoingBack(current).plusDays(1).minusSeconds(seconds);
+            }
+        }
+        return current;
+    }
+
+    default ZonedDateTime ensureValidHourGoingForward(ZonedDateTime dt, int seconds){
+        ZonedDateTime current = dt;
+        while (!isValidHour(current)) {
+            current = current.plusSeconds(seconds);
+            if (!isValidDay(current)){
+                current = ensureValidDayGoingForward(current);
             }
         }
         return current;

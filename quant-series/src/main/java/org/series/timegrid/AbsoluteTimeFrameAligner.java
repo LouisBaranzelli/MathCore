@@ -22,7 +22,7 @@ public class AbsoluteTimeFrameAligner implements TimeFrameAligner {
     }
 
     @Override
-    public ZonedDateTime ensureValidDay(ZonedDateTime dt) {
+    public ZonedDateTime ensureValidDayGoingBack(ZonedDateTime dt) {
         return dt.with(LocalTime.MIDNIGHT);
     }
 
