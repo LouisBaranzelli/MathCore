@@ -21,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class DataContainerFactoryTest {
 
     @Test
-    @DisplayName("Creation d'un  data container horaire horraire: dois retourner la bonne taille")
+    @DisplayName("Creation d'un  data container  horaire: doit retourner la bonne taille")
     public void testCeationHourTick() throws LoadingException {
 
         DataLoader dummyLoader = new DummyDataLoader();
         ImputationStrategy imputationStrategy = new StubImputationStrategy();
-        // Mercredi 1er Janvier 2020
+        // Mercredi 1er Janvier 20204
         DataContainerFactory dataContainerFactory = new DataContainerFactory(imputationStrategy ,dummyLoader);
-        long start = TimeTools.fromDayStringToLong("2020-01-01", ZoneIdEnum.EUROPE_PARIS);
-        long end = TimeTools.fromDayStringToLong("2020-01-30", ZoneIdEnum.EUROPE_PARIS);
+        long start = TimeTools.fromDateTimeStringToLong("2020-01-01T09:00:00", ZoneIdEnum.EUROPE_PARIS);
+        long end = TimeTools.fromDateTimeStringToLong("2020-01-30T09:00:00", ZoneIdEnum.EUROPE_PARIS);
         DataContainer tteDataContainer = dataContainerFactory.create(start, end, Stock.TTE,  TimeFrame.HR);
         ZonedDateTime firstDateTime = TimeTools.fromLongToZonedDateTime(tteDataContainer.getCandleTimeSerie(TimeFrame.HR).getFirst().timestamp(), ZoneIdEnum.EUROPE_PARIS.getZoneId());
         assertEquals(2, firstDateTime.getDayOfMonth());

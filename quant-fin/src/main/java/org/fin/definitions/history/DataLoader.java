@@ -18,8 +18,9 @@ public interface DataLoader {
     void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles);
 
     default String logLoading(long start, long end, Instrument instrument, TimeFrame timeFrame){
+
         return String.format(
-                "%s: loading of %s (%S) between %s and %s",
+                "[LOADER] - %s: loading of %s (%s) between %s and %s",
                 getLabel(),
                 instrument.getLabel(),
                 timeFrame.getLabel(),

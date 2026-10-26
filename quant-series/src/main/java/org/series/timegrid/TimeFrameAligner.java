@@ -41,7 +41,7 @@ public interface TimeFrameAligner {
                    pour des raison de perfs je ne diminue pas le step à moins de 15 min
                    a condition que les premières heures valides ne soient pas batardes (ex 9h05)
                    */
-                   ceil = ensureValidHourGoingForward(ceil, 15 * 60);
+//                   ceil = ensureValidHourGoingForward(ceil, 15 * 60);
                 } else {
                     int minutesAmout = (int) (timeFrame == TimeFrame.HR ? 60 : timeFrame.getStepAmount());
                     ceil = floor.plusMinutes(minutesAmout);

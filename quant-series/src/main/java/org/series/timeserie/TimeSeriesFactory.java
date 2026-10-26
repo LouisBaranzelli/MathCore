@@ -30,7 +30,10 @@ public class TimeSeriesFactory {
         if (!Arrays.stream(observations).allMatch(o -> zoneId.equals(o.getZoneId()))){
             throw new RuntimeException("All the observation must have the same ID zone");
         }
-
+//        l'heure de la derniere observation est à 9h ...
+//            voir en vrai a quoi elle correspond dans la realité (jour)
+//                probleme est que je regeupere ce 9h pour retrancher 24h
+//        et avoir un timegrid basé sur 9h au lieu de 00h00 qui est l'heur que j'utilise pour les time frame day de la journée considérée
         TimeGrid timeGrid = TimeGridFactory.create(firstZoneDateTime, lastZoneDateTime, timeGridValidDatePredicate, timeFrame, zoneId);
         TimeSeriesAligner timeSeriesAligner = new TimeSeriesAligner(imputationStrategy);
         return timeSeriesAligner.align(observations, timeGrid);

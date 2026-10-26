@@ -45,7 +45,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
     public CsvInstrumentDataBase(Path path) {
         Objects.requireNonNull(path, "csv loader path can not be null");
         this.rootPath = path;
-        logger.debug("{} set to path {}", getLabel(), rootPath.toFile().getAbsoluteFile());
+        logger.debug("[LOADER] {} set to path {}", getLabel(), rootPath.toFile().getAbsoluteFile());
     }
 
     public List<Candle> loadAll(Instrument instrument, TimeFrame timeFrame) throws LoadingException {
@@ -73,6 +73,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
             candles = candles.stream().filter(candle -> validDatesPredicate.test(candle.timestamp())).toList();
         }
         if (candles.isEmpty()){
+            logger.warn("[LOADER] - {} - No data data available for {} / {}", getLabel(), instrument.getLabel(), timeFrame.getLabel());
             throw new LoadingException(String.format("(%s) No data available for %s, %s.",
                     getLabel(),
                     instrument.getLabel(),
@@ -90,6 +91,7 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
         double availableDataRatio = MathUtil.round((double) candles.size() / targetSize, 1);
 
         if (availableDataRatio < thresholdLoadingError || availableDataRatio > 1){
+            logger.warn("[LOADER] - {} - Not enougth  data available for {}, only {}% available", getLabel(), instrument.getLabel(), availableDataRatio * 100);
             throw new LoadingException(
                     String.format(
                             "(%s) Only %s%% of data available for %s.",
@@ -103,6 +105,8 @@ public class CsvInstrumentDataBase implements DataLoader, DataSaver {
         long lastCandleTimeStamp = candles.get(candles.size()-1).timestamp();
         if (end != lastCandleTimeStamp){
             ZoneId zoneId = instrument.getZoneIdEnum().getZoneId();
+            logger.warn("[LOADER] - {} - end not reached, target: {}, got: {}", getLabel(),  TimeTools.fromLongToZonedDateTime(end, instrument.getZoneIdEnum().getZoneId()
+            ),TimeTools.fromLongToZonedDateTime(lastCandleTimeStamp, instrument.getZoneIdEnum().getZoneId()));
             throw new LoadingException(String.format("date requested: %s, date received: %s",
                     TimeTools.fromLongToZonedDateTime(end, zoneId),
                     TimeTools.fromLongToZonedDateTime(lastCandleTimeStamp, zoneId)));

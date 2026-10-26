@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,9 +43,10 @@ public class YahooFinanceLoader implements DataLoader {
         logger.debug(logLoading(start, end, instrument, timeFrame));
         if (timeFrame == TimeFrame.WK){
             try {
+                logger.trace("[LOADER] {} not  in charge by {}, use {} instead",timeFrame.getLabel(), getLabel(), defaultLoader.getLabel());
                 return defaultLoader.load(start, end, instrument, timeFrame);
             } catch (LoadingException e){
-                logger.trace("Failed to load {} ({}) by using the loader {}", instrument.getLabel(), timeFrame.getLabel(), defaultLoader.getLabel());
+                logger.trace("[LOADER] Failed to load {} ({}) by using the loader {}. Using alternative methode ...", instrument.getLabel(), timeFrame.getLabel(), defaultLoader.getLabel());
             }
         }
 
@@ -63,6 +65,7 @@ public class YahooFinanceLoader implements DataLoader {
                 "https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=%s&period1=%d&period2=%d&events=dividends",
                 instrument.getTicker(), YahooFinanceIntervalService.getTicker(timeFrame), startAdapted, endAdapted);
 
+        logger.trace("[LOADER] - {} - url: {}",getLabel(), urlStr);
         FetcherUrl fetcherUrl = new FetcherUrl(urlStr);
         JSONObject root;
         String baseErrorMessage = String.format("(%s) Fetching data failed for %s (%s): ", getLabel(), instrument.getLabel(), timeFrame.getLabel());
@@ -82,13 +85,21 @@ public class YahooFinanceLoader implements DataLoader {
                     .getJSONObject(0)
                     .getJSONArray("timestamp");
         } catch (Exception e){
+            logger.warn("[LOADER] - {} - wrong data format received for {} / {}", getLabel(), instrument.getLabel(), timeFrame.getLabel());
             throw new LoadingException(String.format("Mauvais format de données reçu: ", e.getMessage()));
         }
 
         long endDateReached = timestamps.getLong(timestamps.length() - 1);
-        endDateReached = adaptTimeStamp(endDateReached, 0, timeFrame, instrument.getZoneIdEnum().getZoneId());
+        long startDateReached = timestamps.getLong(0);
+        ZonedDateTime startZoneDateTime = TimeTools.fromLongToZonedDateTime(startDateReached, instrument.getZoneIdEnum().getZoneId());
+        ZonedDateTime endZoneDateTime = TimeTools.fromLongToZonedDateTime(endDateReached, instrument.getZoneIdEnum().getZoneId());
+        logger.trace("[LOADER] - {} - data received, start: {}, end: {}", getLabel(), startZoneDateTime, endZoneDateTime);
+        endDateReached = adaptTimeStamp(endDateReached, timeFrame, instrument.getZoneIdEnum().getZoneId());
 
         if (endDateReached < end){
+            logger.warn("[LOADER] - {} - end not reached, target: {}, got: {}", getLabel(),  TimeTools.fromLongToZonedDateTime(end, instrument.getZoneIdEnum().getZoneId()
+            ),TimeTools.fromLongToZonedDateTime(endDateReached, instrument.getZoneIdEnum().getZoneId()));
+
             throw new LoadingException(String.format("(%s) Loading of %s (%s) failed to reach %s, got %s instead.",
                     getLabel(),
                     instrument.getLabel(),
@@ -116,7 +127,7 @@ public class YahooFinanceLoader implements DataLoader {
 
         for (int i = 0; i < timestamps.length(); i++) {
             long ts = timestamps.getLong(i);
-            ts = adaptTimeStamp(ts, 0, timeFrame, instrument.getZoneIdEnum().getZoneId());
+            ts = adaptTimeStamp(ts, timeFrame, instrument.getZoneIdEnum().getZoneId());
             if (ts < start || ts > end){
                 continue;
             }
@@ -137,6 +148,7 @@ public class YahooFinanceLoader implements DataLoader {
         }
 
         if (candles.isEmpty()){
+            logger.warn("[LOADER] - {} - No data data received for {} / {}", getLabel(), instrument.getLabel(), timeFrame.getLabel());
             throw new LoadingException(String.format("(%s) No data available for %s, %s.",
                     getLabel(),
                     instrument.getLabel(),
@@ -144,6 +156,9 @@ public class YahooFinanceLoader implements DataLoader {
         }
         endDateReached = candles.getLast().timestamp();
         if (endDateReached != end){
+            logger.warn("[LOADER] - {} - end not reached, target: {}, got: {}", getLabel(),  TimeTools.fromLongToZonedDateTime(end, instrument.getZoneIdEnum().getZoneId()
+            ), TimeTools.fromLongToZonedDateTime(endDateReached, instrument.getZoneIdEnum().getZoneId()));
+
             throw new LoadingException(String.format("(%s) Loading of %s (%s) failed to reach %s, got %s instead.",
                     getLabel(),
                     instrument.getLabel(),
@@ -163,10 +178,16 @@ public class YahooFinanceLoader implements DataLoader {
             );        }
         return arr.getDouble(idx);
     }
-
-    private long adaptTimeStamp(long timestamp, int targetHour, TimeFrame timeFrame, ZoneId zoneId){
-        if (List.of(TimeFrame.D, TimeFrame.WK).contains(timeFrame)) {
-            return YahooFinanceTimeService.setHourAt(targetHour, timestamp, zoneId);
+    /*
+        Yahoofinance me retourne de données hebdo time stampé au Lundi
+        donc 4 jours avant la date ffective de la valeur.
+        Je corrige ce billet ici
+     */
+    private long adaptTimeStamp(long timestamp, TimeFrame timeFrame, ZoneId zoneId){
+        if (timeFrame == TimeFrame.D) {
+            return YahooFinanceTimeService.setHourAt(0, timestamp, zoneId);
+        } else if (timeFrame == TimeFrame.WK) {
+            return YahooFinanceTimeService.setAtFriday(timestamp, zoneId);
         }
         return timestamp;
     }
@@ -178,13 +199,13 @@ public class YahooFinanceLoader implements DataLoader {
 
     @Override
     public void onSuccessLoading(Instrument instrument, TimeFrame timeFrame, List<Candle> candles) {
-        logger.debug("{} ({}): {} [LOADING SUCCEED]", instrument.getLabel(), timeFrame.getLabel(), getLabel());
+        logger.debug("[LOADER] - LOADING SUCCEED - {} ({}): {}", instrument.getLabel(), timeFrame.getLabel(), getLabel());
         if (this.savers != null){
             Arrays.stream(this.savers).forEach(s -> {
                 try {
                     s.save(instrument, timeFrame, candles);
                 } catch (SavingException e) {
-                    logger.warn("Failed to save {} with {}", instrument.getLabel(), s.getLabel());
+                    logger.warn("[LOADER] Failed to save {} with {}", instrument.getLabel(), s.getLabel());
                 }
             });
         }

@@ -246,9 +246,9 @@ class TimeFrameAlignerTest {
 
         @Test
         void should_ceil_day_correctly() {
-            // Dimanche 14:30:00 -> Doit s'arrondir au début du jour suivant valide -> Lundi 09:00:00
+            // Dimanche 14:30:00 -> Doit s'arrondir au début du jour suivant valide -> Lundi 00:00:00
             ZonedDateTime input = ZonedDateTime.of(2026, 3, 15, 14, 30, 0, 0, ZoneId.of("UTC"));
-            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 16, 9, 0, 0, 0, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 3, 16, 0, 0, 0, 0, ZoneId.of("UTC"));
 
             ZonedDateTime result = aligner.alignCeil(input, TimeFrame.D);
 
@@ -260,11 +260,11 @@ class TimeFrameAlignerTest {
             // Vendredi à 19:00:00 avec un TimeFrame journalier (D)
             // Le jour suivant (samedi) est invalide, il doit sauter au lundi 09:00:00
             ZonedDateTime fridayEvening = ZonedDateTime.of(2026, 3, 13, 19, 0, 0, 0, ZoneId.of("UTC")); // 13 mars 2026 est un vendredi
-            ZonedDateTime expectedMonday = ZonedDateTime.of(2026, 3, 16, 9, 0, 0, 0, ZoneId.of("UTC")); // 16 mars 2026 est un lundi
+            ZonedDateTime expectedMonday = ZonedDateTime.of(2026, 3, 16, 0, 0, 0, 0, ZoneId.of("UTC")); // 16 mars 2026 est un lundi
 
             ZonedDateTime result = aligner.alignCeil(fridayEvening, TimeFrame.D);
 
-            assertEquals(expectedMonday, result, "Le ceil d'un vendredi après-midi doit sauter le week-end et atterrir au lundi 09:00");
+            assertEquals(expectedMonday, result, "Le ceil d'un vendredi après-midi doit sauter le week-end et atterrir au lundi 00:00");
         }
 
         @Test
@@ -307,7 +307,7 @@ class TimeFrameAlignerTest {
         void should_handle_end_of_month_transition() {
             // Mardi 31 mars 2026 à 16:30:00 -> Doit passer au 1er avril 2026 à 00:00:00 (ou ouverture)
             ZonedDateTime input = ZonedDateTime.of(2026, 3, 31, 16, 30, 0, 0, ZoneId.of("UTC"));
-            ZonedDateTime expected = ZonedDateTime.of(2026, 4, 1, 9, 0, 0, 0, ZoneId.of("UTC"));
+            ZonedDateTime expected = ZonedDateTime.of(2026, 4, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
 
             ZonedDateTime result = aligner.alignCeil(input, TimeFrame.D);
 

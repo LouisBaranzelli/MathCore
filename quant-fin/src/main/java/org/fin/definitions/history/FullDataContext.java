@@ -32,7 +32,7 @@ public class FullDataContext implements DataContext {
 
     public FullDataContext(long start, long end, ImputationStrategy imputationStrategy,  List<DataLoader> dataLoaders, List<Instrument> instruments, List<TimeFrame> timeFrames) {
 
-        logger.info("Full Context loading between {} and {} for {} instruments ({}), with: {}",
+        logger.info("[CONTEXT] Full Context loading between {} and {} for {} instruments ({}), with: {}",
                 TimeTools.fromLongToZonedDateTime(start, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
                 TimeTools.fromLongToZonedDateTime(end, ZoneIdEnum.EUROPE_PARIS.getZoneId()),
                 instruments.size(),
@@ -51,10 +51,10 @@ public class FullDataContext implements DataContext {
                 dataContainer = dataContainerFactory.create(start, end, instrument,  this.timeFrames);
                 data.put(instrument, dataContainer);
             } catch (LoadingException e) {
-                logger.warn("Failed to load {}: {}", instrument.getLabel(), e.getMessage());
+                logger.warn("[CONTEXT] Failed to load {}: {}", instrument.getLabel(), e.getMessage());
             }
         }
-        logger.info("End of the loading context - {}", getDescription());
+        logger.info("[CONTEXT] End of the loading context - {}", getDescription());
     }
 
     @Override

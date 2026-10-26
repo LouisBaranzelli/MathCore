@@ -161,27 +161,27 @@ class YahooFinanceLoaderTest {
         long start = TimeTools.fromDayStringToLong("2026-08-11", zone);
         long end = TimeTools.fromDayStringToLong("2026-08-15", zone);
 
-        DataLoader csvLoader = new CsvInstrumentDataBase(tempDir);
-        DataLoader yahooFinanceLoader = new YahooFinanceLoader(csvLoader, (DataSaver) csvLoader);
+        DataLoader yahooFinanceLoader = new YahooFinanceLoader(loaderCsv, (DataSaver) loaderCsv);
         ImputationStrategy imputationStrategy = new StubImputationStrategy();
 
         FullDataContext context = new FullDataContext(
                 start,
                 end,
                 imputationStrategy,
-                List.of(csvLoader, yahooFinanceLoader),
+                List.of(loaderCsv, yahooFinanceLoader),
                 List.of(Stock.TTE),
                 List.of(TimeFrame.WK)
         );
 
         long startFriday = TimeTools.fromDayStringToLong("2026-08-14", zone);
         long endFriday = TimeTools.fromDayStringToLong("2026-08-14", zone);
-        List<?> ticks = csvLoader.load(start, endFriday, Stock.TTE, TimeFrame.WK);
+        List<?> ticks = loaderCsv.load(start, endFriday, Stock.TTE, TimeFrame.WK);
         assertEquals(1, ticks.size());
+//        la donnée est time stampé du 10 Aoutmais la valeur recu est celle du 14 Aout (Daily) mais time stampé au Lundi du debut de semaine
 
 
         // When
-        ticks = csvLoader.load(startFriday, endFriday, Stock.TTE, TimeFrame.D);
+        ticks = loaderCsv.load(startFriday, endFriday, Stock.TTE, TimeFrame.D);
 
         // Then
         assertEquals(1, ticks.size());
@@ -196,8 +196,9 @@ class YahooFinanceLoaderTest {
             return;
         }
         ZoneIdEnum zone = ZoneIdEnum.EUROPE_PARIS;
-        long start = TimeTools.fromDateTimeStringToLong("2026-08-14T10:30:00", zone);
-        long end = TimeTools.fromDateTimeStringToLong("2026-08-14T15:30:00", zone);
+        // Attention si date trop ancienne data à la minute non disponible et fait échouer les tests
+        long start = TimeTools.fromDateTimeStringToLong("2026-10-23T10:30:00", zone);
+        long end = TimeTools.fromDateTimeStringToLong("2026-10-23T15:30:00", zone);
 
         DataLoader csvLoader = new CsvInstrumentDataBase(tempDir);
         DataLoader yahooFinanceLoader = new YahooFinanceLoader(csvLoader, (DataSaver) csvLoader);
