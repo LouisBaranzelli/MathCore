@@ -4,6 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.distributions.monovariate.continuous.ContinuousDistribution;
 
+/*
+ Test pour vérifier un paramètre.Utiliser Likelihood Ratio Test (LRT)pour vérifier plusieurs paramètres
+ */
+
 public class WaldTest {
     private static final Logger log = LoggerFactory.getLogger(WaldTest.class);
 
