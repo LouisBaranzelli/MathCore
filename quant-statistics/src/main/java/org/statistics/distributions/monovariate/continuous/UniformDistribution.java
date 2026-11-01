@@ -28,6 +28,11 @@ public class UniformDistribution implements ContinuousDistribution {
     }
 
     @Override
+    public String getLabel() {
+        return "uniform distribution";
+    }
+
+    @Override
     public double density(double x) {
         if (x < a || x > b) return 0.0;
         return 1.0 / (b - a);

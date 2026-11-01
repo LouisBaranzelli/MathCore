@@ -35,6 +35,11 @@ public class NormalDistribution implements ContinuousDistribution {
     }
 
     @Override
+    public String getLabel() {
+        return "normal distribution";
+    }
+
+    @Override
     public double density(double x) {
         double z = (x - mu) / sigma;
         return Math.exp(-0.5 * z * z) / (sigma * SQRT_TWO_PI);

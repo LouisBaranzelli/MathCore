@@ -1,11 +1,11 @@
 package org.statistics.estimator.parametric.mle;
 
-class LikelyhoodRatioTestResult {
+public class ChiSquareTestResult {
     private final double statistic;
     private final int degreesOfFreedom;
     private final double pValue;
 
-    public LikelyhoodRatioTestResult(double statistic, int degreesOfFreedom, double pValue) {
+    public ChiSquareTestResult(double statistic, int degreesOfFreedom, double pValue) {
         this.statistic = statistic;
         this.degreesOfFreedom = degreesOfFreedom;
         this.pValue = pValue;

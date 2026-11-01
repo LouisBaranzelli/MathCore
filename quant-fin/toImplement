@@ -32,3 +32,9 @@ public interface CopulaDistribution {
 
     Vector sample();
 }
+
+
+en finance, implementer les modeles:
+CAPM (Capital Asset Pricing Model / MEDAF en français), SMB (Small Minus Big), HML (High Minus Low)
+
+En pratique, estimer l'impact d'une variable (comme un choc pétrolier) sur une action de manière totalement indépendante se fait via une régression linéaire simple (OLS - Ordinary Least Squares).

@@ -41,8 +41,12 @@ public interface ContinuousDistribution extends Distribution {
         );
     }
 
+
+    String getLabel();
+
     default double getSample(RandomGenerator random){
         double probability = random.nextDouble();
         return inverseCdf(probability);
     }
+
 }

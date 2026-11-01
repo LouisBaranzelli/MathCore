@@ -14,6 +14,19 @@ public class NegativeLogLikelihoodFunction implements MultivariateFunction {
     private final Sample data;
     private final ParametricModel<?> model;
 
+    /*
+    Notes:
+    Calculer la probabilité des données sachant le modèle (la vraisemblance) est extrêmement utile, mais uniquement pour
+     comparer deux modèles entre eux, pas pour juger un modèle dans l'absolu.C'est le principe du rapport de
+     vraisemblance (le LRT dont on parlait) :
+
+     Modèle A (Loi Normale) donne une probabilité de $10^{-50}$ à tes données.
+     Modèle B (Loi de Student) donne une probabilité de $10^{-30}$ à tes données.
+     Conclusion : Le modèle B est $10^{20}$ fois plus plausible que le modèle A.
+
+     Mais cela ne te dit toujours pas si le modèle B est réellement correct ou si c'est juste le moins pire des deux.
+     */
+
     public NegativeLogLikelihoodFunction(Sample data, ParametricModel<?> model) {
         this.data = data;
         this.model = model;

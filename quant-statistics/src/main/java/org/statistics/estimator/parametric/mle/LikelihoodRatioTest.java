@@ -3,7 +3,6 @@ package org.statistics.estimator.parametric.mle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.distributions.monovariate.continuous.ChiSquaredDistribution;
-import org.statistics.estimator.parametric.mle.LikelyhoodRatioTestResult;
 
 public class LikelihoodRatioTest {
 
@@ -18,7 +17,7 @@ public class LikelihoodRatioTest {
      * @param logLikelihoodRestricted Log-vraisemblance du modèle contraint (Theta_0)
      * @param degreesOfFreedom        Nombre de restrictions (dim(Theta) - dim(Theta_0))
      */
-    public static LikelyhoodRatioTestResult evaluate(double logLikelihoodFull, double logLikelihoodRestricted, int degreesOfFreedom) {
+    public static ChiSquareTestResult evaluate(double logLikelihoodFull, double logLikelihoodRestricted, int degreesOfFreedom) {
         if (degreesOfFreedom <= 0) {
             log.error("Tentative d'évaluation d'un LRT avec des degrés de liberté invalides : {}", degreesOfFreedom);
             throw new IllegalArgumentException("Le nombre de degrés de liberté doit être strictement positif.");
@@ -39,6 +38,6 @@ public class LikelihoodRatioTest {
 
         log.debug("LRT évalué avec succès : lambda = {}, df = {}, p-value = {}", lambda, degreesOfFreedom, pValue);
 
-        return new LikelyhoodRatioTestResult(lambda, degreesOfFreedom, pValue);
+        return new ChiSquareTestResult(lambda, degreesOfFreedom, pValue);
     }
 }

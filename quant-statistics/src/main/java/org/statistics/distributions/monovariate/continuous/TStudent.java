@@ -65,6 +65,11 @@ public class TStudent implements ContinuousDistribution {
         return location + scale * inverseCdfStandard(p);
     }
 
+    @Override
+    public String getLabel() {
+        return "T-student distribution";
+    }
+
     // =========================================================================
     // Formules Mathématiques pour la Student Standard t(df)
     // =========================================================================

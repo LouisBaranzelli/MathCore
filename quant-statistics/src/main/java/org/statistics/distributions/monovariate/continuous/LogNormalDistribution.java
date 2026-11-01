@@ -40,6 +40,11 @@ public class LogNormalDistribution implements ContinuousDistribution {
     }
 
     @Override
+    public String getLabel() {
+        return "log-normal distribution";
+    }
+
+    @Override
     public double density(double x) {
         if (x <= 0.0) {
             return 0.0;
