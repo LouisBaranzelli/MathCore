@@ -2,10 +2,10 @@ package org.statistics.estimator.parametric.mle;
 
 import org.statistics.data.Sample;
 import org.statistics.distributions.monovariate.continuous.NormalDistribution;
-import org.statistics.estimator.parametric.mle.MaximumLikelihoodEstimator;
-import org.statistics.estimator.parametric.mle.MleResult;
-import org.statistics.estimator.parametric.model.NormalModel;
-import org.statistics.estimator.parametric.model.ParametricModel;
+import org.statistics.frequentist.estimator.parametric.mle.MaximumLikelihoodEstimator;
+import org.statistics.frequentist.estimator.parametric.mle.MleResult;
+import org.statistics.frequentist.estimator.parametric.model.NormalModel;
+import org.statistics.frequentist.estimator.parametric.model.ParametricModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.math.matrix.Matrix;

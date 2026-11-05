@@ -1,7 +1,7 @@
 package hypothesis;
 
 import org.junit.jupiter.api.Test;
-import org.statistics.hypothesis.HypothesisTestResult;
+import org.statistics.frequentist.hypothesis.HypothesisTestResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 

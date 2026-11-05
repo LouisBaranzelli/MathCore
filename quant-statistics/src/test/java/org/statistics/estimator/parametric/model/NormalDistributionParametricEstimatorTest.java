@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.distributions.monovariate.continuous.NormalDistribution;
-import org.statistics.estimator.parametric.model.NormalDistributionParametricEstimator;
+import org.statistics.frequentist.estimator.parametric.model.NormalDistributionParametricEstimator;
 
 import java.util.Random;
 

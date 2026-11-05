@@ -1,6 +1,6 @@
 package org.statistics.statistics.estimator.parametric.model;
 
-import org.statistics.estimator.parametric.model.ChiSquaredModel;
+import org.statistics.frequentist.estimator.parametric.model.ChiSquaredModel;
 import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;

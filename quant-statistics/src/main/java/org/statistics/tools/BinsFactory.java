@@ -5,7 +5,6 @@ import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.distributions.monovariate.continuous.ContinuousDistribution;
-import org.statistics.hypothesis.ChiSquareGoodnessOfFitTest;
 
 public class BinsFactory {
     private static final Logger logger = LoggerFactory.getLogger(BinsFactory.class);

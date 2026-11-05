@@ -1,7 +1,7 @@
 package org.statistics.statistics.estimator.nonparametric.test;
 
-import org.statistics.estimator.nonparametric.test.GoodnessOfFitResult;
-import org.statistics.estimator.nonparametric.test.PearsonChiSquareGoodnessOfFitTest;
+import org.statistics.frequentist.estimator.nonparametric.test.GoodnessOfFitResult;
+import org.statistics.frequentist.estimator.nonparametric.test.PearsonChiSquareGoodnessOfFitTest;
 import org.junit.jupiter.api.Test;
 import org.statistics.data.CategoricalMultinomialData;
 import org.statistics.data.CategoricalProbabilityDistribution;

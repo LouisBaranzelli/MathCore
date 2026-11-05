@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.distributions.monovariate.continuous.NormalDistribution;
-import org.statistics.estimator.parametric.mle.ChiSquareTestResult;
+import org.statistics.frequentist.estimator.parametric.mle.ChiSquareTestResult;
+import org.statistics.frequentist.hypothesis.GoodnessOfFitAnalyzer;
 
 import static org.junit.jupiter.api.Assertions.*;
 

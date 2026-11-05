@@ -7,7 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.estimator.parametric.model.NormalModel;
+import org.statistics.frequentist.estimator.parametric.model.NormalModel;
 
 import static org.junit.jupiter.api.Assertions.*;
 

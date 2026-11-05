@@ -1,6 +1,6 @@
 package org.statistics.statistics.estimator.parametric.uncertainty;
 
-import org.statistics.estimator.parametric.uncertainty.DeltaMethod;
+import org.statistics.frequentist.estimator.parametric.uncertainty.DeltaMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.math.function.MultivariateFunction;
@@ -8,8 +8,8 @@ import org.math.matrix.DenseMatrix;
 import org.math.matrix.Matrix;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.estimator.nonparametric.bootstrap.VectorPointEstimate;
-import org.statistics.estimator.parametric.model.NormalModel;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.VectorPointEstimate;
+import org.statistics.frequentist.estimator.parametric.model.NormalModel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

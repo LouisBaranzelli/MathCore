@@ -7,9 +7,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.estimator.nonparametric.bootstrap.PointEstimate;
-import org.statistics.estimator.nonparametric.bootstrap.ScalarPointEstimate;
-import org.statistics.estimator.nonparametric.bootstrap.TrimmedMeanEstimator;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.PointEstimate;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.ScalarPointEstimate;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.TrimmedMeanEstimator;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.estimator.interval.DKWConfidenceBandEstimator;
-import org.statistics.estimator.interval.EmpiricalDistributionConfidenceBand;
+import org.statistics.frequentist.estimator.interval.DKWConfidenceBandEstimator;
+import org.statistics.frequentist.estimator.interval.EmpiricalDistributionConfidenceBand;
 
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;

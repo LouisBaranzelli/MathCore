@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.distributions.monovariate.continuous.LogNormalDistribution;
-import org.statistics.estimator.parametric.moment.LogNormalMethodOfMomentsEstimator;
+import org.statistics.frequentist.estimator.parametric.moment.LogNormalMethodOfMomentsEstimator;
 
 import java.util.Random;
 

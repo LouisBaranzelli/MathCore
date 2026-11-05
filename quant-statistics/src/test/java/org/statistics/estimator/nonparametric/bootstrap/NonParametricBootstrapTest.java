@@ -1,8 +1,8 @@
 package org.statistics.estimator.nonparametric.bootstrap;
 
-import org.statistics.estimator.interval.ConfidenceInterval;
-import org.statistics.estimator.interval.bootstrap.BootstrapIntervalMethod;
-import org.statistics.estimator.interval.bootstrap.BootstrapResult;
+import org.statistics.frequentist.estimator.interval.ConfidenceInterval;
+import org.statistics.frequentist.estimator.interval.bootstrap.BootstrapIntervalMethod;
+import org.statistics.frequentist.estimator.interval.bootstrap.BootstrapResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +13,10 @@ import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.data.Sample;
 import org.math.random.RandomVectorFactory;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.MeanEstimator;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.NonParametricBootstrap;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.PointEstimate;
+import org.statistics.frequentist.estimator.nonparametric.bootstrap.ScalarPointEstimate;
 
 
 import java.util.random.RandomGenerator;

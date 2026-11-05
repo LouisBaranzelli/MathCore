@@ -1,6 +1,6 @@
 package org.statistics.statistics.estimator.nonparametric.test;
 
-import org.statistics.estimator.nonparametric.test.PermutationTest;
+import org.statistics.frequentist.estimator.nonparametric.test.PermutationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;

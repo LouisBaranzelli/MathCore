@@ -2,7 +2,7 @@ package org.fin.definitions.indicators;
 
 import org.math.function.MultivariateFunction;
 import org.math.vector.Vector;
-import org.statistics.estimator.parametric.model.ParametricModel;
+import org.statistics.frequentist.estimator.parametric.model.ParametricModel;
 
 /*
     mesure l'excès de rentabilité d'un actif ou d'un portefeuille par unité de risque pris.

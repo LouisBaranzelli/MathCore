@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.distributions.monovariate.discrete.PoissonDistribution;
-import org.statistics.estimator.parametric.moment.PoissonMethodOfMomentsEstimator;
+import org.statistics.frequentist.estimator.parametric.moment.PoissonMethodOfMomentsEstimator;
 
 import java.util.Random;
 
