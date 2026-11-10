@@ -21,7 +21,6 @@ public class ChiSquaredModel implements ParametricModel<ChiSquaredDistribution> 
         }
         double kDouble = params.getValue(0);
 
-        // Le degré de liberté doit être un entier positif
         boolean valid = !Double.isNaN(kDouble) && !Double.isInfinite(kDouble)
                 && kDouble > 0.0 && kDouble == Math.floor(kDouble);
 
@@ -36,7 +35,6 @@ public class ChiSquaredModel implements ParametricModel<ChiSquaredDistribution> 
         if (!isValidParameterSet(params)) {
             return Double.NEGATIVE_INFINITY;
         }
-        // Délègue au calcul de la densité sous-jacente de la distribution
         int k = (int) params.getValue(0);
         ChiSquaredDistribution dist = new ChiSquaredDistribution(k);
         double density = dist.density(x);
@@ -52,7 +50,6 @@ public class ChiSquaredModel implements ParametricModel<ChiSquaredDistribution> 
         if (!isValidParameterSet(theta)) {
             throw new IllegalArgumentException("Invalid parameters for mean calculation.");
         }
-        // L'espérance d'une loi du Chi-deux à k degrés de liberté est k
         return theta.getValue(0);
     }
 
@@ -62,7 +59,6 @@ public class ChiSquaredModel implements ParametricModel<ChiSquaredDistribution> 
             throw new IllegalArgumentException("Invalid parameters for variance calculation.");
         }
         double k = theta.getValue(0);
-        // La variance d'une loi du Chi-deux à k degrés de liberté est 2k
         return 2.0 * k;
     }
 
