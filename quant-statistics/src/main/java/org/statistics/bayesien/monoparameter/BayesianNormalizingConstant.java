@@ -1,4 +1,4 @@
-package org.statistics.bayesien;
+package org.statistics.bayesien.monoparameter;
 
 import org.math.Integrator.NumericalIntegrator;
 import org.math.vector.ArrayVector;
@@ -23,7 +23,7 @@ public final class BayesianNormalizingConstant {
      *
      * @param data données observées stockées dans un Vector
      * @param model modèle paramétrique associé
-     * @param bayesianPrior fonction de densité de l'a priori f(theta)
+     * @param monovariateBayesianPrior fonction de densité de l'a priori f(theta)
      * @param integrator algorithme d'intégration numérique (ex: Simpson, Trapèzes)
      * @param thetaMin borne inférieure du domaine des paramètres
      * @param thetaMax borne supérieure du domaine des paramètres
@@ -32,17 +32,17 @@ public final class BayesianNormalizingConstant {
     public static <D> double compute(
             Vector data,
             ParametricModel<D> model,
-            BayesianPrior bayesianPrior,
+            MonovariateBayesianPrior monovariateBayesianPrior,
             NumericalIntegrator integrator,
             double thetaMin,
             double thetaMax) {
 
         log.trace("BayesianNormalizingConstant called with prior: {}, data size: {}, theta range: [{}, {}]",
-                 bayesianPrior.getLabel(),data.size(), thetaMin, thetaMax);
+                 monovariateBayesianPrior.getLabel(),data.size(), thetaMin, thetaMax);
 
         Objects.requireNonNull(data, "Data vector cannot be null");
         Objects.requireNonNull(model, "Model cannot be null");
-        Objects.requireNonNull(bayesianPrior, "Prior density function cannot be null");
+        Objects.requireNonNull(monovariateBayesianPrior, "Prior density function cannot be null");
         Objects.requireNonNull(integrator, "NumericalIntegrator cannot be null");
 
         ToDoubleFunction<Double> integrand = theta -> {
@@ -54,7 +54,7 @@ public final class BayesianNormalizingConstant {
             }
             double likelihood = Math.exp(logLikelihood);
 
-            double prior = bayesianPrior.density(theta);
+            double prior = monovariateBayesianPrior.density(theta);
             return likelihood * prior;
         };
 

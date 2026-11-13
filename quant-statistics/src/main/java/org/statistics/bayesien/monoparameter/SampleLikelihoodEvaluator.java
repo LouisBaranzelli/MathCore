@@ -1,4 +1,4 @@
-package org.statistics.bayesien;
+package org.statistics.bayesien.monoparameter;
 
 import org.math.vector.Vector;
 import org.slf4j.Logger;

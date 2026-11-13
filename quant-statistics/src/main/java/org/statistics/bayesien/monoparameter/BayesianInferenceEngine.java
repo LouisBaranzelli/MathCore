@@ -1,7 +1,6 @@
-package org.statistics.bayesien;
+package org.statistics.bayesien.monoparameter;
 
 import org.math.vector.Vector;
-import org.statistics.distributions.monovariate.Distribution;
 import org.statistics.distributions.monovariate.continuous.ContinuousDistribution;
 
 /**
@@ -17,5 +16,5 @@ public interface BayesianInferenceEngine {
      * @param data les données observées x^n
      * @return la distribution a posteriori f(theta | x^n) sous forme de ContinuousDistribution
      */
-    ContinuousDistribution computePosterior(BayesianPrior prior, Vector data);
+    ContinuousDistribution computePosterior(MonovariateBayesianPrior prior, Vector data);
 }

@@ -3,7 +3,7 @@ package org.statistics.bayesien;
 import org.junit.jupiter.api.Test;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
-import org.statistics.bayesien.SampleLikelihoodEvaluator;
+import org.statistics.bayesien.monoparameter.SampleLikelihoodEvaluator;
 import org.statistics.frequentist.estimator.parametric.model.NormalModel;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

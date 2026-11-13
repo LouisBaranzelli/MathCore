@@ -7,8 +7,9 @@ import org.math.Integrator.NumericalIntegrator;
 import org.math.Integrator.SimpsonIntegrator;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
+import org.statistics.bayesien.monoparameter.MonovariateBayesianPrior;
+import org.statistics.bayesien.monoparameter.GridBayesianInferenceEngine;
 import org.statistics.distributions.monovariate.continuous.ContinuousDistribution;
-import org.statistics.distributions.monovariate.continuous.GridDiscretizedDistribution;
 import org.statistics.distributions.monovariate.continuous.UniformDistribution;
 import org.statistics.frequentist.estimator.parametric.model.BernoulliModel;
 import org.statistics.frequentist.estimator.parametric.model.ParametricModel;
@@ -36,7 +37,7 @@ class GridBayesianInferenceEngineTest {
         // 3. Prior : Uniforme sur [0, 1], ce qui équivaut à un Beta(1, 1)
         ContinuousDistribution distribution = new UniformDistribution(0, 1);
 
-        BayesianPrior uniformPrior = new BayesianPrior(distribution);
+        MonovariateBayesianPrior uniformPrior = new MonovariateBayesianPrior(distribution);
 
         GridBayesianInferenceEngine engine = new GridBayesianInferenceEngine(
                 bernoulliModel, integrator, 0.0, 1.0, 500

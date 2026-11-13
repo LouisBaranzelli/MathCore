@@ -1,17 +1,16 @@
-package org.statistics.bayesien;
+package org.statistics.bayesien.monoparameter;
 
-import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.distributions.monovariate.continuous.ContinuousDistribution;
 
-public class BayesianPrior {
+public class MonovariateBayesianPrior {
 
-    private static final Logger log = LoggerFactory.getLogger(BayesianPrior.class);
+    private static final Logger log = LoggerFactory.getLogger(MonovariateBayesianPrior.class);
 
     private final ContinuousDistribution distribution;
 
-    public BayesianPrior(ContinuousDistribution distribution) {
+    public MonovariateBayesianPrior(ContinuousDistribution distribution) {
         this.distribution = distribution;
     }
 

@@ -1,4 +1,4 @@
-package org.statistics.bayesien;
+package org.statistics.bayesien.monoparameter;
 
 import org.math.Integrator.NumericalIntegrator;
 import org.math.vector.ArrayVector;
@@ -73,7 +73,7 @@ public class GridBayesianInferenceEngine implements BayesianInferenceEngine {
     }
 
     @Override
-    public ContinuousDistribution computePosterior(BayesianPrior prior, Vector data) {
+    public ContinuousDistribution computePosterior(MonovariateBayesianPrior prior, Vector data) {
         log.trace("computePosteriorDistribution called with data size: {}", data != null ? data.size() : 0);
 
         Objects.requireNonNull(prior, "Prior cannot be null");

@@ -145,34 +145,8 @@ class DenseSymmetricMatrixTest {
 
         SymmetricMatrix a = new DenseSymmetricMatrix( 4, data);
 
-        Matrix invA = a.invert();
-        double[] expectedData = {
-                -2.0, 0.0, 1.0, 0.0,
-                0.0, 13.0 / 30.0, -3.0 / 10.0, 1.0 / 30.0,
-                1.0, -3.0 / 10.0, -1.0 / 10.0, -1.0 / 10.0,
-                0.0, 1.0 / 30.0, -1.0 / 10.0, 7.0 / 30.0
-        };
+        assertThrows(NotPositiveDefiniteMatrixException.class, a::invert);
 
-        Matrix expectedInvMatrix = new DenseMatrix(4, 4, expectedData);
-
-        for (int r = 0; r < 4; r++) {
-            for (int c = 0; c < 4; c++) {
-                double expected = expectedInvMatrix.get(r, c);
-                double actual = invA.get(r, c);
-                double diff = Math.abs(expected - actual);
-
-                int finalR = r;
-                int finalC = c;
-
-                assertTrue(
-                        diff < 1e-9,
-                        () -> String.format(
-                                "Incorrect inverse coeff at (%d, %d): expected %f, got %f",
-                                finalR, finalC, expected, actual
-                        )
-                );
-            }
-        }
     }
 
     @Test

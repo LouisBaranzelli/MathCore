@@ -11,4 +11,7 @@ public interface SymmetricMatrix extends Matrix {
     default Matrix transpose() {
         return this;
     }
+
+    @Override
+    SymmetricMatrix invert();
 }

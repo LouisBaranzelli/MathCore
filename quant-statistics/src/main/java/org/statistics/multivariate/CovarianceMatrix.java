@@ -12,6 +12,7 @@ public interface CovarianceMatrix extends SymmetricMatrix {
     Vector getStandardDeviations();
 
 
+
     CorrelationMatrix toCorrelationMatrix();
 
     /**

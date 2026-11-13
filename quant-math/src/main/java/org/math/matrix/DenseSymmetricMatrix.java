@@ -28,8 +28,14 @@ public class DenseSymmetricMatrix extends AbstractMatrix implements SymmetricMat
 
     @Override public int getDimension() { return dimension; }
 
+    /*
+    * @return Une nouvelle instance de {@link SymmetricMatrix} représentant l'inverse de la matrice.
+    * @throws NotPositiveDefiniteMatrixException si la matrice n'est pas définie positive
+    *         (si un pivot est strictement inférieur à la tolérance négative), ce qui indique une dégénérescence
+    *         structurelle ou une dérive numérique de l'espace des paramètres.
+    */
     @Override
-    public Matrix invert() {
+    public SymmetricMatrix invert() {
         int n = getDimension();
         int packedSize = MatrixTools.packedSize(n);
         double[] work = new double[packedSize];
@@ -49,9 +55,8 @@ public class DenseSymmetricMatrix extends AbstractMatrix implements SymmetricMat
                 if (i == j) {
                     double val = get(i, i) - sum;
                     if (val <= 0.0) {
-                        logger.info("La matrice n'est pas définie positive (échec Cholesky à l'indice {} ).", i);
-                        return super.invert();
-
+                        throw new NotPositiveDefiniteMatrixException(
+                                String.format("Matrix is not positive definite: pivot value %e at index %d", val, i));
                     }
                     work[rowOffset + j] = Math.sqrt(val);
                 } else {
