@@ -1,6 +1,6 @@
 package org.statistics.distributions.monovariate.continuous;
 
-import org.math.Integrator.NumericalIntegrator;
+import org.math.Integrator.monovariate.NumericalIntegrator;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.slf4j.Logger;

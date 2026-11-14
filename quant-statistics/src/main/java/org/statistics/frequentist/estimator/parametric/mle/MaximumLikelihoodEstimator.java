@@ -14,7 +14,7 @@ import org.math.optimizer.MultivariateOptimizer;
 import org.math.optimizer.NelderMeadOptimizer;
 import org.math.optimizer.OptimizationResult;
 import org.math.vector.Vector;
-import org.statistics.tools.PerformanceMonitor;
+import org.math.common.PerformanceMonitor;
 
 
 public class MaximumLikelihoodEstimator {

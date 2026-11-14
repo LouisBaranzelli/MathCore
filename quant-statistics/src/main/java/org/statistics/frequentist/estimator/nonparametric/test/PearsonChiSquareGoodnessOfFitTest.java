@@ -5,7 +5,7 @@ import org.statistics.data.CategoricalMultinomialData;
 import org.statistics.data.CategoricalProbabilityDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.statistics.tools.PerformanceMonitor;
+import org.math.common.PerformanceMonitor;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

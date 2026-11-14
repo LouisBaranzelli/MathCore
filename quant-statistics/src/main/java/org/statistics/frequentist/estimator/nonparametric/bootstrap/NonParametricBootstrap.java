@@ -6,7 +6,7 @@ import org.statistics.frequentist.estimator.interval.bootstrap.BootstrapResult;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.data.Sample;
-import org.statistics.tools.PerformanceMonitor;
+import org.math.common.PerformanceMonitor;
 
 
 import java.util.Objects;

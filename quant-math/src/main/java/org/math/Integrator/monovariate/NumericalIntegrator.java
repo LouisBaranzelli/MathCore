@@ -1,9 +1,5 @@
-package org.math.Integrator;
+package org.math.Integrator.monovariate;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 
 /**

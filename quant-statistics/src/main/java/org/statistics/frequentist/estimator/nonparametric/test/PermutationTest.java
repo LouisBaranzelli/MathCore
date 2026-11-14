@@ -7,7 +7,7 @@ import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.data.TwoVectorsStatistic;
-import org.statistics.tools.PerformanceMonitor;
+import org.math.common.PerformanceMonitor;
 
 import java.util.Random;
 

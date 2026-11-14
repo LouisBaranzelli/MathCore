@@ -1,4 +1,4 @@
-package org.statistics.tools;
+package org.math.common;
 
 import org.slf4j.Logger;
 

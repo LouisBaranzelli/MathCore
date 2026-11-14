@@ -41,12 +41,17 @@ public class ParameterSampleMatrix {
         return numParams;
     }
 
-
+    /**
+     * Récupère un vecteur complet pour une itération donnée (la ligne b).
+     */
     public Vector getSampleAt(int iteration) {
         return matrix.getRow(iteration);
     }
 
-
+    /**
+     * Extrait la distribution marginale d'un paramètre spécifique (la colonne k)
+     * pour alimenter directement un objet {@link Sample}.
+     */
     public Sample extractMarginal(int parameterIndex) {
         if (parameterIndex < 0 || parameterIndex >= numParams) {
             throw new IndexOutOfBoundsException("Parameter index out of bounds: " + parameterIndex);
@@ -59,6 +64,9 @@ public class ParameterSampleMatrix {
         return new Sample(marginalValues);
     }
 
+    /**
+     * Expose la matrice dense sous-jacente pour les calculs algébriques globaux.
+     */
     public DenseMatrix getUnderlyingMatrix() {
         return matrix;
     }
