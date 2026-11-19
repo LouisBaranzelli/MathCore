@@ -41,4 +41,15 @@ public class MatrixTools {
         }
         return row * dimension - (row - 1) * row / 2 + (col - row);
     }
+
+    public static double[] extractUpperPacked(Matrix matrix) {
+        int n = matrix.rowCount();
+        double[] packed = new double[MatrixTools.packedSize(n)];
+        for (int i = 0; i < n; i++) {
+            for (int j = i; j < n; j++) {
+                packed[MatrixTools.upperTriangleIndex(i, j, n)] = matrix.get(i, j);
+            }
+        }
+        return packed;
+    }
 }

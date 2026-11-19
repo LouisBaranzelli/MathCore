@@ -1,12 +1,21 @@
 package org.statistics.multivariate;
 
+import org.math.matrix.DenseMatrix;
 import org.math.matrix.DenseSymmetricMatrix;
+import org.math.matrix.Matrix;
 import org.math.matrix.MatrixTools;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 
 public class DenseCovarianceMatrix extends DenseSymmetricMatrix implements CovarianceMatrix {
 
+    public DenseCovarianceMatrix(double[][] matrix) {
+        this(new DenseMatrix(matrix));
+    }
+
+    public DenseCovarianceMatrix(Matrix matrix) {
+        this(validateAndExtractDimension(matrix), MatrixTools.extractUpperPacked(matrix));
+    }
 
     public DenseCovarianceMatrix(int dimension, double[] packedValues) {
         super(dimension, packedValues);
@@ -70,5 +79,22 @@ public class DenseCovarianceMatrix extends DenseSymmetricMatrix implements Covar
                 );
             }
         }
+    }
+
+    private static int validateAndExtractDimension(Matrix matrix) {
+        if (matrix == null) {
+            throw new IllegalArgumentException("La matrice source ne peut pas être nulle.");
+        }
+        int rows = matrix.rowCount();
+        int cols = matrix.columnCount();
+        if (rows <= 0 || rows != cols) {
+            throw new IllegalArgumentException(
+                    String.format("La matrice doit être carrée et non vide (%dx%d).", rows, cols)
+            );
+        }
+        if (!MatrixTools.isSymetric(matrix, rows)) {
+            throw new IllegalArgumentException("La matrice de covariance doit être symétrique.");
+        }
+        return rows;
     }
 }

@@ -137,5 +137,68 @@ class DenseCovarianceMatrixTest {
             assertEquals(0.0, corr.get(1, 2), EPSILON);
             assertEquals(1.0, corr.get(2, 2), EPSILON);
         }
+
+        @Test
+        void testConstructorFrom3x3Array() {
+            double[][] rawCov = {
+                    {4.0,  2.0, -1.0},
+                    {2.0,  9.0,  3.0},
+                    {-1.0, 3.0, 16.0}
+            };
+
+            DenseCovarianceMatrix covMatrix = new DenseCovarianceMatrix(rawCov);
+
+            assertEquals(3, covMatrix.getDimension());
+
+            // Accès symétrique (triangle supérieur et inférieur)
+            assertEquals(4.0,  covMatrix.get(0, 0), EPSILON);
+            assertEquals(2.0,  covMatrix.get(0, 1), EPSILON);
+            assertEquals(2.0,  covMatrix.get(1, 0), EPSILON);
+            assertEquals(-1.0, covMatrix.get(0, 2), EPSILON);
+            assertEquals(-1.0, covMatrix.get(2, 0), EPSILON);
+            assertEquals(9.0,  covMatrix.get(1, 1), EPSILON);
+            assertEquals(3.0,  covMatrix.get(1, 2), EPSILON);
+            assertEquals(3.0,  covMatrix.get(2, 1), EPSILON);
+            assertEquals(16.0, covMatrix.get(2, 2), EPSILON);
+
+            // Variances et écarts-types
+            Vector variances = covMatrix.getVariances();
+            assertEquals(4.0,  variances.getValue(0), EPSILON);
+            assertEquals(9.0,  variances.getValue(1), EPSILON);
+            assertEquals(16.0, variances.getValue(2), EPSILON);
+
+            Vector stdDevs = covMatrix.getStandardDeviations();
+            assertEquals(2.0, stdDevs.getValue(0), EPSILON);
+            assertEquals(3.0, stdDevs.getValue(1), EPSILON);
+            assertEquals(4.0, stdDevs.getValue(2), EPSILON);
+
+            // Matrice de corrélation associée : Corr(i, j) = Cov(i, j) / (std_i * std_j)
+            CorrelationMatrix corr = covMatrix.toCorrelationMatrix();
+            assertEquals(1.0, corr.get(0, 0), EPSILON);
+            assertEquals(1.0, corr.get(1, 1), EPSILON);
+            assertEquals(1.0, corr.get(2, 2), EPSILON);
+            assertEquals(2.0 / (2.0 * 3.0),   corr.get(0, 1), EPSILON);
+            assertEquals(-1.0 / (2.0 * 4.0),  corr.get(0, 2), EPSILON);
+            assertEquals(3.0 / (3.0 * 4.0),   corr.get(1, 2), EPSILON);
+        }
+
+        @Test
+        void testConstructorFrom3x3Array_InvalidMatrices() {
+            // Matrice non symétrique
+            double[][] asymmetric = {
+                    {4.0, 2.0, 0.0},
+                    {1.0, 9.0, 0.0},
+                    {0.0, 0.0, 16.0}
+            };
+            assertThrows(IllegalArgumentException.class, () -> new DenseCovarianceMatrix(asymmetric));
+
+            // Variance diagonale négative
+            double[][] negativeVariance = {
+                    {4.0,  0.0, 0.0},
+                    {0.0, -1.0, 0.0},
+                    {0.0,  0.0, 9.0}
+            };
+            assertThrows(IllegalArgumentException.class, () -> new DenseCovarianceMatrix(negativeVariance));
+        }
     }
 }

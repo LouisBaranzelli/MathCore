@@ -1,10 +1,12 @@
-package org.statistics.frequentist.estimator.parametric.model;
+package org.statistics.frequentist.estimator.parametric.model.linear;
 
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.descriptive.DescriptiveStatistics;
+import org.statistics.multivariate.CovarianceMatrix;
+import org.statistics.multivariate.DenseCovarianceMatrix;
 
 /**
  * Estimateur par Moindres Carrés Ordinaires (OLS) pour la régression linéaire simple.
@@ -12,26 +14,23 @@ import org.statistics.descriptive.DescriptiveStatistics;
 public class SimpleLinearLeastSquaresEstimator {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleLinearLeastSquaresEstimator.class);
+    private static final double EPSILON = 1e-12;
 
     /**
-     * Estime uniquement le vecteur de paramètres [beta_0, beta_1, sigma].
+     * Estime le vecteur des coefficients [beta_0, beta_1].
      */
     public Vector estimate(Vector x, Vector y) {
-        return fit(x, y).getParameters();
+        log.trace("estimate called with x={}, y={}", x, y);
+        Vector coefficients = fit(x, y).coefficients();
+        log.debug("estimate completed with coefficients={}", coefficients);
+        return coefficients;
     }
 
     /**
-     * Ajuste la régression linéaire simple et retourne l'objet complet d'inférence
-     * (paramètres, erreurs standard homoscédastiques, résidus et R^2).
-     *
-     * @param x le vecteur des variables explicatives (covariables)
-     * @param y le vecteur des variables réponses
-     * @return le résultat complet de la régression
+     * Ajuste le modèle linéaire simple et produit les quantités nécessaires à l'inférence.
      */
     public SimpleLinearRegressionResult fit(Vector x, Vector y) {
-        log.trace("fit called with x size: {}, y size: {}",
-                x == null ? "null" : x.size(), y == null ? "null" : y.size());
-
+        log.trace("fit called with x={}, y={}", x, y);
         validateInputs(x, y);
 
         int n = x.size();
@@ -55,42 +54,42 @@ public class SimpleLinearLeastSquaresEstimator {
             sumXSquared += xi * xi;
         }
 
-        if (sxx == 0.0) {
-            log.error("Variance of predictor X is zero; regression slope is undefined.");
+        if (sxx <= EPSILON) {
+            log.warn("Predictor X has near-zero variance (sxx={}); regression slope is undefined.", sxx);
             throw new IllegalArgumentException("Predictor X has zero variance; cannot fit linear regression.");
         }
 
         double beta1 = sxy / sxx;
         double beta0 = meanY - beta1 * meanX;
 
-        // Calcul des résidus et de la somme des carrés des résidus (RSS)
         double[] residualArray = new double[n];
         double rss = 0.0;
         for (int i = 0; i < n; i++) {
-            double predicted = beta0 + beta1 * x.getValue(i);
-            double residual = y.getValue(i) - predicted;
+            double residual = y.getValue(i) - (beta0 + beta1 * x.getValue(i));
             residualArray[i] = residual;
             rss += residual * residual;
         }
 
-        // Estimateur sans biais de l'écart-type des résidus (n - 2 degrés de liberté)
-        double sigma = Math.sqrt(rss / (n - 2));
+        double sigmaSquared = rss / (n - 2);
+        double sigma = Math.sqrt(sigmaSquared);
 
-        // Erreurs standard sous hypothèse d'homoscédasticité
-        double seBeta1 = sigma / Math.sqrt(sxx);
-        double seBeta0 = seBeta1 * Math.sqrt(sumXSquared / n);
+        double varBeta1 = sigmaSquared / sxx;
+        double varBeta0 = varBeta1 * (sumXSquared / n);
+        double covBeta0Beta1 = -meanX * varBeta1;
 
-        // Coefficient de détermination R^2
-        double rSquared = (syy == 0.0) ? 1.0 : 1.0 - (rss / syy);
+        CovarianceMatrix covarianceMatrix = new DenseCovarianceMatrix(new double[][]{
+                {varBeta0, covBeta0Beta1},
+                {covBeta0Beta1, varBeta1}
+        });
 
+        double rSquared = (syy <= EPSILON) ? Double.NaN : 1.0 - (rss / syy);
         Vector residuals = new ArrayVector(residualArray);
+
         SimpleLinearRegressionResult result = new SimpleLinearRegressionResult(
-                beta0, beta1, sigma, seBeta0, seBeta1, residuals, rSquared
+                beta0, beta1, sigma, covarianceMatrix, residuals, rSquared, n
         );
 
-        log.debug("fit completed: beta_0={} (se={}), beta_1={} (se={}), sigma={}, R^2={}",
-                beta0, seBeta0, beta1, seBeta1, sigma, rSquared);
-
+        log.debug("fit completed: beta0={}, beta1={}, sigma={}, rSquared={}", beta0, beta1, sigma, rSquared);
         return result;
     }
 
@@ -102,7 +101,7 @@ public class SimpleLinearLeastSquaresEstimator {
             throw new IllegalArgumentException("Vectors x and y must have the same length.");
         }
         if (x.size() < 3) {
-            throw new IllegalArgumentException("At least 3 observations are required to estimate 2 parameters and residual variance.");
+            throw new IllegalArgumentException("At least 3 observations are required to fit simple linear regression.");
         }
     }
 }
