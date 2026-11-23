@@ -1,9 +1,10 @@
-package org.statistics.frequentist.estimator.parametric.model;
+package org.statistics.frequentist.estimator.parametric.model.distribution;
 
 import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.distributions.monovariate.continuous.NormalDistribution;
+import org.statistics.frequentist.estimator.parametric.model.ParametricModel;
 
 /**
  * Modèle paramétrique pour la loi normale (Gaussienne).

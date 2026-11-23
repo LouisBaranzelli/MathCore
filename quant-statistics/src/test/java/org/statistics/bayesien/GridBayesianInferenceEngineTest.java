@@ -11,7 +11,7 @@ import org.statistics.bayesien.monoparameter.MonovariateBayesianPrior;
 import org.statistics.bayesien.monoparameter.GridBayesianInferenceEngine;
 import org.statistics.distributions.monovariate.continuous.ContinuousDistribution;
 import org.statistics.distributions.monovariate.continuous.UniformDistribution;
-import org.statistics.frequentist.estimator.parametric.model.BernoulliModel;
+import org.statistics.frequentist.estimator.parametric.model.distribution.BernoulliModel;
 import org.statistics.frequentist.estimator.parametric.model.ParametricModel;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,8 +1,9 @@
-package org.statistics.frequentist.estimator.parametric.model;
+package org.statistics.frequentist.estimator.parametric.model.linear;
 
 import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.statistics.frequentist.estimator.parametric.model.RegressionModel;
 
 /**
  * Modèle paramétrique pour la régression linéaire simple : r(x) = beta_0 + beta_1 * x

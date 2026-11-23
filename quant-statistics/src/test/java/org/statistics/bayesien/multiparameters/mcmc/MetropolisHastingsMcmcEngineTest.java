@@ -7,7 +7,7 @@ import org.math.vector.Vector;
 import org.statistics.bayesien.multiparameters.MultivariateBayesianPrior;
 import org.statistics.bayesien.multiparameters.ParameterSampleMatrix;
 import org.statistics.bayesien.multiparameters.prior.MultivariateUniformPrior;
-import org.statistics.frequentist.estimator.parametric.model.NormalModel;
+import org.statistics.frequentist.estimator.parametric.model.distribution.NormalModel;
 import org.statistics.frequentist.estimator.parametric.model.ParametricModel;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

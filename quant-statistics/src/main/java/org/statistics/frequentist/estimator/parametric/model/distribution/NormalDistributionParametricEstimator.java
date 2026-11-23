@@ -1,4 +1,4 @@
-package org.statistics.frequentist.estimator.parametric.model;
+package org.statistics.frequentist.estimator.parametric.model.distribution;
 
 import org.statistics.frequentist.estimator.parametric.ParametricEstimator;
 import org.statistics.frequentist.estimator.parametric.moment.EmpiricalMomentEstimator;

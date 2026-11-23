@@ -9,7 +9,7 @@ import org.math.matrix.Matrix;
 import org.math.vector.ArrayVector;
 import org.math.vector.Vector;
 import org.statistics.frequentist.estimator.nonparametric.bootstrap.VectorPointEstimate;
-import org.statistics.frequentist.estimator.parametric.model.NormalModel;
+import org.statistics.frequentist.estimator.parametric.model.distribution.NormalModel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

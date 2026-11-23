@@ -4,7 +4,7 @@ import org.statistics.data.Sample;
 import org.statistics.distributions.monovariate.continuous.NormalDistribution;
 import org.statistics.frequentist.estimator.parametric.mle.MaximumLikelihoodEstimator;
 import org.statistics.frequentist.estimator.parametric.mle.MleResult;
-import org.statistics.frequentist.estimator.parametric.model.NormalModel;
+import org.statistics.frequentist.estimator.parametric.model.distribution.NormalModel;
 import org.statistics.frequentist.estimator.parametric.model.ParametricModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

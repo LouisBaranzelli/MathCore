@@ -6,13 +6,14 @@ import org.math.vector.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.statistics.descriptive.DescriptiveStatistics;
+import org.statistics.frequentist.estimator.parametric.model.MatrixRegressionEstimator;
 import org.statistics.multivariate.CovarianceMatrix;
 import org.statistics.multivariate.DenseCovarianceMatrix;
 
 /**
  * Estimateur par Moindres Carrés Ordinaires (OLS) pour la régression linéaire multiple.
  */
-public class MultipleLinearLeastSquaresEstimator {
+public class MultipleLinearLeastSquaresEstimator implements MatrixRegressionEstimator<MultipleLinearRegressionResult> {
 
     private static final Logger log = LoggerFactory.getLogger(MultipleLinearLeastSquaresEstimator.class);
     private static final double EPSILON = 1e-12;
